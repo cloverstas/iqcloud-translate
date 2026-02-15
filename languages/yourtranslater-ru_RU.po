@@ -1,0 +1,1096 @@
+# YourTranslate Plugin - Russian Translation
+# Copyright (C) 2024 YourNewSite
+# This file is distributed under the GPL v2 or later.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: YourTranslate 1.0.3\n"
+"Report-Msgid-Bugs-To: https://translate.yournewsite.ru\n"
+"POT-Creation-Date: 2024-01-16 00:00+0000\n"
+"PO-Revision-Date: 2024-01-16 00:00+0000\n"
+"Last-Translator: YourNewSite <translate@yournewsite.ru>\n"
+"Language-Team: Russian <translate@yournewsite.ru>\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+# Settings page
+msgid "Settings saved successfully!"
+msgstr "Настройки успешно сохранены!"
+
+msgid "API Status"
+msgstr "Статус API"
+
+msgid "Current Plan"
+msgstr "Текущий тариф"
+
+msgid "Tokens Usage"
+msgstr "Использование токенов"
+
+msgid "tokens remaining"
+msgstr "токенов осталось"
+
+msgid "Active Languages"
+msgstr "Активные языки"
+
+msgid "Unlimited"
+msgstr "Безлимитно"
+
+msgid "Subscription"
+msgstr "Подписка"
+
+msgid "%d days left"
+msgstr "%d дней осталось"
+
+msgid "Expires today"
+msgstr "Истекает сегодня"
+
+msgid "Expired"
+msgstr "Истёк"
+
+msgid "Auto-renewal ON"
+msgstr "Автопродление ВКЛ"
+
+msgid "Warning:"
+msgstr "Внимание:"
+
+msgid "You are running low on tokens. Consider upgrading your plan or purchasing additional tokens."
+msgstr "У вас заканчиваются токены. Рассмотрите возможность обновления тарифа или покупки дополнительных токенов."
+
+msgid "API Status Error:"
+msgstr "Ошибка статуса API:"
+
+msgid "Languages"
+msgstr "Языки"
+
+msgid "Translation"
+msgstr "Перевод"
+
+msgid "Switcher"
+msgstr "Переключатель"
+
+msgid "License"
+msgstr "Лицензия"
+
+msgid "Pro Version Active"
+msgstr "Pro версия активна"
+
+msgid "Auto-translation and advanced features are enabled."
+msgstr "Автоперевод и расширенные функции включены."
+
+msgid "Activation Failed"
+msgstr "Ошибка активации"
+
+msgid "Please check your API key and try again."
+msgstr "Пожалуйста, проверьте ваш API-ключ и попробуйте снова."
+
+msgid "Activation Required"
+msgstr "Требуется активация"
+
+msgid "Pro Version Not Active"
+msgstr "Pro версия не активна"
+
+msgid "Enter your API key and click Activate to unlock Pro features."
+msgstr "Введите API-ключ и нажмите Активировать для разблокировки Pro-функций."
+
+msgid "API Key"
+msgstr "API-ключ"
+
+msgid "Enter your API key..."
+msgstr "Введите ваш API-ключ..."
+
+msgid "Disconnect"
+msgstr "Отключить"
+
+msgid "Activate"
+msgstr "Активировать"
+
+msgid "License activated"
+msgstr "Лицензия активирована"
+
+msgid "Activation failed - please check your key"
+msgstr "Ошибка активации - проверьте ваш ключ"
+
+msgid "Website Languages"
+msgstr "Языки сайта"
+
+msgid "Default Language"
+msgstr "Язык по умолчанию"
+
+msgid "Select the original language of your content."
+msgstr "Выберите исходный язык вашего контента."
+
+msgid "WARNING: Changing the default language will invalidate existing translations."
+msgstr "ВНИМАНИЕ: Изменение языка по умолчанию сделает существующие переводы недействительными."
+
+msgid "Translation Languages"
+msgstr "Языки перевода"
+
+msgid "Select the languages you wish to make your website available in."
+msgstr "Выберите языки, на которые хотите перевести ваш сайт."
+
+msgid "Language"
+msgstr "Язык"
+
+msgid "Code"
+msgstr "Код"
+
+msgid "Slug"
+msgstr "Слаг"
+
+msgid "Action"
+msgstr "Действие"
+
+msgid "Default"
+msgstr "По умолчанию"
+
+msgid "Remove"
+msgstr "Удалить"
+
+msgid "Select language to add..."
+msgstr "Выберите язык для добавления..."
+
+msgid "Add Language"
+msgstr "Добавить язык"
+
+msgid "(%d of %d languages)"
+msgstr "(%d из %d языков)"
+
+msgid "You have reached your plan limit of %d languages. Upgrade your plan to add more languages."
+msgstr "Вы достигли лимита вашего тарифа в %d языков. Обновите тариф для добавления большего количества языков."
+
+msgid "Automatic Translation"
+msgstr "Автоматический перевод"
+
+msgid "Auto-translate Website"
+msgstr "Автоперевод сайта"
+
+msgid "Enable automatic translation for the entire website"
+msgstr "Включить автоматический перевод для всего сайта"
+
+msgid "When enabled, new content will be automatically translated to all enabled languages using AI. This includes posts, pages, and dynamic content. Manual translation is always available in the translation modal."
+msgstr "При включении новый контент будет автоматически переводиться на все активные языки с помощью ИИ. Это включает записи, страницы и динамический контент. Ручной перевод всегда доступен в модале перевода."
+
+msgid "Note:"
+msgstr "Примечание:"
+
+msgid "This is a Pro feature that requires an active API key."
+msgstr "Это функция Pro-версии, требующая активного API-ключа."
+
+msgid "Post Types to Translate"
+msgstr "Типы записей для перевода"
+
+msgid "Select All"
+msgstr "Выбрать все"
+
+msgid "Deselect All"
+msgstr "Снять выделение"
+
+msgid "No post types available."
+msgstr "Нет доступных типов записей."
+
+msgid "Gettext Domains"
+msgstr "Gettext-домены"
+
+msgid "Select which plugin/theme text domains to auto-translate. Domains with existing .mo translations are marked. Unchecked domains will use their .mo files instead."
+msgstr "Выберите какие текстовые домены плагинов/тем автоматически переводить. Домены с существующими .mo-переводами отмечены. Невыбранные домены будут использовать свои .mo-файлы."
+
+msgid "Has .mo translations"
+msgstr "Есть .mo-переводы"
+
+msgid "Select Without .mo"
+msgstr "Выбрать без .mo"
+
+msgid "No gettext domains detected. Domains will appear after the first page load."
+msgstr "Gettext-домены не обнаружены. Домены появятся после первой загрузки страницы."
+
+msgid "Translation Status"
+msgstr "Статус перевода"
+
+msgid "Loading status..."
+msgstr "Загрузка статуса..."
+
+msgid "Pending"
+msgstr "В ожидании"
+
+msgid "Processing"
+msgstr "Обработка"
+
+msgid "Completed"
+msgstr "Завершено"
+
+msgid "Failed"
+msgstr "Ошибка"
+
+msgid "Translate All Posts"
+msgstr "Перевести все записи"
+
+msgid "Pause"
+msgstr "Пауза"
+
+msgid "Resume"
+msgstr "Возобновить"
+
+msgid "Retry Failed"
+msgstr "Повторить неудачные"
+
+msgid "Recent Errors"
+msgstr "Последние ошибки"
+
+msgid "Processing..."
+msgstr "Обработка..."
+
+msgid "Debug Mode"
+msgstr "Режим отладки"
+
+msgid "Enable Debug Logging"
+msgstr "Включить журнал отладки"
+
+msgid "Write debug logs to wp-content/debug.log"
+msgstr "Записывать логи отладки в wp-content/debug.log"
+
+msgid "Enable this only when troubleshooting issues. Debug logging may slow down your site and create large log files."
+msgstr "Включайте только при устранении неполадок. Журнал отладки может замедлить сайт и создать большие файлы логов."
+
+msgid "Note: LINGUA_DEBUG constant is defined in wp-config.php and takes priority over this setting."
+msgstr "Примечание: константа LINGUA_DEBUG определена в wp-config.php и имеет приоритет над этой настройкой."
+
+msgid "Display Format"
+msgstr "Формат отображения"
+
+msgid "Language Switcher Format"
+msgstr "Формат переключателя языков"
+
+msgid "Flags with Full Language Names"
+msgstr "Флаги с полными названиями языков"
+
+msgid "Full Language Names"
+msgstr "Полные названия языков"
+
+msgid "Short Language Names"
+msgstr "Короткие названия языков"
+
+msgid "Flags with Short Language Names"
+msgstr "Флаги с короткими названиями языков"
+
+msgid "Only Flags"
+msgstr "Только флаги"
+
+msgid "Choose how language names are displayed in all language switchers (menu, shortcode, floating)."
+msgstr "Выберите как отображать названия языков во всех переключателях (меню, шорткод, плавающий)."
+
+msgid "Advanced Options"
+msgstr "Расширенные настройки"
+
+msgid "Display Options"
+msgstr "Настройки отображения"
+
+msgid "Use native language names"
+msgstr "Использовать родные названия языков"
+
+msgid "When enabled, language names will be shown in their native language instead of the current site language."
+msgstr "При включении названия языков будут отображаться на их родном языке вместо текущего языка сайта."
+
+msgid "Save Settings"
+msgstr "Сохранить настройки"
+
+# Translation modal
+msgid "Drag to resize panel"
+msgstr "Перетащите для изменения размера панели"
+
+msgid "Translate Content"
+msgstr "Перевести контент"
+
+msgid "From:"
+msgstr "С:"
+
+msgid "To:"
+msgstr "На:"
+
+msgid "Search strings..."
+msgstr "Поиск строк..."
+
+msgid "Auto-translate Page"
+msgstr "Автоперевод страницы"
+
+msgid "Re-extract page content"
+msgstr "Повторно извлечь контент страницы"
+
+msgid "Refresh"
+msgstr "Обновить"
+
+msgid "SEO Fields"
+msgstr "SEO-поля"
+
+msgid "SEO Title"
+msgstr "SEO-заголовок"
+
+msgid "SEO Description"
+msgstr "SEO-описание"
+
+msgid "Translate"
+msgstr "Перевести"
+
+msgid "Title"
+msgstr "Заголовок"
+
+msgid "Original"
+msgstr "Оригинал"
+
+msgid "WooCommerce Short Description"
+msgstr "Краткое описание WooCommerce"
+
+msgid "Excerpt"
+msgstr "Отрывок"
+
+msgid "SEO"
+msgstr "SEO"
+
+msgid "Page Content"
+msgstr "Контент страницы"
+
+msgid "Media"
+msgstr "Медиа"
+
+msgid "SEO Optimization"
+msgstr "SEO-оптимизация"
+
+msgid "Translate your page title and meta description for better search engine visibility"
+msgstr "Переведите заголовок страницы и мета-описание для лучшей видимости в поисковых системах"
+
+msgid "Extracted Elements:"
+msgstr "Извлечённые элементы:"
+
+msgid "translatable elements found"
+msgstr "найдено переводимых элементов"
+
+msgid "Media Translation"
+msgstr "Перевод медиа"
+
+msgid "Translate image alt text, captions, and replace images for different languages"
+msgstr "Переводите alt-текст изображений, подписи и заменяйте изображения для разных языков"
+
+msgid "Meta Fields"
+msgstr "Мета-поля"
+
+msgid "Ready to translate"
+msgstr "Готов к переводу"
+
+msgid "Save Translation"
+msgstr "Сохранить перевод"
+
+# Admin menu and pages
+msgid "Lingua Settings"
+msgstr "Настройки Lingua"
+
+msgid "Lingua"
+msgstr "Lingua"
+
+msgid "Settings"
+msgstr "Настройки"
+
+msgid "String Translations"
+msgstr "Переводы строк"
+
+msgid "Strings"
+msgstr "Строки"
+
+msgid "Translate Page"
+msgstr "Перевести страницу"
+
+msgid "Open translation manager for this page"
+msgstr "Открыть менеджер перевода для этой страницы"
+
+# Strings page
+msgid "Scan your themes and plugins for translatable gettext strings. Translate strings used in your website content."
+msgstr "Сканируйте темы и плагины на наличие переводимых gettext-строк. Переводите строки, используемые в контенте вашего сайта."
+
+msgid "Scan for Strings"
+msgstr "Сканировать строки"
+
+msgid "Full Rescan"
+msgstr "Полное сканирование"
+
+msgid "Source:"
+msgstr "Источник:"
+
+msgid "All Strings"
+msgstr "Все строки"
+
+msgid "Gettext (Themes/Plugins)"
+msgstr "Gettext (Темы/Плагины)"
+
+msgid "Custom (Page Content)"
+msgstr "Пользовательские (Контент страниц)"
+
+msgid "Email Templates"
+msgstr "Шаблоны email"
+
+msgid "Text Domain:"
+msgstr "Текстовый домен:"
+
+msgid "All Domains"
+msgstr "Все домены"
+
+msgid "All Languages"
+msgstr "Все языки"
+
+msgid "Search:"
+msgstr "Поиск:"
+
+msgid "Filter"
+msgstr "Фильтр"
+
+msgid "Reset"
+msgstr "Сбросить"
+
+msgid "Text Domains"
+msgstr "Текстовые домены"
+
+msgid "No strings found matching your filters."
+msgstr "Строк, соответствующих вашим фильтрам, не найдено."
+
+msgid "Showing %d strings"
+msgstr "Показано %d строк"
+
+msgid "Original String"
+msgstr "Оригинальная строка"
+
+msgid "Domain / Context"
+msgstr "Домен / Контекст"
+
+msgid "Status"
+msgstr "Статус"
+
+msgid "Actions"
+msgstr "Действия"
+
+msgid "custom"
+msgstr "пользовательская"
+
+msgid "plural (%d forms)"
+msgstr "множественное число (%d форм)"
+
+msgid "email"
+msgstr "email"
+
+msgid "%d/%d translated"
+msgstr "%d/%d переведено"
+
+msgid "Translated"
+msgstr "Переведено"
+
+msgid "Untranslated"
+msgstr "Не переведено"
+
+msgid "Edit"
+msgstr "Редактировать"
+
+msgid "%d items"
+msgstr "%d элементов"
+
+msgid "Edit Translation"
+msgstr "Редактировать перевод"
+
+msgid "Original String:"
+msgstr "Оригинальная строка:"
+
+msgid "Translation:"
+msgstr "Перевод:"
+
+msgid "Enter translation..."
+msgstr "Введите перевод..."
+
+msgid "This string has plural forms. Enter translation for each form."
+msgstr "Эта строка имеет множественные формы. Введите перевод для каждой формы."
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "This will clear all existing gettext strings and rescan from scratch. Continue?"
+msgstr "Это очистит все существующие gettext-строки и запустит сканирование заново. Продолжить?"
+
+msgid "Preparing scan..."
+msgstr "Подготовка к сканированию..."
+
+msgid "strings found"
+msgstr "строк найдено"
+
+msgid "Scan completed!"
+msgstr "Сканирование завершено!"
+
+msgid "Scan failed:"
+msgstr "Сканирование не удалось:"
+
+msgid "Error:"
+msgstr "Ошибка:"
+
+msgid "Loading plural forms..."
+msgstr "Загрузка множественных форм..."
+
+msgid "Singular:"
+msgstr "Единственное:"
+
+msgid "Plural:"
+msgstr "Множественное:"
+
+msgid "Saving..."
+msgstr "Сохранение..."
+
+msgid "Error saving translation:"
+msgstr "Ошибка сохранения перевода:"
+
+msgid "Connection error"
+msgstr "Ошибка соединения"
+
+# Admin AJAX strings
+msgid "Are you sure?"
+msgstr "Вы уверены?"
+
+msgid "Loading..."
+msgstr "Загрузка..."
+
+msgid "Error"
+msgstr "Ошибка"
+
+msgid "Testing connection..."
+msgstr "Проверка соединения..."
+
+msgid "Connection successful!"
+msgstr "Соединение успешно!"
+
+msgid "Connection failed!"
+msgstr "Соединение не удалось!"
+
+msgid "Invalid post ID"
+msgstr "Неверный ID записи"
+
+msgid "No post selected"
+msgstr "Запись не выбрана"
+
+msgid "Please select target language"
+msgstr "Пожалуйста, выберите целевой язык"
+
+msgid "Extracting content..."
+msgstr "Извлечение контента..."
+
+msgid "Content extracted successfully"
+msgstr "Контент успешно извлечён"
+
+msgid "Content extraction failed"
+msgstr "Извлечение контента не удалось"
+
+msgid "AJAX request failed"
+msgstr "AJAX-запрос не удался"
+
+msgid "Ready to extract content"
+msgstr "Готов к извлечению контента"
+
+msgid "Translating..."
+msgstr "Перевод..."
+
+msgid "Translation completed!"
+msgstr "Перевод завершён!"
+
+msgid "Translation failed"
+msgstr "Перевод не удался"
+
+msgid "Auto-translate all content?"
+msgstr "Автоперевод всего контента?"
+
+msgid "No content to translate"
+msgstr "Нет контента для перевода"
+
+msgid "Auto-translation completed"
+msgstr "Автоперевод завершён"
+
+msgid "Invalid state for saving"
+msgstr "Недопустимое состояние для сохранения"
+
+msgid "No translations to save"
+msgstr "Нет переводов для сохранения"
+
+msgid "Saving translations..."
+msgstr "Сохранение переводов..."
+
+msgid "Translations saved successfully"
+msgstr "Переводы успешно сохранены"
+
+msgid "Save failed"
+msgstr "Сохранение не удалось"
+
+msgid "Permission denied"
+msgstr "Доступ запрещён"
+
+msgid "API key is required"
+msgstr "Требуется API-ключ"
+
+msgid "Settings saved"
+msgstr "Настройки сохранены"
+
+msgid "API connection successful!"
+msgstr "Соединение с API успешно!"
+
+msgid "License disconnected"
+msgstr "Лицензия отключена"
+
+msgid "Invalid parameters"
+msgstr "Неверные параметры"
+
+msgid "No post ID provided"
+msgstr "ID записи не указан"
+
+msgid "Post not found"
+msgstr "Запись не найдена"
+
+msgid "Front Page"
+msgstr "Главная страница"
+
+msgid "Front page content extraction is not yet implemented. Please select a specific post or page to translate."
+msgstr "Извлечение контента главной страницы ещё не реализовано. Пожалуйста, выберите конкретную запись или страницу для перевода."
+
+msgid "Invalid parameters: missing post_id or term_id"
+msgstr "Неверные параметры: отсутствует post_id или term_id"
+
+msgid "Invalid parameters: missing language or translations"
+msgstr "Неверные параметры: отсутствует язык или переводы"
+
+msgid "Failed to save unified translation"
+msgstr "Не удалось сохранить унифицированный перевод"
+
+msgid "Invalid translation strings format"
+msgstr "Неверный формат строк перевода"
+
+msgid "Invalid unified translation format"
+msgstr "Неверный формат унифицированного перевода"
+
+msgid "Auto-translation is a Pro feature. Please activate your license in Settings → License."
+msgstr "Автоперевод - это функция Pro-версии. Пожалуйста, активируйте лицензию в Настройках → Лицензия."
+
+msgid "Invalid parameters for translation"
+msgstr "Неверные параметры для перевода"
+
+msgid "Auto-translation is a Pro feature."
+msgstr "Автоперевод - это функция Pro-версии."
+
+msgid "Please select post types and target languages."
+msgstr "Пожалуйста, выберите типы записей и целевые языки."
+
+msgid "Scheduled %d translations for %d posts."
+msgstr "Запланировано %d переводов для %d записей."
+
+msgid "Unauthorized"
+msgstr "Не авторизован"
+
+msgid "Connection successful! API is working correctly."
+msgstr "Соединение успешно! API работает корректно."
+
+msgid "Security check failed"
+msgstr "Проверка безопасности не пройдена"
+
+msgid "Invalid string ID"
+msgstr "Неверный ID строки"
+
+msgid "Translation saved"
+msgstr "Перевод сохранён"
+
+msgid "Failed to save translation"
+msgstr "Не удалось сохранить перевод"
+
+msgid "Missing parameters"
+msgstr "Отсутствуют параметры"
+
+msgid "No plural forms found"
+msgstr "Множественные формы не найдены"
+
+msgid "Invalid forms data"
+msgstr "Неверные данные форм"
+
+msgid "Saved %d translations"
+msgstr "Сохранено %d переводов"
+
+# Translations page
+msgid "Manage Translations"
+msgstr "Управление переводами"
+
+msgid "Bulk Translate"
+msgstr "Массовый перевод"
+
+msgid "Total Translations"
+msgstr "Всего переводов"
+
+msgid "All Post Types"
+msgstr "Все типы записей"
+
+msgid "Posts"
+msgstr "Записи"
+
+msgid "Pages"
+msgstr "Страницы"
+
+msgid "Type"
+msgstr "Тип"
+
+msgid "Date"
+msgstr "Дата"
+
+msgid "Translations"
+msgstr "Переводы"
+
+msgid "View"
+msgstr "Просмотр"
+
+msgid "No posts found."
+msgstr "Записей не найдено."
+
+msgid "Create your first post"
+msgstr "Создайте вашу первую запись"
+
+msgid "Bulk Actions"
+msgstr "Массовые действия"
+
+msgid "Translate Selected"
+msgstr "Перевести выбранные"
+
+msgid "Delete Translations"
+msgstr "Удалить переводы"
+
+msgid "Apply"
+msgstr "Применить"
+
+# Bulk translate page
+msgid "Bulk Translation"
+msgstr "Массовый перевод"
+
+msgid "Auto-translate Multiple Posts"
+msgstr "Автоперевод нескольких записей"
+
+msgid "Select posts and languages for bulk auto-translation. Translations will be processed in the background."
+msgstr "Выберите записи и языки для массового автоперевода. Переводы будут обработаны в фоновом режиме."
+
+msgid "Target Languages"
+msgstr "Целевые языки"
+
+msgid "No target languages available. Please configure languages in Settings first."
+msgstr "Нет доступных целевых языков. Сначала настройте языки в Настройках."
+
+msgid "Post Status"
+msgstr "Статус записи"
+
+msgid "Published"
+msgstr "Опубликовано"
+
+msgid "Draft"
+msgstr "Черновик"
+
+msgid "Any Status"
+msgstr "Любой статус"
+
+msgid "Limit"
+msgstr "Лимит"
+
+msgid "Maximum number of posts to translate (1-100)"
+msgstr "Максимальное количество записей для перевода (1-100)"
+
+msgid "Start Bulk Translation"
+msgstr "Начать массовый перевод"
+
+msgid "Metric"
+msgstr "Метрика"
+
+msgid "Count"
+msgstr "Количество"
+
+msgid "Translations to %s"
+msgstr "Переводы на %s"
+
+msgid "Status: %s"
+msgstr "Статус: %s"
+
+msgid "Recent Translation Jobs"
+msgstr "Последние задания перевода"
+
+msgid "No translation jobs scheduled."
+msgstr "Нет запланированных заданий перевода."
+
+msgid "Post ID"
+msgstr "ID записи"
+
+msgid "Scheduled Time"
+msgstr "Запланированное время"
+
+# License and activation
+msgid "License Expired or Invalid"
+msgstr "Лицензия истекла или недействительна"
+
+msgid "Please re-activate your license."
+msgstr "Пожалуйста, повторно активируйте вашу лицензию."
+
+msgid "License invalid"
+msgstr "Лицензия недействительна"
+
+msgid "Please enter your API key"
+msgstr "Пожалуйста, введите ваш API-ключ"
+
+msgid "Retrying..."
+msgstr "Повтор..."
+
+msgid "License activated! Reloading..."
+msgstr "Лицензия активирована! Перезагрузка..."
+
+msgid "Activation failed"
+msgstr "Ошибка активации"
+
+msgid "Connection failed. Please try again."
+msgstr "Соединение не удалось. Пожалуйста, попробуйте снова."
+
+msgid "Failed to save settings. Please try again."
+msgstr "Не удалось сохранить настройки. Пожалуйста, попробуйте снова."
+
+msgid "Are you sure you want to disconnect this license?"
+msgstr "Вы уверены, что хотите отключить эту лицензию?"
+
+msgid "License disconnected. Reloading..."
+msgstr "Лицензия отключена. Перезагрузка..."
+
+msgid "Failed to disconnect"
+msgstr "Не удалось отключить"
+
+# Queue and processing
+msgid "This will add all published posts to the translation queue and start translating. Continue?"
+msgstr "Это добавит все опубликованные записи в очередь перевода и начнёт перевод. Продолжить?"
+
+msgid "Populating queue..."
+msgstr "Заполнение очереди..."
+
+msgid "Network error. Please try again."
+msgstr "Сетевая ошибка. Пожалуйста, попробуйте снова."
+
+msgid "Stop"
+msgstr "Остановить"
+
+msgid "Starting..."
+msgstr "Запуск..."
+
+msgid "Stopped."
+msgstr "Остановлено."
+
+msgid "processed"
+msgstr "обработано"
+
+msgid "errors"
+msgstr "ошибок"
+
+msgid "done"
+msgstr "готово"
+
+msgid "Complete!"
+msgstr "Завершено!"
+
+msgid "items translated"
+msgstr "элементов переведено"
+
+msgid "Queue is empty"
+msgstr "Очередь пуста"
+
+msgid "Unknown error"
+msgstr "Неизвестная ошибка"
+
+# Navigation and menu integration
+msgid "Lingua Language Switcher"
+msgstr "Переключатель языков Lingua"
+
+msgid "Current Language"
+msgstr "Текущий язык"
+
+msgid "Add to Menu"
+msgstr "Добавить в меню"
+
+msgid "Lingua Settings"
+msgstr "Настройки Lingua"
+
+msgid "Add language switcher after this item"
+msgstr "Добавить переключатель языков после этого элемента"
+
+msgid "Position:"
+msgstr "Позиция:"
+
+msgid "After menu items"
+msgstr "После элементов меню"
+
+msgid "Before menu items"
+msgstr "Перед элементами меню"
+
+msgid "Style:"
+msgstr "Стиль:"
+
+msgid "Flags only"
+msgstr "Только флаги"
+
+msgid "Text only"
+msgstr "Только текст"
+
+msgid "Flags + Text"
+msgstr "Флаги + Текст"
+
+# String capture settings
+msgid "String Capture Settings"
+msgstr "Настройки захвата строк"
+
+msgid "Minimum String Length"
+msgstr "Минимальная длина строки"
+
+msgid "Minimum number of characters for a string to be captured"
+msgstr "Минимальное количество символов для захвата строки"
+
+msgid "Maximum String Length"
+msgstr "Максимальная длина строки"
+
+msgid "Maximum number of characters for a string to be captured"
+msgstr "Максимальное количество символов для захвата строки"
+
+msgid "Skip Admin Bar"
+msgstr "Пропускать админ-бар"
+
+msgid "Do not capture strings from WordPress admin bar"
+msgstr "Не захватывать строки из админ-бара WordPress"
+
+# Middleware API messages
+msgid "API key not configured. Please configure Middleware API in Settings → Lingua API."
+msgstr "API-ключ не настроен. Пожалуйста, настройте Middleware API в Настройках → Lingua API."
+
+msgid "Missing required parameters: text and targetLanguage"
+msgstr "Отсутствуют обязательные параметры: text и targetLanguage"
+
+msgid "API request failed: %s"
+msgstr "Запрос API не удался: %s"
+
+msgid "API credentials not configured. Please enter Middleware URL and API Key."
+msgstr "Учётные данные API не настроены. Пожалуйста, введите URL Middleware и API-ключ."
+
+msgid "API credentials not configured"
+msgstr "Учётные данные API не настроены"
+
+msgid "API key not configured"
+msgstr "API-ключ не настроен"
+
+msgid "Invalid batch response format"
+msgstr "Неверный формат пакетного ответа"
+
+msgid "Could not detect language"
+msgstr "Не удалось определить язык"
+
+# Queue messages
+msgid "Pro license required for auto-translation"
+msgstr "Для автоперевода требуется Pro-лицензия"
+
+msgid "Added %d items to translation queue"
+msgstr "Добавлено %d элементов в очередь перевода"
+
+msgid "Queue processing paused"
+msgstr "Обработка очереди приостановлена"
+
+msgid "Queue processing resumed"
+msgstr "Обработка очереди возобновлена"
+
+msgid "Reset %d failed items for retry"
+msgstr "Сброшено %d неудачных элементов для повтора"
+
+msgid "Pro license required"
+msgstr "Требуется Pro-лицензия"
+
+msgid "No items in queue"
+msgstr "Нет элементов в очереди"
+
+# Gettext scan
+msgid "Scanning item %1$d of %2$d..."
+msgstr "Сканирование элемента %1$d из %2$d..."
+
+# Auto translator
+msgid "WordPress Core"
+msgstr "Ядро WordPress"
+
+msgid "Core"
+msgstr "Ядро"
+
+msgid "Theme"
+msgstr "Тема"
+
+msgid "Plugin"
+msgstr "Плагин"
+
+# Translation render
+msgid "New architecture v2.0 is active! Enhanced performance and better string capture are now available."
+msgstr "Новая архитектура v2.0 активна! Улучшенная производительность и захват строк теперь доступны."
+
+# Every Minute cron
+msgid "Every Minute"
+msgstr "Каждую минуту"
+
+# Search languages
+msgid "Search languages..."
+msgstr "Поиск языков..."
+
+msgid "Search and select language to add..."
+msgstr "Найдите и выберите язык для добавления..."
+
+msgid "Are you sure you want to remove this language?"
+msgstr "Вы уверены, что хотите удалить этот язык?"
+
+# Confirm button texts
+msgid "Confirm"
+msgstr "Подтвердить"
+
+# v5.3.35: New strings for translation modal
+msgid "Auto Translate"
+msgstr "Автоматический перевод"
+
+msgid "OG Title"
+msgstr "OG-заголовок"
+
+msgid "Title shown when shared on Facebook, LinkedIn, etc."
+msgstr "Заголовок при публикации в Facebook, LinkedIn и т.д."
+
+msgid "Title shown when shared on Facebook, LinkedIn, etc. (defaults to SEO Title if empty)"
+msgstr "Заголовок при публикации в Facebook, LinkedIn и т.д. (по умолчанию используется SEO-заголовок)"
+
+msgid "OG Description"
+msgstr "OG-описание"
+
+msgid "Description shown when shared on social media"
+msgstr "Описание при публикации в соцсетях"
+
+msgid "Description shown when shared on social media (defaults to Meta Description if empty)"
+msgstr "Описание при публикации в соцсетях (по умолчанию используется мета-описание)"
+
+msgid "Open Graph (Social Media)"
+msgstr "Open Graph (Соцсети)"
+
+msgid "Add Media"
+msgstr "Добавить медиа"
+
+msgid "Save Media"
+msgstr "Сохранить медиа"
+
+msgid "Enter URL or use Add Media button"
+msgstr "Введите URL или используйте кнопку Добавить медиа"
+
+msgid "Select which post types should be included in automatic translation. These types will be translated when using \"Translate All Posts\"."
+msgstr "Выберите какие типы записей должны быть включены в автоматический перевод. Эти типы будут переведены при использовании \"Перевести все записи\"."
+
+msgid "No gettext strings found. Click \"Scan for Strings\" to scan your themes and plugins."
+msgstr "Gettext-строки не найдены. Нажмите \"Сканировать строки\" для сканирования тем и плагинов."
+
+msgid "Meta Description"
+msgstr "Мета-описание"
+
+msgid "SEO title from Yoast/RankMath (shown in search engine results)"
+msgstr "SEO-заголовок из Yoast/RankMath (отображается в результатах поиска)"
+
+msgid "Brief description of the page shown in search results"
+msgstr "Краткое описание страницы, отображаемое в результатах поиска"
+
+msgid "Auto-translate"
+msgstr "Автоперевод"

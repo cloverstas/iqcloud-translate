@@ -1,0 +1,206 @@
+/* Lingua Admin Styles */
+
+.lingua-admin-tabs .nav-tab-wrapper {
+    margin-bottom: 20px;
+}
+
+.lingua-admin-tabs .tab-content {
+    display: none;
+}
+
+.lingua-admin-tabs .tab-content.active {
+    display: block;
+}
+
+.lingua-languages-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background: #fafafa;
+    border-radius: 4px;
+}
+
+.lingua-language-item {
+    display: block;
+    margin-bottom: 8px;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+}
+
+.lingua-language-item:hover {
+    background: #e8f4f8;
+}
+
+.language-flag {
+    font-size: 16px;
+    margin-right: 8px;
+}
+
+.language-name {
+    font-weight: 500;
+    margin-right: 5px;
+}
+
+.language-native {
+    color: #666;
+    font-style: italic;
+}
+
+.required {
+    color: red;
+}
+
+#api-test-result {
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+#api-test-result.success {
+    color: green;
+}
+
+#api-test-result.error {
+    color: red;
+}
+
+#api-test-result.loading {
+    color: #0073aa;
+}
+
+/* Translation Management Styles */
+.lingua-stats-row {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.lingua-stat-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+    min-width: 120px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.lingua-stat-number {
+    font-size: 32px;
+    font-weight: bold;
+    color: #0073aa;
+    line-height: 1;
+}
+
+.lingua-stat-label {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+.lingua-translation-flags {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.lingua-flag {
+    display: inline-block;
+    font-size: 18px;
+    padding: 2px;
+    border-radius: 2px;
+    cursor: help;
+}
+
+.lingua-flag.translated {
+    opacity: 1;
+}
+
+.lingua-flag.not-translated {
+    opacity: 0.3;
+    filter: grayscale(100%);
+}
+
+.column-translations {
+    width: 120px;
+}
+
+.column-actions {
+    width: 100px;
+}
+
+.column-type {
+    width: 80px;
+}
+
+.column-date {
+    width: 100px;
+}
+
+.lingua-translate-section {
+    background: #f6f7f7;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.lingua-translate-button {
+    margin-top: 5px;
+}
+
+/* General admin improvements */
+.lingua-admin-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.lingua-admin-header .dashicons {
+    font-size: 24px;
+    color: #0073aa;
+}
+
+.lingua-notice {
+    margin: 15px 0;
+}
+
+.lingua-help-text {
+    font-style: italic;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .lingua-stats-row {
+        flex-direction: column;
+    }
+    
+    .lingua-stat-card {
+        min-width: auto;
+    }
+    
+    .lingua-languages-list {
+        max-height: 150px;
+    }
+}
+
+/* Admin Bar Translate Button */
+#wp-admin-bar-lingua-translate-page .ab-icon:before {
+    content: "\f326";
+    top: 2px;
+}
+
+#wp-admin-bar-lingua-translate-page:hover .ab-icon:before,
+#wp-admin-bar-lingua-translate-page:hover .ab-item {
+    color: #00a0d2;
+}
+
+#wp-admin-bar-lingua-translate-page .ab-item {
+    cursor: pointer;
+    text-decoration: none !important;
+}

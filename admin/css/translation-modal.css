@@ -1,0 +1,2628 @@
+/* Lingua Translation Modal Styles v2.0
+   Updated: <?php echo date('Y-m-d H:i:s'); ?>
+   Features: Enhanced v2.0 architecture styles with context grouping and animations
+   Debug: Check browser dev tools for .lingua-element-type and .lingua-context-header classes
+*/
+
+/* ISOLATION: Prevent Lingua modal styles from affecting site elements */
+/* All .lingua-* classes should only apply within #lingua-translation-modal or body.lingua-panel-open context */
+body:not(.lingua-panel-open) [class*="lingua-"]:not(#lingua-translation-modal):not(#lingua-preview-iframe) {
+    /* Reset any potential style leaks - this ensures modal styles don't affect site */
+}
+
+/* Off-canvas slide panel - v2.0 UX Upgrade with site push */
+.lingua-modal {
+    position: fixed;
+    top: 0;
+    left: -40%;
+    width: 40%;
+    height: 100%;
+    background-color: transparent;
+    z-index: 999999;
+    transition: left 0.3s ease-in-out;
+    box-sizing: border-box;
+}
+
+.lingua-modal.lingua-modal-open {
+    left: 0;
+}
+
+/* Push site content when panel is open */
+body.lingua-panel-open {
+    margin-left: 40%;
+    transition: margin-left 0.3s ease-in-out;
+    overflow-x: hidden;
+    overflow-y: hidden; /* Prevent scrolling of main site */
+}
+
+body.lingua-panel-open.lingua-panel-resized {
+    transition: none; /* Disable transition during resize */
+}
+
+/* v5.2: Hide original site content when modal is open (replaced by iframe preview) */
+/* v5.2.165: Added #lingua-notification to exceptions so confirmation dialogs are visible */
+body.lingua-panel-open > *:not(#lingua-translation-modal):not(#lingua-preview-iframe):not(#lingua-notification):not(#wpadminbar):not(script):not(style):not(link) {
+    visibility: hidden !important;
+}
+
+/* v5.2: Force visibility for WordPress Media Library elements */
+body.lingua-panel-open .media-modal,
+body.lingua-panel-open .media-modal-backdrop,
+body.lingua-panel-open .media-modal-content,
+body.lingua-panel-open .media-frame {
+    visibility: visible !important;
+}
+
+/* v5.2: Iframe Preview - shows translated page */
+#lingua-preview-iframe {
+    position: fixed;
+    top: 0;
+    left: 40%; /* Same as panel width */
+    width: 60%;
+    height: 100%;
+    border: none;
+    z-index: 999998; /* Below modal but above everything else */
+    background: #ffffff;
+    display: none;
+    transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+
+body.lingua-panel-open #lingua-preview-iframe {
+    display: block;
+}
+
+body.lingua-panel-open.lingua-panel-resized #lingua-preview-iframe {
+    transition: none; /* Disable transition during resize */
+}
+
+/* Disable pointer events on iframe during resize to prevent mouse capture */
+body.lingua-resizing-cursor #lingua-preview-iframe {
+    pointer-events: none !important;
+}
+
+/* Loading overlay for iframe */
+#lingua-preview-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 999999;
+    display: none;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+#lingua-preview-loading.visible {
+    display: block;
+}
+
+/* v5.2: Ensure WordPress Media Library modal appears above Lingua modal */
+body.lingua-panel-open .media-modal {
+    z-index: 1000000 !important; /* Higher than Lingua modal (999999) */
+    display: block !important;
+}
+
+body.lingua-panel-open .media-modal-backdrop {
+    z-index: 999999 !important;
+    display: block !important;
+}
+
+/* Slide panel content */
+.lingua-modal-content {
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: #1f2937;
+    position: relative;
+}
+
+/* Drag resize handle */
+.lingua-resize-handle {
+    position: absolute;
+    top: 0;
+    right: -4px;
+    width: 8px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 1000;
+    background: rgba(59, 130, 246, 0);
+    transition: background-color 0.2s ease;
+}
+
+.lingua-resize-handle:hover {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.lingua-resize-handle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 40px;
+    background: rgba(107, 114, 128, 0.3);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.lingua-resize-handle:hover::after {
+    opacity: 1;
+}
+
+/* Panel resize states */
+.lingua-modal.resizing {
+    transition: none;
+}
+
+.lingua-modal.resizing .lingua-modal-content {
+    user-select: none;
+}
+
+/* Современная архитектура v3.0 - стили для новых элементов */
+.lingua-content-section {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 15px;
+}
+
+.lingua-section-header {
+    font-weight: 600;
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: #f9fafb;
+    border-radius: 6px;
+    border-left: 3px solid #3b82f6;
+}
+
+.lingua-translation-item {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
+
+.lingua-translation-item:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+}
+
+.lingua-original-text {
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-radius: 4px;
+    border-left: 3px solid #6b7280;
+    line-height: 1.5;
+}
+
+.lingua-translation-input {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.lingua-translated-text {
+    flex: 1;
+    min-height: 80px;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 14px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.lingua-translated-text:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.lingua-translate-button {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s ease;
+}
+
+.lingua-translate-button:hover {
+    background: #2563eb;
+}
+
+.lingua-translate-button:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.lingua-context-info {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 8px;
+    font-style: italic;
+}
+
+.lingua-no-content {
+    text-align: center;
+    color: #6b7280;
+    padding: 40px 20px;
+    font-style: italic;
+}
+
+/* Responsive breakpoints for resized panel */
+.lingua-modal.size-small .lingua-translation-pair {
+    flex-direction: column;
+}
+
+.lingua-modal.size-small .lingua-original,
+.lingua-modal.size-small .lingua-translated {
+    width: 100% !important;
+    margin-bottom: 10px;
+}
+
+.lingua-modal.size-small .lingua-translated {
+    margin-bottom: 0;
+}
+
+/* Compact layout for narrow panels */
+.lingua-modal.size-small .lingua-modal-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.lingua-modal.size-small .lingua-search-container {
+    max-width: none;
+    margin-right: 0;
+    margin-bottom: 0;
+}
+
+.lingua-modal.size-small .lingua-language-selector {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.lingua-modal.size-small .lingua-source-lang-display {
+    margin-bottom: 5px;
+}
+
+.lingua-modal.size-small select {
+    width: 100%;
+}
+
+/* Stack all control elements vertically in narrow mode */
+.lingua-modal.size-small .lingua-translation-controls {
+    gap: 15px;
+}
+
+.lingua-modal.size-small .lingua-global-status {
+    margin-top: 10px;
+}
+
+.lingua-modal.size-small .lingua-arrow {
+    transform: rotate(90deg);
+    margin: 5px 0;
+}
+
+/* Slide panel header */
+.lingua-modal-header {
+    background: #ffffff;
+    border-bottom: 1px solid #f3f4f6;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.lingua-modal-header h2 {
+    margin: 0;
+    color: #111827;
+    font-size: 24px;
+    font-weight: 600;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.lingua-modal-close {
+    background: none !important;
+    border: none;
+    font-size: 28px;
+    line-height: 1;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 6px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.lingua-modal-close:hover {
+    background-color: #f3f4f6 !important;
+    color: #374151;
+}
+
+/* Slide panel body - scrollable */
+.lingua-modal-body {
+    padding: 24px;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #ffffff;
+}
+
+/* Элементы управления переводом - Светлый стиль */
+.lingua-translation-controls {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+}
+
+.lingua-language-selector {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: nowrap;
+}
+
+.lingua-source-lang-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lingua-source-lang-name {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lingua-flag {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.lingua-language-selector label {
+    font-weight: 500;
+    color: #374151;
+    font-size: 14px;
+}
+
+.lingua-language-selector select {
+    padding: 10px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    min-width: 150px;
+    background: #ffffff;
+    color: #1f2937;
+    transition: all 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.lingua-language-selector select:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.lingua-language-selector select:hover {
+    border-color: #9ca3af;
+}
+
+.lingua-arrow {
+    font-size: 18px;
+    color: #9ca3af;
+    font-weight: bold;
+}
+
+.lingua-modal-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.lingua-modal-actions .button {
+    padding: 12px 24px;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lingua-modal-actions .button svg {
+    flex-shrink: 0;
+}
+
+.lingua-modal-actions .button-primary {
+    background: #111827;
+    color: #ffffff;
+}
+
+.lingua-modal-actions .button-primary:hover {
+    background: #1f2937;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.lingua-modal-actions .button-secondary {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    color: #374151;
+}
+
+.lingua-modal-actions .button-secondary:hover {
+    background: #e5e7eb;
+}
+
+/* Секции контента */
+.lingua-content-sections {
+    space-y: 30px;
+}
+
+.lingua-section {
+    margin-bottom: 40px;
+}
+
+.lingua-section h3 {
+    margin: 0 0 20px 0;
+    color: #111827;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 12px;
+}
+
+/* Пары перевода - Светлый стиль с исправленными отступами */
+.lingua-translation-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-bottom: 24px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.lingua-original,
+.lingua-translated {
+    padding: 24px;
+}
+
+.lingua-original {
+    background-color: #f9fafb;
+    border-right: 1px solid #e5e7eb;
+}
+
+.lingua-translated {
+    background-color: #ffffff;
+}
+
+.lingua-translation-pair label {
+    display: block;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.lingua-translation-pair input,
+.lingua-translation-pair textarea {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    color: #1f2937;
+    box-sizing: border-box;
+}
+
+.lingua-translation-pair input::placeholder,
+.lingua-translation-pair textarea::placeholder {
+    color: #9ca3af;
+}
+
+#lingua-translation-modal .lingua-translation-pair input:focus,
+#lingua-translation-modal .lingua-translation-pair textarea:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+#lingua-translation-modal .lingua-original input,
+#lingua-translation-modal .lingua-original textarea {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    border-color: #e5e7eb;
+}
+
+#lingua-translation-modal .lingua-original input:focus,
+#lingua-translation-modal .lingua-original textarea:focus {
+    border-color: #111827 !important;
+    box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1) !important;
+}
+
+/* Original text fields - strong visual distinction */
+#lingua-translation-modal .lingua-original-text,
+#lingua-translation-modal .lingua-original-string {
+    background-color: #f9fafb !important;
+    color: #6b7280 !important;
+    border: 1px solid #d1d5db !important;
+    font-style: italic;
+    opacity: 0.9;
+    cursor: default;
+}
+
+#lingua-translation-modal .lingua-original-text:focus,
+#lingua-translation-modal .lingua-original-string:focus {
+    background-color: #f3f4f6 !important;
+    border-color: #9ca3af !important;
+    box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.1) !important;
+}
+
+/* Превью контента - Светлый стиль */
+.lingua-content-preview {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.4;
+    max-height: 60px;
+    overflow: hidden;
+}
+
+/* Кнопки перевода - Светлый стиль */
+.lingua-translate-single {
+    margin-top: 12px;
+    background: #111827;
+    color: #ffffff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.lingua-translate-single svg {
+    flex-shrink: 0;
+}
+
+.lingua-translate-single:hover {
+    background: #1f2937;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.lingua-translate-single:disabled {
+    background: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Подвал модального окна - Светлый стиль */
+.lingua-modal-footer {
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    padding: 24px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 20px;
+}
+
+/* Прогресс-бар и уведомления */
+.lingua-progress {
+    flex: 1;
+    max-width: 400px;
+}
+
+.lingua-progress-bar {
+    background: #e5e7eb;
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.lingua-progress-fill {
+    background: linear-gradient(90deg, #10b981, #34d399);
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.lingua-progress-fill.success {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.lingua-progress-fill.error {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.lingua-progress-text {
+    font-size: 12px;
+    color: #6b7280;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.lingua-progress-text .status-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    font-size: 10px;
+    line-height: 1;
+}
+
+.lingua-progress-text .status-icon.success {
+    background: #28a745;
+    color: white;
+}
+
+.lingua-progress-text .status-icon.error {
+    background: #dc3545;
+    color: white;
+}
+
+.lingua-progress-text.success {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.lingua-progress-text.error {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+/* Действия в подвале */
+.lingua-footer-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.lingua-footer-actions .button {
+    padding: 12px 24px;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lingua-footer-actions .button svg {
+    flex-shrink: 0;
+}
+
+.lingua-footer-actions .button-primary {
+    background: #111827;
+    color: #ffffff;
+}
+
+.lingua-footer-actions .button-primary:hover {
+    background: #1f2937;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.lingua-footer-actions .button-primary:disabled {
+    background: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.lingua-footer-actions .button:not(.button-primary) {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    color: #374151;
+}
+
+.lingua-footer-actions .button:not(.button-primary):hover {
+    background: #e5e7eb;
+}
+
+/* Full-width Live Search Styles */
+.lingua-search-container-full {
+    position: relative;
+    width: 100%;
+    margin: 15px 0;
+    padding: 0;
+}
+
+.lingua-search-input-full {
+    width: 100% !important;
+    padding: 12px 16px !important;
+    border: 2px solid #d1d5db !important;
+    border-radius: 8px !important;
+    font-size: 15px !important;
+    transition: all 0.2s ease !important;
+    background: #ffffff !important;
+    box-sizing: border-box !important;
+    font-weight: 400 !important;
+}
+
+.lingua-search-input-full:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+.lingua-search-input-full::placeholder {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+/* Legacy search container (for compatibility) */
+.lingua-search-container {
+    position: relative;
+    flex: 1;
+    max-width: 300px;
+    margin-right: 15px;
+}
+
+.lingua-search-input {
+    width: 100% !important;
+    padding: 8px 12px !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    transition: border-color 0.2s ease !important;
+    background: #ffffff !important;
+}
+
+.lingua-search-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.lingua-search-results-info {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 4px 8px;
+    font-size: 11px;
+    color: #6b7280;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    display: none;
+    z-index: 10;
+}
+
+.lingua-search-results-info.visible {
+    display: block;
+}
+
+/* Search highlighting */
+.lingua-search-highlight {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 1px 2px;
+    border-radius: 2px;
+    font-weight: 500;
+}
+
+/* Search result focus (scroll-to) */
+.lingua-translation-pair.search-focus {
+    background: #fef3c7;
+    border: 2px solid #f59e0b;
+    border-radius: 6px;
+    animation: lingua-search-pulse 0.6s ease-out;
+}
+
+@keyframes lingua-search-pulse {
+    0% {
+        background: #fef3c7;
+        transform: scale(1);
+    }
+    50% {
+        background: #fed7aa;
+        transform: scale(1.02);
+    }
+    100% {
+        background: #fef3c7;
+        transform: scale(1);
+    }
+}
+
+/* No results message */
+.lingua-search-no-results {
+    padding: 20px;
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+}
+
+/* Search match styling for input fields */
+.lingua-search-match {
+    background: #fef3c7 !important;
+    border-color: #f59e0b !important;
+    color: #92400e !important;
+}
+
+/* Enhanced modal actions layout for search */
+.lingua-modal-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* Resize cursor styles */
+body.lingua-resizing-cursor,
+body.lingua-resizing-cursor * {
+    cursor: col-resize !important;
+}
+
+@media (max-width: 768px) {
+    .lingua-search-container {
+        max-width: none;
+        margin-right: 0;
+        margin-bottom: 10px;
+        order: -1;
+        flex: 1 1 100%;
+    }
+
+    .lingua-modal-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    /* Mobile: panel takes full width and doesn't push content */
+    .lingua-modal {
+        width: 100% !important;
+        left: -100%;
+    }
+
+    .lingua-modal.lingua-modal-open {
+        left: 0;
+    }
+
+    /* No content push on mobile */
+    body.lingua-panel-open {
+        margin-left: 0 !important;
+    }
+
+    /* Disable drag resize on mobile */
+    .lingua-resize-handle {
+        display: none;
+    }
+}
+
+/* Блоки контента */
+.lingua-content-block {
+    border-left: 4px solid #111827;
+}
+
+.lingua-content-block .lingua-original {
+    background-color: #fafbfc;
+}
+
+/* SEO секция - Серые тона */
+.lingua-seo-section {
+    background: #f8f9fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 32px;
+    color: #1f2937;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.lingua-seo-section h3 {
+    color: #111827;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    border-bottom: 2px solid #e5e7eb;
+    margin-bottom: 24px;
+    font-weight: 600;
+}
+
+.lingua-seo-field {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: visible !important; /* v5.0.11: Changed from hidden to allow content to flow */
+    margin-bottom: 20px;
+    background: #ffffff;
+}
+
+.lingua-seo-field .lingua-original {
+    background-color: #f9fafb;
+    border-right: 1px solid #e5e7eb;
+}
+
+.lingua-seo-field .lingua-translated {
+    background-color: #ffffff;
+}
+
+/* Мета-поля */
+.lingua-meta-field {
+    border-left: 4px solid #28a745;
+}
+
+.lingua-meta-field .lingua-original {
+    background-color: #f0fff4;
+}
+
+/* Красивое уведомление */
+/* v5.2.165: Added backdrop and higher z-index to appear above iframe */
+.lingua-notification {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.lingua-notification.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.lingua-notification-content {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    min-width: 320px;
+    max-width: 400px;
+}
+
+.lingua-notification-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+    color: #10b981;
+}
+
+.lingua-notification-message {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: #111827;
+    margin-bottom: 24px;
+}
+
+.lingua-notification-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.lingua-notification-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.lingua-notification-btn.primary {
+    background: #111827;
+    color: #ffffff;
+}
+
+.lingua-notification-btn.primary:hover {
+    background: #1f2937;
+}
+
+.lingua-notification-btn.secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.lingua-notification-btn.secondary:hover {
+    background: #e5e7eb;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .lingua-modal {
+        padding: 10px;
+    }
+    
+    .lingua-modal-content {
+        max-height: 95vh;
+    }
+    
+    .lingua-translation-pair {
+        grid-template-columns: 1fr;
+    }
+    
+    .lingua-original {
+        border-right: none;
+        border-bottom: 1px solid #e1e5e9;
+    }
+    
+    .lingua-language-selector {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .lingua-modal-footer {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .lingua-progress {
+        max-width: none;
+        width: 100%;
+    }
+}
+
+/* Mobile responsive - full width slide panel */
+@media (max-width: 768px) {
+    .lingua-modal {
+        left: -100%;
+        width: 100%;
+    }
+
+    .lingua-modal.lingua-modal-open {
+        left: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .lingua-modal-header,
+    .lingua-modal-body,
+    .lingua-modal-footer {
+        padding: 15px 20px;
+    }
+
+    .lingua-translation-controls {
+        padding: 15px;
+    }
+
+    .lingua-modal-actions {
+        flex-direction: column;
+    }
+
+    .lingua-footer-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .lingua-footer-actions .button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Slide panel animations */
+@keyframes lingua-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.lingua-modal-content {
+    animation: lingua-slide-in 0.3s ease-out;
+}
+
+/* Состояния загрузки */
+.lingua-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.lingua-loading .lingua-translate-single {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+/* Успешные переводы */
+.lingua-translation-pair.translated .lingua-translated {
+    background-color: #f0fff4;
+    border-left: 3px solid #28a745;
+}
+
+/* Красивые дропдауны в стиле shadcn/ui */
+.lingua-select-wrapper {
+    position: relative;
+    display: inline-block;
+    min-width: 200px;
+}
+
+.lingua-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: #111827;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    outline: none;
+}
+
+.lingua-select:hover {
+    border-color: #d1d5db;
+}
+
+.lingua-select:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.lingua-select-icon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #6b7280;
+}
+
+/* Стиль для выбора языка в модальном окне - защищен от переопределения темой */
+.lingua-modal #lingua-target-lang,
+.lingua-modal-content #lingua-target-lang,
+#lingua-translation-modal #lingua-target-lang {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    padding: 0.5rem 2.5rem 0.5rem 0.75rem !important;
+    background-color: #ffffff !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 16px !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.375rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+    color: #111827 !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    outline: none !important;
+    min-width: 200px !important;
+    box-sizing: border-box !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    margin: 0 !important;
+    vertical-align: baseline !important;
+    text-transform: none !important;
+    text-decoration: none !important;
+    font-weight: 400 !important;
+}
+
+.lingua-modal #lingua-target-lang:hover,
+.lingua-modal-content #lingua-target-lang:hover,
+#lingua-translation-modal #lingua-target-lang:hover {
+    border-color: #d1d5db !important;
+    background-color: #ffffff !important;
+}
+
+.lingua-modal #lingua-target-lang:focus,
+.lingua-modal-content #lingua-target-lang:focus,
+#lingua-translation-modal #lingua-target-lang:focus {
+    outline: 2px solid transparent !important;
+    outline-offset: 2px !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    background-color: #ffffff !important;
+}
+
+.lingua-modal #lingua-target-lang option,
+.lingua-modal-content #lingua-target-lang option,
+#lingua-translation-modal #lingua-target-lang option {
+    padding: 0.5rem !important;
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    font-family: inherit !important;
+}
+
+/* Улучшенный стиль для языковой секции - защищен от переопределения */
+.lingua-modal .lingua-language-selector,
+.lingua-modal-content .lingua-language-selector,
+#lingua-translation-modal .lingua-language-selector {
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    background-color: #f9fafb !important;
+    padding: 1rem !important;
+    border-radius: 0.5rem !important;
+    border: 1px solid #e5e7eb !important;
+    margin: 0 0 24px 0 !important;
+    box-sizing: border-box !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+.lingua-modal .lingua-source-lang-display,
+.lingua-modal-content .lingua-source-lang-display,
+#lingua-translation-modal .lingua-source-lang-display {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    margin: 0 !important;
+}
+
+.lingua-modal .lingua-source-lang-display label,
+.lingua-modal-content .lingua-source-lang-display label,
+#lingua-translation-modal .lingua-source-lang-display label {
+    font-weight: 500 !important;
+    color: #6b7280 !important;
+    font-size: 0.875rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: inherit !important;
+}
+
+.lingua-modal .lingua-source-lang-name,
+.lingua-modal-content .lingua-source-lang-name,
+#lingua-translation-modal .lingua-source-lang-name {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem 0.75rem !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.375rem !important;
+    font-size: 0.875rem !important;
+    color: #111827 !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    font-family: inherit !important;
+}
+
+.lingua-modal .lingua-arrow,
+.lingua-modal-content .lingua-arrow,
+#lingua-translation-modal .lingua-arrow {
+    color: #9ca3af !important;
+    font-size: 1.25rem !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.lingua-modal .lingua-language-selector > label[for="lingua-target-lang"],
+.lingua-modal-content .lingua-language-selector > label[for="lingua-target-lang"],
+#lingua-translation-modal .lingua-language-selector > label[for="lingua-target-lang"] {
+    font-weight: 500 !important;
+    color: #6b7280 !important;
+    font-size: 0.875rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: inherit !important;
+}
+
+/* Флаги в дропдауне */
+.lingua-flag {
+    font-size: 1.125rem;
+    line-height: 1;
+    margin-right: 0.25rem;
+}
+
+/* ===================================================================
+   🚀 СТИЛИ ДЛЯ v2.0 АРХИТЕКТУРЫ - НОВАЯ СЕКЦИЯ
+   Если вы видите эти стили в браузере, значит CSS v2.0 загружен корректно
+   =================================================================== */
+
+/* Общий счетчик элементов */
+.lingua-strings-summary {
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+}
+
+.lingua-strings-summary:hover {
+    background: #e6f3ff !important;
+}
+
+/* Заголовки контекстов */
+.lingua-context-header {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 5px !important;
+    margin-bottom: 15px !important;
+    margin-top: 25px !important;
+    position: relative;
+}
+
+.lingua-context-header:first-child {
+    margin-top: 10px !important;
+}
+
+.lingua-context-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    background: #0073aa;
+}
+
+/* Информация о типе элемента */
+.lingua-element-type {
+    display: inline-block;
+    background: #f0f8ff;
+    color: #0073aa;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+/* Статус строк */
+.lingua-string-translated {
+    background: rgba(16, 185, 129, 0.05);
+    border-left: 3px solid #10b981;
+}
+
+.lingua-string-pending {
+    background: rgba(245, 158, 11, 0.05);
+    border-left: 3px solid #f59e0b;
+}
+
+/* Группировка строк по типам */
+.lingua-page-string {
+    margin-bottom: 12px;
+    border-radius: 6px;
+    padding: 15px;
+    transition: all 0.2s ease-in-out;
+}
+
+.lingua-page-string:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Адаптивные текстовые поля */
+.lingua-page-string textarea.lingua-original-string,
+.lingua-page-string textarea.lingua-translated-string {
+    resize: vertical;
+    min-height: 40px;
+    font-family: inherit;
+    line-height: 1.4;
+}
+
+/* Улучшенные лейблы с эмодзи */
+.lingua-page-string .lingua-original label,
+.lingua-page-string .lingua-translated label {
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
+    display: block;
+    font-size: 14px;
+}
+
+/* Визуальные улучшения для секции */
+#lingua-page-strings-section h3 {
+    position: relative;
+    padding-left: 30px;
+}
+
+#lingua-page-strings-section h3::before {
+    content: '🚀';
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 20px;
+}
+
+#lingua-page-strings-section h3 small {
+    display: block;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+/* Анимация появления элементов */
+.lingua-page-string {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* v2.1.1 UNIFIED: Styles for unified content container */
+#lingua-page-content-section {
+    border: 2px solid #0073aa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+#lingua-page-content-section h3 {
+    color: #0073aa;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lingua-version-badge {
+    font-size: 0.7em;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.lingua-content-group-header {
+    background: #f8f9fa;
+    padding: 8px 12px;
+    margin: 15px 0 10px 0;
+    border-left: 4px solid #0073aa;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+}
+
+.lingua-context-subheader {
+    color: #666;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 15px 0 8px 0;
+}
+
+.lingua-context-tag, .lingua-type-tag {
+    display: inline-block;
+    background: #e1f5fe;
+    color: #0277bd;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    margin-left: 8px;
+}
+
+.lingua-type-tag {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+/* Unified item status styles */
+.lingua-item-translated {
+    border-left: 4px solid #4caf50;
+}
+
+.lingua-item-pending {
+    border-left: 4px solid #ff9800;
+}
+
+/* Unified container layout */
+/* v3.2: Removed nested scroll - now panel scrolls as a whole */
+#lingua-unified-content {
+    /* max-height removed - no nested scroll */
+    /* overflow-y removed - panel body handles scroll */
+    padding-right: 0;
+}
+
+#lingua-unified-content .lingua-translation-pair {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #fafafa;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+#lingua-unified-content .lingua-translation-pair:hover {
+    background: #f0f0f0;
+    transform: translateY(-1px);
+}
+/* ============================================
+   v3.2: TABBED INTERFACE STYLES
+   ============================================ */
+
+/* Tab Navigation */
+.lingua-tab-navigation {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0;
+}
+
+.lingua-tab-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    transition: all 0.2s ease;
+    position: relative;
+    margin-bottom: -2px;
+}
+
+.lingua-tab-button:hover {
+    color: #374151;
+    background: #f9fafb;
+}
+
+.lingua-tab-button.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+    background: #eff6ff;
+}
+
+.lingua-tab-icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.lingua-tab-label {
+    font-weight: 600;
+}
+
+.lingua-tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 8px;
+    background: #e5e7eb;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    transition: all 0.2s ease;
+}
+
+.lingua-tab-button.active .lingua-tab-count {
+    background: #2563eb;
+    color: white;
+}
+
+/* Tab Panels */
+.lingua-tab-panels {
+    position: relative;
+}
+
+.lingua-tab-panel {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.lingua-tab-panel.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* SEO Tab Styles */
+.lingua-seo-header,
+.lingua-media-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.lingua-seo-header h4,
+.lingua-media-header h4 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.lingua-seo-description,
+.lingua-media-description {
+    margin: 0;
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.6;
+}
+
+/* SEO Content */
+#lingua-seo-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* v5.0.11: Unified styles for SEO fields and Content blocks */
+.lingua-seo-field,
+.lingua-translation-item {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s ease;
+    max-width: 100%;
+    box-sizing: border-box;
+    /* Removed overflow: hidden - let content determine size */
+}
+
+.lingua-seo-field:hover,
+.lingua-translation-item:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.lingua-seo-field-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.lingua-seo-field-icon {
+    font-size: 16px;
+}
+
+/* v5.0.11: Original and Translation containers (unified) */
+.lingua-seo-field-original,
+.lingua-seo-field-translation,
+.lingua-translation-item .lingua-original,
+.lingua-translation-item .lingua-translated {
+    margin-bottom: 12px;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important; /* Allow flex items to shrink */
+    /* No overflow: hidden - let content flow naturally */
+}
+
+/* v5.0.11: Remove border and padding from Content blocks */
+.lingua-translation-item .lingua-original,
+.lingua-translation-item .lingua-translated {
+    border-right: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.lingua-seo-field-original:last-child,
+.lingua-seo-field-translation:last-child,
+.lingua-translation-item .lingua-original:last-child,
+.lingua-translation-item .lingua-translated:last-child {
+    margin-bottom: 0;
+}
+
+.lingua-seo-field-original label,
+.lingua-seo-field-translation label,
+.lingua-translation-item .lingua-content-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.lingua-seo-field-original input,
+.lingua-seo-field-original textarea,
+.lingua-seo-field-translation input,
+.lingua-seo-field-translation textarea {
+    width: 100% !important;
+    padding: 10px 12px !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-family: inherit !important;
+    background: white !important;
+    transition: all 0.2s ease !important;
+}
+
+.lingua-seo-field-original input:focus,
+.lingua-seo-field-original textarea:focus,
+.lingua-seo-field-translation input:focus,
+.lingua-seo-field-translation textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.lingua-seo-field-original textarea,
+.lingua-seo-field-translation textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.lingua-seo-field-original input[readonly],
+.lingua-seo-field-original textarea[readonly] {
+    background: #f3f4f6;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+.lingua-seo-char-count {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #9ca3af;
+    text-align: right;
+}
+
+.lingua-seo-char-count.warning {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+.lingua-seo-char-count.error {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+/* v5.0.11: Original text display (DIV style for readonly content) */
+.lingua-translation-item .lingua-original-text {
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #f3f4f6;
+    color: #374151;
+    line-height: 1.6;
+    white-space: pre-wrap !important; /* Preserve line breaks */
+    word-break: break-all !important; /* Break anywhere to prevent overflow */
+    max-width: 100% !important; /* Don't exceed container */
+    width: 100% !important;
+    box-sizing: border-box !important; /* Include padding in width */
+    display: block !important;
+    overflow-wrap: break-word !important;
+}
+
+/* v3.2: SEO Label with badges and counters */
+.lingua-seo-label,
+.lingua-translation-item .lingua-content-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.lingua-lang-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #e0e7ff;
+    color: #3730a3;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.lingua-char-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.lingua-char-counter.success {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.lingua-char-counter.warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.lingua-char-counter.error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.lingua-char-count {
+    font-weight: 700;
+}
+
+.lingua-char-max {
+    font-weight: 500;
+}
+
+.lingua-char-status {
+    font-weight: 500;
+}
+
+/* v5.0.11: Block number badge for Content blocks */
+.lingua-block-number {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    margin-left: auto;
+}
+
+/* v5.2.39: English gettext badge (shows English version of gettext strings) */
+.lingua-gettext-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #fef3c7;  /* Amber/yellow background */
+    color: #92400e;       /* Dark amber text */
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    margin-left: 6px;
+    cursor: help;
+    border: 1px solid #fbbf24;
+}
+
+/* v5.2.42: Source badge for gettext strings (shows domain like "Gettext: woodmart") */
+.lingua-source-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #ddd6fe;  /* Purple/lavender background */
+    color: #5b21b6;       /* Dark purple text */
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    margin-left: 6px;
+    cursor: help;
+    border: 1px solid #a78bfa;
+}
+
+.lingua-source-badge.gettext {
+    background: #e0e7ff;  /* Indigo background for gettext */
+    color: #3730a3;       /* Dark indigo text */
+    border: 1px solid #818cf8;
+}
+
+/* v5.0.11: Translate button unified styles */
+.lingua-translation-item .lingua-translate-button {
+    margin-top: 8px;
+    padding: 8px 16px;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.lingua-translation-item .lingua-translate-button:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: white;
+}
+
+.lingua-button-icon {
+    font-size: 14px;
+}
+
+.lingua-button-text {
+    font-weight: 500;
+}
+
+/* v5.2.137: Separator for OG fields section */
+.lingua-seo-separator {
+    display: flex;
+    align-items: center;
+    margin: 24px 0 16px;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.lingua-seo-separator::before,
+.lingua-seo-separator::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+.lingua-seo-separator::before {
+    margin-right: 12px;
+}
+
+.lingua-seo-separator::after {
+    margin-left: 12px;
+}
+
+.lingua-seo-separator span {
+    white-space: nowrap;
+}
+
+/* v3.2: Info message for OG tags auto-sync */
+.lingua-info-message {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.lingua-info-icon {
+    font-size: 20px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.lingua-info-text {
+    flex: 1;
+}
+
+.lingua-info-text strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e40af;
+    margin-bottom: 4px;
+}
+
+.lingua-info-text p {
+    font-size: 13px;
+    color: #3b82f6;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Media Tab Styles */
+#lingua-media-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.lingua-media-item {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 20px;
+    transition: all 0.2s ease;
+}
+
+.lingua-media-item:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.lingua-media-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lingua-media-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.lingua-media-fields {
+    flex: 1;
+}
+
+.lingua-media-field {
+    margin-bottom: 16px;
+}
+
+.lingua-media-field:last-child {
+    margin-bottom: 0;
+}
+
+.lingua-media-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.lingua-media-field input,
+.lingua-media-field textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    background: white;
+}
+
+.lingua-media-replace-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.lingua-media-replace-button:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+}
+
+/* Empty State */
+.lingua-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #9ca3af;
+}
+
+.lingua-empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.lingua-empty-state-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.lingua-empty-state-description {
+    font-size: 14px;
+    color: #9ca3af;
+}
+
+/* v5.0.7: Original fields as DIV blocks, Translation as auto-resize textarea */
+
+/* Original text blocks (DIV instead of textarea) */
+.lingua-original-block,
+.lingua-seo-field-original .lingua-original-text,
+.lingua-content-block .lingua-original .lingua-original-text {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    background: #f3f4f6 !important;
+    color: #4b5563 !important;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    box-sizing: border-box;
+    min-height: 40px;
+}
+
+/* Translation textareas: auto-resize with manual resize option */
+.lingua-seo-field-translation textarea,
+.lingua-content-block .lingua-translated textarea,
+.lingua-translated-text,
+textarea[data-role="translated"] {
+    width: 100% !important;
+    padding: 10px 12px !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-family: inherit !important;
+    background: white !important;
+    transition: all 0.2s ease !important;
+    resize: vertical !important;
+    min-height: 60px !important;
+    height: auto !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+    line-height: 1.5 !important;
+}
+
+/* Focus states for translation textarea */
+.lingua-seo-field-translation textarea:focus,
+.lingua-content-block .lingua-translated textarea:focus,
+.lingua-translated-text:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Unified card style for both SEO and Content blocks */
+.lingua-seo-field,
+.lingua-content-block {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: all 0.2s ease;
+}
+
+.lingua-seo-field:hover,
+.lingua-content-block:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* v5.0.7: Override old min-height rules */
+.lingua-seo-field-original textarea,
+.lingua-seo-field-translation textarea {
+    min-height: 40px !important;
+    height: 40px !important;
+}
+
+/* Override legacy styles - ONLY for textareas, NOT for DIVs */
+.lingua-translation-item textarea.lingua-translated-text {
+    min-height: 80px !important;
+    height: auto !important; /* Allow to grow */
+}
+
+/* v5.0.11: Original text DIV should NOT have fixed height */
+.lingua-translation-item .lingua-original-text {
+    height: auto !important;
+    min-height: auto !important;
+}
+
+/* ===================================
+   v5.0.12: UI Improvements
+   =================================== */
+
+/* 1. Different badge styles for Original vs Translation */
+.lingua-original .lingua-lang-badge,
+.lingua-seo-field-original .lingua-lang-badge {
+    background: #9ca3af !important; /* Gray for Original */
+    color: #ffffff !important;
+}
+
+.lingua-translated .lingua-lang-badge,
+.lingua-seo-field-translation .lingua-lang-badge {
+    background: #eff6ff !important; /* Light blue for Translation */
+    color: #2563eb !important;
+}
+
+/* 2. Increase min-height for translation textareas */
+.lingua-translation-item textarea.lingua-translated-text,
+.lingua-seo-field textarea.lingua-translated-text {
+    min-height: 160px !important;
+}
+
+/* 3. Auto-translate button - blue theme (#2563eb) */
+.lingua-translation-item .lingua-translate-button,
+.lingua-seo-field .lingua-translate-button {
+    background: #2563eb !important;
+    border: 1px solid #2563eb !important;
+    color: white !important;
+    transition: all 0.2s ease !important;
+    margin-top: 8px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.lingua-translation-item .lingua-translate-button:hover,
+.lingua-seo-field .lingua-translate-button:hover {
+    background: #1d4ed8 !important; /* Darker blue on hover */
+    border-color: #1d4ed8 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3) !important;
+}
+
+.lingua-translation-item .lingua-translate-button .lingua-button-icon,
+.lingua-seo-field .lingua-translate-button .lingua-button-icon {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+/* 4. Save translations button - remove dark text on hover */
+.lingua-footer-actions .button-primary:hover,
+.lingua-modal-actions .button-primary:hover {
+    color: white !important;
+}
+
+/* 5. Live preview animation - highlight replaced text */
+@keyframes lingua-live-preview-highlight {
+    0% { background-color: rgba(37, 99, 235, 0.3); }
+    100% { background-color: transparent; }
+}
+
+.lingua-live-preview-replaced {
+    animation: lingua-live-preview-highlight 1.5s ease-out;
+}
+
+/* ===================================================
+   v5.1: MEDIA TAB STYLES
+   ================================================= */
+
+.lingua-media-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: white;
+}
+
+.lingua-media-preview {
+    margin-bottom: 15px;
+    text-align: center;
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.lingua-media-preview img {
+    max-width: 300px;
+    max-height: 200px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.lingua-media-fields {
+    margin-bottom: 15px;
+}
+
+.lingua-media-field {
+    margin-bottom: 15px;
+}
+
+.lingua-media-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #1e293b;
+}
+
+.lingua-media-original,
+.lingua-media-translated {
+    width: 100% !important;
+    padding: 10px 12px !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    margin-bottom: 5px !important;
+}
+
+.lingua-media-original {
+    background: #f3f4f6 !important;
+    color: #6b7280 !important;
+}
+
+.lingua-media-translated {
+    border-color: #d1d5db !important;
+    background: white !important;
+}
+
+.lingua-media-translated:focus {
+    outline: none !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+}
+
+/* v5.2: Media input wrapper with Add Media button */
+.lingua-media-input-wrapper {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.lingua-media-input-wrapper .lingua-media-translated {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.lingua-add-media-btn {
+    flex-shrink: 0;
+    padding: 8px 16px !important;
+    height: auto !important;
+    line-height: 1.4 !important;
+    white-space: nowrap;
+    background: #0073aa !important;
+    color: white !important;
+    border-color: #0073aa !important;
+    font-size: 13px !important;
+    border-radius: 8px !important;
+}
+
+.lingua-add-media-btn:hover {
+    background: #005177 !important;
+    border-color: #005177 !important;
+}
+
+/* v5.2: WordPress Media Library modal should appear above Lingua modal */
+.media-modal-backdrop {
+    z-index: 1000001 !important;
+}
+
+.media-modal {
+    z-index: 1000002 !important;
+}
+
+.lingua-save-media-btn {
+    padding: 8px 16px !important;
+    background: #2563eb !important;
+    color: white !important;
+    border: 1px solid #2563eb !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    height: auto !important;
+    line-height: 1.4 !important;
+}
+
+.lingua-save-media-btn svg {
+    flex-shrink: 0 !important;
+    margin-right: 4px !important;
+}
+
+.lingua-save-media-btn:hover {
+    background: #1d4ed8 !important;
+    border-color: #1d4ed8 !important;
+}
+
+.lingua-save-media-btn:active {
+    background: #1e40af !important;
+    border-color: #1e40af !important;
+}
+
+.lingua-save-media-btn:disabled {
+    background: #9ca3af !important;
+    border-color: #9ca3af !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+}
+
+/* v5.2: Success message next to Save button */
+.lingua-media-save-success {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #dcfce7;
+    color: #166534;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-left: 10px;
+    animation: slideInRight 0.3s ease;
+}
+
+.lingua-media-save-success::before {
+    content: "✓";
+    font-size: 16px;
+    font-weight: bold;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ===================================================
+   v5.2.43: PLURAL GROUP CARD STYLES
+   ================================================= */
+
+/* Plural group container */
+.lingua-translation-item.lingua-plural-group {
+    border-left: 4px solid #8b5cf6; /* Purple border for plural groups */
+}
+
+.lingua-plural-group .lingua-lang-badge {
+    background: #ede9fe !important;
+    color: #6b21a8 !important;
+}
+
+/* Plural forms container */
+.lingua-plural-forms {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+/* Individual plural form */
+.lingua-plural-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.lingua-plural-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.lingua-plural-text {
+    padding: 8px 12px !important;
+    background: #f3f4f6 !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    color: #374151 !important;
+}
+
+/* Plural textareas in translation section */
+.lingua-plural-group .lingua-translated-text {
+    min-height: 60px !important;
+    resize: vertical;
+}
+
+.lingua-plural-group .lingua-translated-text:focus {
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1) !important;
+}
+
+/* Plural group auto-translate button */
+.lingua-plural-group .lingua-translate-button {
+    margin-top: 12px;
+}
+
+/* ===================================================
+   v5.2.134: RTL (Right-to-Left) CONTENT SUPPORT
+   For Arabic, Hebrew, Persian, Kurdish, Pashto, Urdu, Sindhi
+   Panel position unchanged - only content direction is RTL
+   ================================================= */
+
+/* RTL: Reset modal to LTR to prevent layout flip */
+html[dir="rtl"] .lingua-modal,
+html[dir="rtl"] .lingua-modal-content,
+html[dir="rtl"] #lingua-translation-modal {
+    direction: ltr;
+    text-align: left;
+}
+
+/* RTL: Input fields text direction - only translation textareas */
+html[dir="rtl"] .lingua-translated-text,
+html[dir="rtl"] textarea[name*="translated"] {
+    text-align: right;
+    direction: rtl;
+}
+
+/* RTL: Media translation fields */
+html[dir="rtl"] .lingua-media-translated {
+    text-align: right;
+    direction: rtl;
+}

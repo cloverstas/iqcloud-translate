@@ -1,0 +1,25 @@
+/* Lingua Public Styles */
+.lingua-language-switcher {
+    display: inline-block;
+    margin: 10px 0;
+}
+
+.lingua-language-switcher select {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.lingua-language-switcher select:hover {
+    border-color: #999;
+}
+
+.lingua-language-flag {
+    width: 20px;
+    height: 15px;
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+}

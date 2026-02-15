@@ -1,0 +1,50 @@
+# Node modules
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+debug.log
+debug-*.txt
+
+# Test files
+test-*.php
+test-*.js
+send-headers-test.txt
+
+# Backup and disabled files
+*.bak
+*.backup
+*.disabled
+*.orig
+
+# Documentation (keep only README.md and readme.txt)
+docs/
+ai-context/
+
+# PDF files
+*.pdf
+
+# Development files
+package.json
+package-lock.json
+yarn.lock
+json.html
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# Claude / AI context
+.claude/

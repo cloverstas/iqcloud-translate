@@ -1,0 +1,22 @@
+/**
+ * Lingua Public Styles
+ *
+ * Основные стили для публичной части плагина.
+ * Стили переключателей языков.
+ */
+
+/* Language Switcher Flag Styles */
+.lingua-language-switcher-container .fi {
+    margin-right: 6px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Ensure flags display correctly in menus */
+.menu-item .fi {
+    font-size: 0.9em;
+    line-height: 1;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+}

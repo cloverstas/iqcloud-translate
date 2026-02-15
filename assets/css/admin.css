@@ -1,0 +1,28 @@
+/* Lingua Admin Styles */
+.lingua-admin-wrapper {
+    margin: 20px 0;
+}
+
+.lingua-settings-section {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.lingua-language-list {
+    margin-top: 15px;
+}
+
+.lingua-language-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.lingua-language-item:last-child {
+    border-bottom: none;
+}
