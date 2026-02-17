@@ -1506,9 +1506,15 @@ jQuery(document).ready(function($) {
             window.linguaDebug('🔍 LINGUA v2.1.4 SAVE STATE: currentPostId =', this.currentPostId, 'currentLanguage =', this.currentLanguage);
 
             // v5.0.6: Validate taxonomy context
+            // v5.5.2: Allow post_type_archive pages (currentPostId=0 is expected)
             if (this.currentPageType === 'taxonomy') {
                 if (!this.currentTermId || !this.currentLanguage) {
                     alert(lingua_admin.strings.invalid_state || 'Invalid state for saving taxonomy');
+                    return;
+                }
+            } else if (this.currentPageType === 'post_type_archive') {
+                if (!this.currentLanguage) {
+                    alert(lingua_admin.strings.invalid_state || 'Invalid state for saving');
                     return;
                 }
             } else if (!this.currentPostId || !this.currentLanguage) {

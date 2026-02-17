@@ -936,8 +936,10 @@ class Lingua_Admin {
         $global_mode = isset($_POST['global_translation']) && $_POST['global_translation'] === 'true';
 
         // v5.0.6: Allow post_id=0 for taxonomy pages
+        // v5.5.2: Allow post_id=0 for post_type_archive pages (e.g. /docs/)
         $is_taxonomy = ($page_type === 'taxonomy' && $term_id > 0);
-        if (!$is_taxonomy && !$post_id) {
+        $is_archive = ($page_type === 'post_type_archive');
+        if (!$is_taxonomy && !$is_archive && !$post_id) {
             wp_send_json_error(__('Invalid parameters: missing post_id or term_id', 'yourtranslater'));
         }
         if (!$language || empty($translations)) {
@@ -1592,8 +1594,15 @@ class Lingua_Admin {
         }
 
         // v5.0.6: Build context prefix for taxonomy pages
+        // v5.5.2: Support post_type_archive context
         $is_taxonomy = ($page_type === 'taxonomy' && $term_id > 0);
-        $context_prefix = $is_taxonomy ? "taxonomy_{$taxonomy}_{$term_id}" : "post_{$post_id}";
+        if ($is_taxonomy) {
+            $context_prefix = "taxonomy_{$taxonomy}_{$term_id}";
+        } elseif ($page_type === 'post_type_archive') {
+            $context_prefix = "archive";
+        } else {
+            $context_prefix = "post_{$post_id}";
+        }
 
         lingua_debug_log("[LINGUA SAVE v5.0.6] Processing " . count($processed_strings) . " strings for context: $context_prefix");
 
