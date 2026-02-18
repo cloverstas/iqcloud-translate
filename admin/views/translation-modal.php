@@ -19,9 +19,9 @@ $debug_timestamp = date('Y-m-d H:i:s');
 
 <div id="lingua-translation-modal" class="lingua-modal" style="display: none;">
     <div class="lingua-modal-content">
-        <div class="lingua-resize-handle" title="<?php _e('Drag to resize panel', 'yourtranslater'); ?>"></div>
+        <div class="lingua-resize-handle" title="<?php _e('Drag to resize panel', 'linguateq'); ?>"></div>
         <div class="lingua-modal-header">
-            <h2><?php _e('Translate Content', 'yourtranslater'); ?></h2>
+            <h2><?php _e('Translate Content', 'linguateq'); ?></h2>
             <button type="button" class="lingua-modal-close">&times;</button>
         </div>
         
@@ -29,7 +29,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
             <div class="lingua-translation-controls">
                 <div class="lingua-language-selector">
                     <div class="lingua-source-lang-display">
-                        <label><?php _e('From:', 'yourtranslater'); ?></label>
+                        <label><?php _e('From:', 'linguateq'); ?></label>
                         <span class="lingua-source-lang-name">
                             <?php 
                             $languages = get_option('lingua_languages', array());
@@ -43,7 +43,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
                     
                     <span class="lingua-arrow">→</span>
                     
-                    <label for="lingua-target-lang"><?php _e('To:', 'yourtranslater'); ?></label>
+                    <label for="lingua-target-lang"><?php _e('To:', 'linguateq'); ?></label>
                     <select id="lingua-target-lang" name="target_lang">
                         <?php
                         foreach ($languages as $code => $data) {
@@ -58,7 +58,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
 
                 <!-- Full-width Live Search -->
                 <div class="lingua-search-container-full">
-                    <input type="text" id="lingua-live-search" placeholder="<?php _e('Search strings...', 'yourtranslater'); ?>" class="lingua-search-input-full">
+                    <input type="text" id="lingua-live-search" placeholder="<?php _e('Search strings...', 'linguateq'); ?>" class="lingua-search-input-full">
                     <div class="lingua-search-results-info"></div>
                 </div>
 
@@ -72,10 +72,10 @@ $debug_timestamp = date('Y-m-d H:i:s');
                             <path d="m22 22-5-10-5 10"/>
                             <path d="M14 18h6"/>
                         </svg>
-                        <?php _e('Auto-translate Page', 'yourtranslater'); ?>
+                        <?php _e('Auto-translate Page', 'linguateq'); ?>
                     </button>
-                    <button type="button" id="lingua-extract-content" class="button button-secondary" title="<?php _e('Re-extract page content', 'yourtranslater'); ?>">
-                        🔄 <?php _e('Refresh', 'yourtranslater'); ?>
+                    <button type="button" id="lingua-extract-content" class="button button-secondary" title="<?php _e('Re-extract page content', 'linguateq'); ?>">
+                        🔄 <?php _e('Refresh', 'linguateq'); ?>
                     </button>
                 </div>
             </div>
@@ -83,16 +83,16 @@ $debug_timestamp = date('Y-m-d H:i:s');
             <div class="lingua-content-sections">
                 <!-- СКРЫТА в v3.0: SEO Section - Moved to the top -->
                 <div class="lingua-section lingua-seo-section" style="display: none !important;">
-                    <h3><?php _e('SEO Fields', 'yourtranslater'); ?></h3>
+                    <h3><?php _e('SEO Fields', 'linguateq'); ?></h3>
                     
                     <!-- SEO Title -->
                     <div class="lingua-translation-pair lingua-seo-field">
                         <div class="lingua-original">
-                            <label><?php _e('SEO Title', 'yourtranslater'); ?></label>
+                            <label><?php _e('SEO Title', 'linguateq'); ?></label>
                             <input type="text" id="lingua-original-seo-title" readonly />
                         </div>
                         <div class="lingua-translated">
-                            <label><?php _e('Translation', 'yourtranslater'); ?></label>
+                            <label><?php _e('Translation', 'linguateq'); ?></label>
                             <input type="text" id="lingua-translated-seo-title" />
                             <button type="button" class="lingua-translate-single" data-field="seo_title">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -103,7 +103,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
                                     <path d="m22 22-5-10-5 10"/>
                                     <path d="M14 18h6"/>
                                 </svg>
-                                <?php _e('Translate', 'yourtranslater'); ?>
+                                <?php _e('Translate', 'linguateq'); ?>
                             </button>
                         </div>
                     </div>
@@ -111,11 +111,11 @@ $debug_timestamp = date('Y-m-d H:i:s');
                     <!-- SEO Description -->
                     <div class="lingua-translation-pair lingua-seo-field">
                         <div class="lingua-original">
-                            <label><?php _e('SEO Description', 'yourtranslater'); ?></label>
+                            <label><?php _e('SEO Description', 'linguateq'); ?></label>
                             <textarea id="lingua-original-seo-description" readonly rows="3"></textarea>
                         </div>
                         <div class="lingua-translated">
-                            <label><?php _e('Translation', 'yourtranslater'); ?></label>
+                            <label><?php _e('Translation', 'linguateq'); ?></label>
                             <textarea id="lingua-translated-seo-description" rows="3"></textarea>
                             <button type="button" class="lingua-translate-single" data-field="seo_description">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -126,7 +126,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
                                     <path d="m22 22-5-10-5 10"/>
                                     <path d="M14 18h6"/>
                                 </svg>
-                                <?php _e('Translate', 'yourtranslater'); ?>
+                                <?php _e('Translate', 'linguateq'); ?>
                             </button>
                         </div>
                     </div>
@@ -134,14 +134,14 @@ $debug_timestamp = date('Y-m-d H:i:s');
                 
                 <!-- СКРЫТА в v3.0: Title Section -->
                 <div class="lingua-section" style="display: none !important;">
-                    <h3><?php _e('Title', 'yourtranslater'); ?></h3>
+                    <h3><?php _e('Title', 'linguateq'); ?></h3>
                     <div class="lingua-translation-pair">
                         <div class="lingua-original">
-                            <label><?php _e('Original', 'yourtranslater'); ?></label>
+                            <label><?php _e('Original', 'linguateq'); ?></label>
                             <input type="text" id="lingua-original-title" readonly />
                         </div>
                         <div class="lingua-translated">
-                            <label><?php _e('Translation', 'yourtranslater'); ?></label>
+                            <label><?php _e('Translation', 'linguateq'); ?></label>
                             <input type="text" id="lingua-translated-title" />
                             <button type="button" class="lingua-translate-single" data-field="title">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -152,7 +152,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
                                     <path d="m22 22-5-10-5 10"/>
                                     <path d="M14 18h6"/>
                                 </svg>
-                                <?php _e('Translate', 'yourtranslater'); ?>
+                                <?php _e('Translate', 'linguateq'); ?>
                             </button>
                         </div>
                     </div>
@@ -160,14 +160,14 @@ $debug_timestamp = date('Y-m-d H:i:s');
 
                 <!-- WooCommerce Short Description Section -->
                 <div class="lingua-section" id="lingua-woo-short-desc-section" style="display: none;">
-                    <h3><?php _e('WooCommerce Short Description', 'yourtranslater'); ?></h3>
+                    <h3><?php _e('WooCommerce Short Description', 'linguateq'); ?></h3>
                     <div class="lingua-translation-pair">
                         <div class="lingua-original">
-                            <label><?php _e('Original', 'yourtranslater'); ?></label>
+                            <label><?php _e('Original', 'linguateq'); ?></label>
                             <textarea id="lingua-original-woo-short-desc" readonly rows="3"></textarea>
                         </div>
                         <div class="lingua-translated">
-                            <label><?php _e('Translation', 'yourtranslater'); ?></label>
+                            <label><?php _e('Translation', 'linguateq'); ?></label>
                             <textarea id="lingua-translated-woo-short-desc" rows="3"></textarea>
                             <button type="button" class="lingua-translate-single" data-field="woo_short_desc">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -178,7 +178,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
                                     <path d="m22 22-5-10-5 10"/>
                                     <path d="M14 18h6"/>
                                 </svg>
-                                <?php _e('Translate', 'yourtranslater'); ?>
+                                <?php _e('Translate', 'linguateq'); ?>
                             </button>
                         </div>
                     </div>
@@ -186,17 +186,17 @@ $debug_timestamp = date('Y-m-d H:i:s');
 
                 <!-- СКРЫТА в v3.0: Excerpt Section -->
                 <div class="lingua-section" style="display: none !important;">
-                    <h3><?php _e('Excerpt', 'yourtranslater'); ?></h3>
+                    <h3><?php _e('Excerpt', 'linguateq'); ?></h3>
                     <div class="lingua-translation-pair">
                         <div class="lingua-original">
-                            <label><?php _e('Original', 'yourtranslater'); ?></label>
+                            <label><?php _e('Original', 'linguateq'); ?></label>
                             <textarea id="lingua-original-excerpt" readonly rows="3"></textarea>
                         </div>
                         <div class="lingua-translated">
-                            <label><?php _e('Translation', 'yourtranslater'); ?></label>
+                            <label><?php _e('Translation', 'linguateq'); ?></label>
                             <textarea id="lingua-translated-excerpt" rows="3"></textarea>
                             <button type="button" class="lingua-translate-single" data-field="excerpt">
-                                <?php _e('Translate', 'yourtranslater'); ?>
+                                <?php _e('Translate', 'linguateq'); ?>
                             </button>
                         </div>
                     </div>
@@ -213,7 +213,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
                                     <path d="m21 21-4.35-4.35"></path>
                                 </svg>
                             </span>
-                            <span class="lingua-tab-label"><?php _e('SEO', 'yourtranslater'); ?></span>
+                            <span class="lingua-tab-label"><?php _e('SEO', 'linguateq'); ?></span>
                             <span class="lingua-tab-count" id="seo-count">0</span>
                         </button>
                         <button class="lingua-tab-button" data-tab="content">
@@ -226,7 +226,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
                                     <line x1="10" y1="9" x2="8" y2="9"></line>
                                 </svg>
                             </span>
-                            <span class="lingua-tab-label"><?php _e('Page Content', 'yourtranslater'); ?></span>
+                            <span class="lingua-tab-label"><?php _e('Page Content', 'linguateq'); ?></span>
                             <span class="lingua-tab-count" id="content-count">0</span>
                         </button>
                         <button class="lingua-tab-button" data-tab="media">
@@ -237,7 +237,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
                                     <polyline points="21 15 16 10 5 21"></polyline>
                                 </svg>
                             </span>
-                            <span class="lingua-tab-label"><?php _e('Media', 'yourtranslater'); ?></span>
+                            <span class="lingua-tab-label"><?php _e('Media', 'linguateq'); ?></span>
                             <span class="lingua-tab-count" id="media-count">0</span>
                         </button>
                     </div>
@@ -247,8 +247,8 @@ $debug_timestamp = date('Y-m-d H:i:s');
                         <!-- SEO Tab Panel -->
                         <div class="lingua-tab-panel active" id="lingua-seo-panel" data-tab="seo">
                             <div class="lingua-seo-header">
-                                <h4><?php _e('SEO Optimization', 'yourtranslater'); ?></h4>
-                                <p class="lingua-seo-description"><?php _e('Translate your page title and meta description for better search engine visibility', 'yourtranslater'); ?></p>
+                                <h4><?php _e('SEO Optimization', 'linguateq'); ?></h4>
+                                <p class="lingua-seo-description"><?php _e('Translate your page title and meta description for better search engine visibility', 'linguateq'); ?></p>
                             </div>
                             <div id="lingua-seo-content">
                                 <!-- SEO fields will be dynamically added here -->
@@ -258,8 +258,8 @@ $debug_timestamp = date('Y-m-d H:i:s');
                         <!-- Page Content Tab Panel -->
                         <div class="lingua-tab-panel" id="lingua-content-panel" data-tab="content">
                             <div class="lingua-strings-summary" id="lingua-content-summary" style="display: none;">
-                                <strong><?php _e('Extracted Elements:', 'yourtranslater'); ?></strong>
-                                <span id="lingua-total-content-count">0</span> <?php _e('translatable elements found', 'yourtranslater'); ?>
+                                <strong><?php _e('Extracted Elements:', 'linguateq'); ?></strong>
+                                <span id="lingua-total-content-count">0</span> <?php _e('translatable elements found', 'linguateq'); ?>
                             </div>
                             <div id="lingua-unified-content">
                                 <!-- Page content will be dynamically added here -->
@@ -269,8 +269,8 @@ $debug_timestamp = date('Y-m-d H:i:s');
                         <!-- Media Tab Panel -->
                         <div class="lingua-tab-panel" id="lingua-media-panel" data-tab="media">
                             <div class="lingua-media-header">
-                                <h4><?php _e('Media Translation', 'yourtranslater'); ?></h4>
-                                <p class="lingua-media-description"><?php _e('Translate image alt text, captions, and replace images for different languages', 'yourtranslater'); ?></p>
+                                <h4><?php _e('Media Translation', 'linguateq'); ?></h4>
+                                <p class="lingua-media-description"><?php _e('Translate image alt text, captions, and replace images for different languages', 'linguateq'); ?></p>
                             </div>
                             <div id="lingua-media-content">
                                 <!-- Media items will be dynamically added here -->
@@ -281,7 +281,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
                 
                 <!-- СКРЫТА в v3.0: Meta Fields Section -->
                 <div class="lingua-section" id="lingua-meta-section" style="display: none !important;">
-                    <h3><?php _e('Meta Fields', 'yourtranslater'); ?></h3>
+                    <h3><?php _e('Meta Fields', 'linguateq'); ?></h3>
                     <div id="lingua-meta-fields">
                         <!-- Meta fields will be dynamically added here -->
                     </div>
@@ -294,7 +294,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
                 <div class="lingua-progress-bar">
                     <div class="lingua-progress-fill" style="width: 0%;"></div>
                 </div>
-                <span class="lingua-progress-text"><?php _e('Ready to translate', 'yourtranslater'); ?></span>
+                <span class="lingua-progress-text"><?php _e('Ready to translate', 'linguateq'); ?></span>
             </div>
             
             <div class="lingua-footer-actions">
@@ -304,7 +304,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
                         <polyline points="17,21 17,13 7,13 7,21"/>
                         <polyline points="7,3 7,8 15,8"/>
                     </svg>
-                    <?php _e('Save Translation', 'yourtranslater'); ?>
+                    <?php _e('Save Translation', 'linguateq'); ?>
                 </button>
             </div>
         </div>
@@ -334,15 +334,15 @@ $debug_timestamp = date('Y-m-d H:i:s');
 <script type="text/template" id="lingua-content-block-template">
     <div class="lingua-translation-pair lingua-content-block" data-block-id="{block_id}">
         <div class="lingua-original">
-            <label><?php _e('Original', 'yourtranslater'); ?> #{block_id}</label>
+            <label><?php _e('Original', 'linguateq'); ?> #{block_id}</label>
             <div class="lingua-content-preview">{original_content}</div>
             <textarea class="lingua-original-text" readonly>{original_text}</textarea>
         </div>
         <div class="lingua-translated">
-            <label><?php _e('Translation', 'yourtranslater'); ?> #{block_id}</label>
+            <label><?php _e('Translation', 'linguateq'); ?> #{block_id}</label>
             <textarea class="lingua-translated-text" data-field="content-{block_id}">{translated_text}</textarea>
             <button type="button" class="lingua-translate-single" data-field="content-{block_id}">
-                <?php _e('Translate', 'yourtranslater'); ?>
+                <?php _e('Translate', 'linguateq'); ?>
             </button>
         </div>
     </div>
@@ -356,10 +356,10 @@ $debug_timestamp = date('Y-m-d H:i:s');
             <input type="text" class="lingua-original-meta" value="{original_value}" readonly />
         </div>
         <div class="lingua-translated">
-            <label><?php _e('Translation', 'yourtranslater'); ?></label>
+            <label><?php _e('Translation', 'linguateq'); ?></label>
             <input type="text" class="lingua-translated-meta" data-field="meta-{meta_key}" value="{translated_value}" />
             <button type="button" class="lingua-translate-single" data-field="meta-{meta_key}">
-                <?php _e('Translate', 'yourtranslater'); ?>
+                <?php _e('Translate', 'linguateq'); ?>
             </button>
         </div>
     </div>

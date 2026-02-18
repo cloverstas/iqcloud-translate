@@ -863,7 +863,7 @@ class Lingua_Auto_Translator {
         $theme_domain = $theme->get('TextDomain');
 
         foreach ($l10n as $domain => $mo) {
-            if ($domain === 'yourtranslater') {
+            if ($domain === 'linguateq') {
                 continue;
             }
 
@@ -911,13 +911,13 @@ class Lingua_Auto_Translator {
      */
     private static function get_domain_label($domain, $source) {
         if ($domain === 'default') {
-            return __('WordPress Core', 'yourtranslater');
+            return __('WordPress Core', 'linguateq');
         }
 
         $source_labels = array(
-            'wordpress' => __('Core', 'yourtranslater'),
-            'theme' => __('Theme', 'yourtranslater'),
-            'plugin' => __('Plugin', 'yourtranslater')
+            'wordpress' => __('Core', 'linguateq'),
+            'theme' => __('Theme', 'linguateq'),
+            'plugin' => __('Plugin', 'linguateq')
         );
 
         $source_label = $source_labels[$source] ?? '';

@@ -24,7 +24,7 @@ $available_languages = Lingua_Languages::get_all();
     
     <?php if (isset($_GET['settings-updated']) && $_GET['settings-updated']): ?>
         <div class="notice notice-success is-dismissible">
-            <p><?php _e('Settings saved successfully!', 'yourtranslater'); ?></p>
+            <p><?php _e('Settings saved successfully!', 'linguateq'); ?></p>
         </div>
     <?php endif; ?>
 
@@ -39,12 +39,12 @@ $available_languages = Lingua_Languages::get_all();
         
         if (!is_wp_error($api_status) && isset($api_status['isActive']) && $api_status['isActive']): ?>
             <div class="lingua-api-status-block" style="background: #fff; border: 1px solid #ccd0d4; padding: 20px; margin: 20px 0; border-radius: 4px;">
-                <h2 style="margin-top: 0;"><?php _e('API Status', 'yourtranslater'); ?></h2>
+                <h2 style="margin-top: 0;"><?php _e('API Status', 'linguateq'); ?></h2>
                 
                 <div class="lingua-status-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
                     <!-- Тариф -->
                     <div class="status-item">
-                        <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #666;"><?php _e('Current Plan', 'yourtranslater'); ?></h3>
+                        <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #666;"><?php _e('Current Plan', 'linguateq'); ?></h3>
                         <p style="margin: 0; font-size: 18px; font-weight: 600;">
                             <?php echo esc_html($api_status['plan']['displayName']); ?>
                         </p>
@@ -57,7 +57,7 @@ $available_languages = Lingua_Languages::get_all();
 
                     <!-- Токены -->
                     <div class="status-item">
-                        <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #666;"><?php _e('Tokens Usage', 'yourtranslater'); ?></h3>
+                        <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #666;"><?php _e('Tokens Usage', 'linguateq'); ?></h3>
                         <p style="margin: 0; font-size: 18px; font-weight: 600;">
                             <?php echo number_format($api_status['tokens']['used']); ?> / <?php echo number_format($api_status['tokens']['limit']); ?>
                         </p>
@@ -65,17 +65,17 @@ $available_languages = Lingua_Languages::get_all();
                             <div style="background: <?php echo $api_status['tokens']['percentage'] > 80 ? '#dc3232' : ($api_status['tokens']['percentage'] > 50 ? '#ffb900' : '#46b450'); ?>; width: <?php echo min(100, $api_status['tokens']['percentage']); ?>%; height: 100%;"></div>
                         </div>
                         <p style="margin: 5px 0 0; font-size: 12px; color: #666;">
-                            <?php echo number_format($api_status['tokens']['remaining']); ?> <?php _e('tokens remaining', 'yourtranslater'); ?> (<?php echo $api_status['tokens']['percentage']; ?>%)
+                            <?php echo number_format($api_status['tokens']['remaining']); ?> <?php _e('tokens remaining', 'linguateq'); ?> (<?php echo $api_status['tokens']['percentage']; ?>%)
                         </p>
                     </div>
 
                     <!-- Языки -->
                     <div class="status-item">
-                        <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #666;"><?php _e('Active Languages', 'yourtranslater'); ?></h3>
+                        <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #666;"><?php _e('Active Languages', 'linguateq'); ?></h3>
                         <p style="margin: 0; font-size: 18px; font-weight: 600;">
                             <?php 
                             if ($api_status['languages']['unlimited']) {
-                                echo '∞ ' . __('Unlimited', 'yourtranslater');
+                                echo '∞ ' . __('Unlimited', 'linguateq');
                             } else {
                                 echo $api_status['languages']['activeCount'] . ' / ' . $api_status['languages']['maxLanguages'];
                             }
@@ -91,7 +91,7 @@ $available_languages = Lingua_Languages::get_all();
                     <!-- Подписка -->
                     <?php if (!empty($api_status['subscription']['expiresAt'])): ?>
                         <div class="status-item">
-                            <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #666;"><?php _e('Subscription', 'yourtranslater'); ?></h3>
+                            <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #666;"><?php _e('Subscription', 'linguateq'); ?></h3>
                             <?php 
                             $expires_date = new DateTime($api_status['subscription']['expiresAt']);
                             $days_remaining = $api_status['subscription']['daysRemaining'];
@@ -100,11 +100,11 @@ $available_languages = Lingua_Languages::get_all();
                                 <?php 
                                 if ($days_remaining !== null) {
                                     if ($days_remaining > 0) {
-                                        printf(__('%d days left', 'yourtranslater'), $days_remaining);
+                                        printf(__('%d days left', 'linguateq'), $days_remaining);
                                     } else if ($days_remaining === 0) {
-                                        echo __('Expires today', 'yourtranslater');
+                                        echo __('Expires today', 'linguateq');
                                     } else {
-                                        echo '<span style="color: #dc3232;">' . __('Expired', 'yourtranslater') . '</span>';
+                                        echo '<span style="color: #dc3232;">' . __('Expired', 'linguateq') . '</span>';
                                     }
                                 }
                                 ?>
@@ -112,7 +112,7 @@ $available_languages = Lingua_Languages::get_all();
                             <p style="margin: 5px 0 0; font-size: 12px; color: #666;">
                                 <?php echo $expires_date->format('d.m.Y'); ?>
                                 <?php if ($api_status['subscription']['autoRenewal']): ?>
-                                    <span style="color: #46b450;">● <?php _e('Auto-renewal ON', 'yourtranslater'); ?></span>
+                                    <span style="color: #46b450;">● <?php _e('Auto-renewal ON', 'linguateq'); ?></span>
                                 <?php endif; ?>
                             </p>
                         </div>
@@ -121,13 +121,13 @@ $available_languages = Lingua_Languages::get_all();
 
                 <?php if ($api_status['tokens']['percentage'] > 80): ?>
                     <div class="notice notice-warning inline" style="margin: 15px 0 0;">
-                        <p><strong><?php _e('Warning:', 'yourtranslater'); ?></strong> <?php _e('You are running low on tokens. Consider upgrading your plan or purchasing additional tokens.', 'yourtranslater'); ?></p>
+                        <p><strong><?php _e('Warning:', 'linguateq'); ?></strong> <?php _e('You are running low on tokens. Consider upgrading your plan or purchasing additional tokens.', 'linguateq'); ?></p>
                     </div>
                 <?php endif; ?>
             </div>
         <?php elseif (is_wp_error($api_status)): ?>
             <div class="notice notice-error" style="margin: 20px 0;">
-                <p><strong><?php _e('API Status Error:', 'yourtranslater'); ?></strong> <?php echo esc_html($api_status->get_error_message()); ?></p>
+                <p><strong><?php _e('API Status Error:', 'linguateq'); ?></strong> <?php echo esc_html($api_status->get_error_message()); ?></p>
             </div>
         <?php endif;
     }
@@ -136,10 +136,10 @@ $available_languages = Lingua_Languages::get_all();
     <!-- v5.3.35: Tab navigation moved outside form to prevent reload issues -->
     <div class="lingua-admin-tabs">
         <nav class="nav-tab-wrapper">
-            <a href="#language-settings" class="nav-tab nav-tab-active"><?php _e('Languages', 'yourtranslater'); ?></a>
-            <a href="#translation-settings" class="nav-tab"><?php _e('Auto Translate', 'yourtranslater'); ?></a>
-            <a href="#switcher-settings" class="nav-tab"><?php _e('Switcher', 'yourtranslater'); ?></a>
-            <a href="#api-settings" class="nav-tab"><?php _e('License', 'yourtranslater'); ?></a>
+            <a href="#language-settings" class="nav-tab nav-tab-active"><?php _e('Languages', 'linguateq'); ?></a>
+            <a href="#translation-settings" class="nav-tab"><?php _e('Auto Translate', 'linguateq'); ?></a>
+            <a href="#switcher-settings" class="nav-tab"><?php _e('Switcher', 'linguateq'); ?></a>
+            <a href="#api-settings" class="nav-tab"><?php _e('License', 'linguateq'); ?></a>
         </nav>
 
     <form method="post" action="">
@@ -174,50 +174,50 @@ $available_languages = Lingua_Languages::get_all();
                 <!-- v5.3.35: Added id and data-status for language-independent JS detection -->
                 <?php if ($is_pro): ?>
                     <div id="lingua-pro-status-notice" data-status="active" class="notice notice-success inline" style="margin-bottom: 20px;">
-                        <p><strong>✅ <?php _e('Pro Version Active', 'yourtranslater'); ?></strong></p>
-                        <p><?php _e('Auto-translation and advanced features are enabled.', 'yourtranslater'); ?></p>
+                        <p><strong>✅ <?php _e('Pro Version Active', 'linguateq'); ?></strong></p>
+                        <p><?php _e('Auto-translation and advanced features are enabled.', 'linguateq'); ?></p>
                     </div>
                 <?php elseif ($credentials_configured && $cached_status == 0): ?>
                     <div id="lingua-pro-status-notice" data-status="failed" class="notice notice-error inline" style="margin-bottom: 20px;">
-                        <p><strong>❌ <?php _e('Activation Failed', 'yourtranslater'); ?></strong></p>
-                        <p><?php _e('Please check your API key and try again.', 'yourtranslater'); ?></p>
+                        <p><strong>❌ <?php _e('Activation Failed', 'linguateq'); ?></strong></p>
+                        <p><?php _e('Please check your API key and try again.', 'linguateq'); ?></p>
                         <?php if ($status_error): ?>
                             <p><code><?php echo esc_html($status_error); ?></code></p>
                         <?php endif; ?>
                     </div>
                 <?php elseif ($credentials_configured): ?>
                     <div id="lingua-pro-status-notice" data-status="pending" class="notice notice-info inline" style="margin-bottom: 20px;">
-                        <p><strong>⏳ <?php _e('Activation Required', 'yourtranslater'); ?></strong></p>
-                        <p><?php _e('Click "Activate" to verify your license.', 'yourtranslater'); ?></p>
+                        <p><strong>⏳ <?php _e('Activation Required', 'linguateq'); ?></strong></p>
+                        <p><?php _e('Click "Activate" to verify your license.', 'linguateq'); ?></p>
                     </div>
                 <?php else: ?>
                     <div id="lingua-pro-status-notice" data-status="none" class="notice notice-warning inline" style="margin-bottom: 20px;">
-                        <p><strong>🔒 <?php _e('Pro Version Not Active', 'yourtranslater'); ?></strong></p>
-                        <p><?php _e('Enter your API key and click Activate to unlock Pro features.', 'yourtranslater'); ?></p>
+                        <p><strong>🔒 <?php _e('Pro Version Not Active', 'linguateq'); ?></strong></p>
+                        <p><?php _e('Enter your API key and click Activate to unlock Pro features.', 'linguateq'); ?></p>
                     </div>
                 <?php endif; ?>
 
                 <div class="lingua-api-key-section">
-                    <label for="middleware_api_key" class="lingua-api-label"><?php _e('API Key', 'yourtranslater'); ?></label>
+                    <label for="middleware_api_key" class="lingua-api-label"><?php _e('API Key', 'linguateq'); ?></label>
                     <div class="lingua-api-key-row">
-                        <input type="text" id="middleware_api_key" name="middleware_api_key" value="<?php echo esc_attr($middleware_api_key); ?>" class="regular-text" placeholder="<?php _e('Enter your API key...', 'yourtranslater'); ?>" <?php echo $is_pro ? 'readonly' : ''; ?> />
+                        <input type="text" id="middleware_api_key" name="middleware_api_key" value="<?php echo esc_attr($middleware_api_key); ?>" class="regular-text" placeholder="<?php _e('Enter your API key...', 'linguateq'); ?>" <?php echo $is_pro ? 'readonly' : ''; ?> />
                         <?php if ($is_pro): ?>
                             <button type="button" class="button" id="disconnect-license" style="color: #d63638;">
-                                <span class="disconnect-text"><?php _e('Disconnect', 'yourtranslater'); ?></span>
+                                <span class="disconnect-text"><?php _e('Disconnect', 'linguateq'); ?></span>
                                 <span class="disconnect-spinner" style="display:none;"><span class="spinner is-active" style="float:none;margin:0;"></span></span>
                             </button>
                         <?php else: ?>
                             <button type="button" class="button button-primary" id="activate-license">
-                                <span class="activate-text"><?php _e('Activate', 'yourtranslater'); ?></span>
+                                <span class="activate-text"><?php _e('Activate', 'linguateq'); ?></span>
                                 <span class="activate-spinner" style="display:none;"><span class="spinner is-active" style="float:none;margin:0;"></span></span>
                             </button>
                         <?php endif; ?>
                     </div>
                     <div id="api-activation-result" style="margin-top: 8px;">
                         <?php if ($is_pro): ?>
-                            <span class="success">✓ <?php _e('License activated', 'yourtranslater'); ?></span>
+                            <span class="success">✓ <?php _e('License activated', 'linguateq'); ?></span>
                         <?php elseif ($credentials_configured && $cached_status == 0): ?>
-                            <span class="error">✗ <?php _e('Activation failed - please check your key', 'yourtranslater'); ?></span>
+                            <span class="error">✗ <?php _e('Activation failed - please check your key', 'linguateq'); ?></span>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -225,12 +225,12 @@ $available_languages = Lingua_Languages::get_all();
 
             <!-- Language Settings Tab -->
             <div id="language-settings" class="tab-content active">
-                <h3><?php _e('Website Languages', 'yourtranslater'); ?></h3>
+                <h3><?php _e('Website Languages', 'linguateq'); ?></h3>
                 
                 <table class="form-table">
                     <tr>
                         <th scope="row">
-                            <label for="default_language"><?php _e('Default Language', 'yourtranslater'); ?></label>
+                            <label for="default_language"><?php _e('Default Language', 'linguateq'); ?></label>
                         </th>
                         <td>
                             <select id="default_language" name="default_language" class="regular-text">
@@ -240,27 +240,27 @@ $available_languages = Lingua_Languages::get_all();
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                            <p class="description"><?php _e('Select the original language of your content.', 'yourtranslater'); ?></p>
+                            <p class="description"><?php _e('Select the original language of your content.', 'linguateq'); ?></p>
                             <?php if ($default_language != get_option('lingua_default_language', 'ru')): ?>
                             <p class="lingua-warning" style="color: #d63638; font-weight: bold;">
-                                <?php _e('WARNING: Changing the default language will invalidate existing translations.', 'yourtranslater'); ?>
+                                <?php _e('WARNING: Changing the default language will invalidate existing translations.', 'linguateq'); ?>
                             </p>
                             <?php endif; ?>
                         </td>
                     </tr>
                 </table>
                 
-                <h3><?php _e('Translation Languages', 'yourtranslater'); ?></h3>
-                <p class="description"><?php _e('Select the languages you wish to make your website available in.', 'yourtranslater'); ?></p>
+                <h3><?php _e('Translation Languages', 'linguateq'); ?></h3>
+                <p class="description"><?php _e('Select the languages you wish to make your website available in.', 'linguateq'); ?></p>
                 
                 <div class="lingua-languages-table-wrapper">
                     <table id="lingua-languages-table" class="widefat">
                         <thead>
                             <tr>
-                                <th><?php _e('Language', 'yourtranslater'); ?></th>
-                                <th><?php _e('Code', 'yourtranslater'); ?></th>
-                                <th><?php _e('Slug', 'yourtranslater'); ?></th>
-                                <th><?php _e('Action', 'yourtranslater'); ?></th>
+                                <th><?php _e('Language', 'linguateq'); ?></th>
+                                <th><?php _e('Code', 'linguateq'); ?></th>
+                                <th><?php _e('Slug', 'linguateq'); ?></th>
+                                <th><?php _e('Action', 'linguateq'); ?></th>
                             </tr>
                         </thead>
                         <tbody id="lingua-sortable-languages">
@@ -279,7 +279,7 @@ $available_languages = Lingua_Languages::get_all();
                                     <span class="lingua-flag-display"><span class="fi fi-<?php echo esc_attr(Lingua_Languages::get_country_code($code)); ?>"></span></span>
                                     <?php echo esc_html($lang['name']); ?>
                                     <?php if ($is_default): ?>
-                                        <span style="color: #666; font-style: italic;">(<?php _e('Default', 'yourtranslater'); ?>)</span>
+                                        <span style="color: #666; font-style: italic;">(<?php _e('Default', 'linguateq'); ?>)</span>
                                     <?php endif; ?>
                                     <input type="hidden" name="translation_languages[]" value="<?php echo esc_attr($code); ?>" />
                                 </td>
@@ -292,7 +292,7 @@ $available_languages = Lingua_Languages::get_all();
                                 </td>
                                 <td>
                                     <?php if (!$is_default): ?>
-                                        <a href="#" class="lingua-remove-language" style="color: #d63638;"><?php _e('Remove', 'yourtranslater'); ?></a>
+                                        <a href="#" class="lingua-remove-language" style="color: #d63638;"><?php _e('Remove', 'linguateq'); ?></a>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -329,7 +329,7 @@ $available_languages = Lingua_Languages::get_all();
                     <?php if ($can_add_more): ?>
                     <div class="lingua-add-language-row" style="margin-top: 10px;">
                         <select id="lingua-select-language" class="regular-text">
-                            <option value=""><?php _e('Select language to add...', 'yourtranslater'); ?></option>
+                            <option value=""><?php _e('Select language to add...', 'linguateq'); ?></option>
                             <?php foreach ($available_languages as $code => $lang): ?>
                                 <?php if (!isset($languages[$code])): ?>
                                 <option value="<?php echo esc_attr($code); ?>" data-country-code="<?php echo esc_attr(Lingua_Languages::get_country_code($code)); ?>">
@@ -338,17 +338,17 @@ $available_languages = Lingua_Languages::get_all();
                                 <?php endif; ?>
                             <?php endforeach; ?>
                         </select>
-                        <button type="button" id="lingua-add-language" class="button"><?php _e('Add Language', 'yourtranslater'); ?></button>
+                        <button type="button" id="lingua-add-language" class="button"><?php _e('Add Language', 'linguateq'); ?></button>
                         <?php if (!$is_unlimited): ?>
                             <span class="description" style="margin-left: 10px;">
-                                <?php printf(__('(%d of %d languages)', 'yourtranslater'), $current_count, $language_limit); ?>
+                                <?php printf(__('(%d of %d languages)', 'linguateq'), $current_count, $language_limit); ?>
                             </span>
                         <?php endif; ?>
                     </div>
                     <?php else: ?>
                     <div class="notice notice-warning inline" style="margin-top: 10px;">
                         <p>
-                            <?php printf(__('You have reached your plan limit of %d languages. Upgrade your plan to add more languages.', 'yourtranslater'), $language_limit); ?>
+                            <?php printf(__('You have reached your plan limit of %d languages. Upgrade your plan to add more languages.', 'linguateq'), $language_limit); ?>
                         </p>
                     </div>
                     <?php endif; ?>
@@ -357,20 +357,20 @@ $available_languages = Lingua_Languages::get_all();
 
             <!-- Translation Settings Tab -->
             <div id="translation-settings" class="tab-content">
-                <h3><?php _e('Automatic Translation', 'yourtranslater'); ?></h3>
+                <h3><?php _e('Automatic Translation', 'linguateq'); ?></h3>
                 <table class="form-table">
                     <tr>
-                        <th scope="row"><?php _e('Auto-translate Website', 'yourtranslater'); ?></th>
+                        <th scope="row"><?php _e('Auto-translate Website', 'linguateq'); ?></th>
                         <td>
                             <fieldset>
                                 <label>
                                     <input type="checkbox" name="auto_translate_website" value="1" <?php checked($auto_translate_website); ?> />
-                                    <?php _e('Enable automatic translation for the entire website', 'yourtranslater'); ?>
+                                    <?php _e('Enable automatic translation for the entire website', 'linguateq'); ?>
                                 </label>
                             </fieldset>
                             <p class="description">
-                                <?php _e('When enabled, new content will be automatically translated to all enabled languages using AI. This includes posts, pages, and dynamic content. Manual translation is always available in the translation modal.', 'yourtranslater'); ?>
-                                <br><strong><?php _e('Note:', 'yourtranslater'); ?></strong> <?php _e('This is a Pro feature that requires an active API key.', 'yourtranslater'); ?>
+                                <?php _e('When enabled, new content will be automatically translated to all enabled languages using AI. This includes posts, pages, and dynamic content. Manual translation is always available in the translation modal.', 'linguateq'); ?>
+                                <br><strong><?php _e('Note:', 'linguateq'); ?></strong> <?php _e('This is a Pro feature that requires an active API key.', 'linguateq'); ?>
                             </p>
                         </td>
                     </tr>
@@ -383,9 +383,9 @@ $available_languages = Lingua_Languages::get_all();
                 ?>
 
                 <div id="lingua-post-types-section" class="lingua-post-types-section" style="margin-top: 20px; padding: 20px; background: #fff; border: 1px solid #ccd0d4; border-radius: 4px;">
-                    <h3 style="margin-top: 0;"><?php _e('Post Types to Translate', 'yourtranslater'); ?></h3>
+                    <h3 style="margin-top: 0;"><?php _e('Post Types to Translate', 'linguateq'); ?></h3>
                     <p class="description" style="margin-bottom: 15px;">
-                        <?php _e('Select which post types should be included in automatic translation. These types will be translated when using "Translate All Posts".', 'yourtranslater'); ?>
+                        <?php _e('Select which post types should be included in automatic translation. These types will be translated when using "Translate All Posts".', 'linguateq'); ?>
                     </p>
 
                     <?php if (!empty($available_post_types)): ?>
@@ -411,10 +411,10 @@ $available_languages = Lingua_Languages::get_all();
 
                         <div style="margin-top: 15px; display: flex; gap: 10px;">
                             <button type="button" class="button" id="lingua-select-all-types">
-                                <?php _e('Select All', 'yourtranslater'); ?>
+                                <?php _e('Select All', 'linguateq'); ?>
                             </button>
                             <button type="button" class="button" id="lingua-deselect-all-types">
-                                <?php _e('Deselect All', 'yourtranslater'); ?>
+                                <?php _e('Deselect All', 'linguateq'); ?>
                             </button>
                         </div>
 
@@ -429,7 +429,7 @@ $available_languages = Lingua_Languages::get_all();
                         });
                         </script>
                     <?php else: ?>
-                        <p><?php _e('No post types available.', 'yourtranslater'); ?></p>
+                        <p><?php _e('No post types available.', 'linguateq'); ?></p>
                     <?php endif; ?>
                 </div>
 
@@ -445,9 +445,9 @@ $available_languages = Lingua_Languages::get_all();
                 ?>
 
                 <div id="lingua-domains-section" class="lingua-domains-section" style="margin-top: 20px; padding: 20px; background: #fff; border: 1px solid #ccd0d4; border-radius: 4px;">
-                    <h3 style="margin-top: 0;"><?php _e('Gettext Domains', 'yourtranslater'); ?></h3>
+                    <h3 style="margin-top: 0;"><?php _e('Gettext Domains', 'linguateq'); ?></h3>
                     <p class="description" style="margin-bottom: 15px;">
-                        <?php _e('Select which plugin/theme text domains to auto-translate. Domains with existing .mo translations are marked. Unchecked domains will use their .mo files instead.', 'yourtranslater'); ?>
+                        <?php _e('Select which plugin/theme text domains to auto-translate. Domains with existing .mo translations are marked. Unchecked domains will use their .mo files instead.', 'linguateq'); ?>
                     </p>
 
                     <?php if (!empty($available_domains)): ?>
@@ -462,7 +462,7 @@ $available_languages = Lingua_Languages::get_all();
                                     <span style="flex: 1;">
                                         <strong><?php echo esc_html($info['label']); ?></strong>
                                         <?php if ($info['has_mo']): ?>
-                                            <span style="color: #46b450; font-size: 11px; margin-left: 5px;" title="<?php _e('Has .mo translations', 'yourtranslater'); ?>">✓ .mo</span>
+                                            <span style="color: #46b450; font-size: 11px; margin-left: 5px;" title="<?php _e('Has .mo translations', 'linguateq'); ?>">✓ .mo</span>
                                         <?php endif; ?>
                                     </span>
                                     <span style="color: #666; font-size: 11px;">
@@ -474,13 +474,13 @@ $available_languages = Lingua_Languages::get_all();
 
                         <div style="margin-top: 15px; display: flex; gap: 10px;">
                             <button type="button" class="button" id="lingua-select-all-domains">
-                                <?php _e('Select All', 'yourtranslater'); ?>
+                                <?php _e('Select All', 'linguateq'); ?>
                             </button>
                             <button type="button" class="button" id="lingua-deselect-all-domains">
-                                <?php _e('Deselect All', 'yourtranslater'); ?>
+                                <?php _e('Deselect All', 'linguateq'); ?>
                             </button>
                             <button type="button" class="button" id="lingua-select-no-mo-domains">
-                                <?php _e('Select Without .mo', 'yourtranslater'); ?>
+                                <?php _e('Select Without .mo', 'linguateq'); ?>
                             </button>
                         </div>
 
@@ -506,18 +506,18 @@ $available_languages = Lingua_Languages::get_all();
                         </script>
                     <?php else: ?>
                         <p style="color: #666; font-style: italic;">
-                            <?php _e('No gettext domains detected. Domains will appear after the first page load.', 'yourtranslater'); ?>
+                            <?php _e('No gettext domains detected. Domains will appear after the first page load.', 'linguateq'); ?>
                         </p>
                     <?php endif; ?>
                 </div>
 
                 <!-- v5.2.179: Translation Queue Status -->
                 <div id="lingua-queue-status" class="lingua-queue-section" style="margin-top: 20px; padding: 20px; background: #fff; border: 1px solid #ccd0d4; border-radius: 4px;">
-                    <h3 style="margin-top: 0;"><?php _e('Translation Status', 'yourtranslater'); ?></h3>
+                    <h3 style="margin-top: 0;"><?php _e('Translation Status', 'linguateq'); ?></h3>
 
                     <div id="lingua-queue-loading" style="text-align: center; padding: 20px;">
                         <span class="spinner is-active" style="float: none;"></span>
-                        <?php _e('Loading status...', 'yourtranslater'); ?>
+                        <?php _e('Loading status...', 'linguateq'); ?>
                     </div>
 
                     <div id="lingua-queue-content" style="display: none;">
@@ -528,19 +528,19 @@ $available_languages = Lingua_Languages::get_all();
                         <div id="lingua-queue-stats" style="display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap;">
                             <div class="lingua-stat-box" style="flex: 1; min-width: 120px; padding: 15px; background: #f0f0f1; border-radius: 4px; text-align: center;">
                                 <div style="font-size: 24px; font-weight: bold;" id="stat-pending">0</div>
-                                <div style="color: #646970;"><?php _e('Pending', 'yourtranslater'); ?></div>
+                                <div style="color: #646970;"><?php _e('Pending', 'linguateq'); ?></div>
                             </div>
                             <div class="lingua-stat-box" style="flex: 1; min-width: 120px; padding: 15px; background: #f0f0f1; border-radius: 4px; text-align: center;">
                                 <div style="font-size: 24px; font-weight: bold;" id="stat-processing">0</div>
-                                <div style="color: #646970;"><?php _e('Processing', 'yourtranslater'); ?></div>
+                                <div style="color: #646970;"><?php _e('Processing', 'linguateq'); ?></div>
                             </div>
                             <div class="lingua-stat-box" style="flex: 1; min-width: 120px; padding: 15px; background: #d4edda; border-radius: 4px; text-align: center;">
                                 <div style="font-size: 24px; font-weight: bold; color: #155724;" id="stat-completed">0</div>
-                                <div style="color: #155724;"><?php _e('Completed', 'yourtranslater'); ?></div>
+                                <div style="color: #155724;"><?php _e('Completed', 'linguateq'); ?></div>
                             </div>
                             <div class="lingua-stat-box" style="flex: 1; min-width: 120px; padding: 15px; background: #f8d7da; border-radius: 4px; text-align: center;">
                                 <div style="font-size: 24px; font-weight: bold; color: #721c24;" id="stat-failed">0</div>
-                                <div style="color: #721c24;"><?php _e('Failed', 'yourtranslater'); ?></div>
+                                <div style="color: #721c24;"><?php _e('Failed', 'linguateq'); ?></div>
                             </div>
                         </div>
 
@@ -548,32 +548,32 @@ $available_languages = Lingua_Languages::get_all();
                         <div id="lingua-queue-controls" style="display: flex; gap: 10px; flex-wrap: wrap;">
                             <button type="button" id="btn-translate-all" class="button button-primary">
                                 <span class="dashicons dashicons-translation" style="vertical-align: middle; margin-right: 5px;"></span>
-                                <?php _e('Translate All Posts', 'yourtranslater'); ?>
+                                <?php _e('Translate All Posts', 'linguateq'); ?>
                             </button>
                             <button type="button" id="btn-pause-queue" class="button" style="display: none;">
                                 <span class="dashicons dashicons-controls-pause" style="vertical-align: middle; margin-right: 5px;"></span>
-                                <?php _e('Pause', 'yourtranslater'); ?>
+                                <?php _e('Pause', 'linguateq'); ?>
                             </button>
                             <button type="button" id="btn-resume-queue" class="button" style="display: none;">
                                 <span class="dashicons dashicons-controls-play" style="vertical-align: middle; margin-right: 5px;"></span>
-                                <?php _e('Resume', 'yourtranslater'); ?>
+                                <?php _e('Resume', 'linguateq'); ?>
                             </button>
                             <button type="button" id="btn-retry-failed" class="button" style="display: none;">
                                 <span class="dashicons dashicons-update" style="vertical-align: middle; margin-right: 5px;"></span>
-                                <?php _e('Retry Failed', 'yourtranslater'); ?>
+                                <?php _e('Retry Failed', 'linguateq'); ?>
                             </button>
                         </div>
 
                         <!-- Recent Errors -->
                         <div id="lingua-queue-errors" style="display: none; margin-top: 20px;">
-                            <h4 style="color: #721c24;"><?php _e('Recent Errors', 'yourtranslater'); ?></h4>
+                            <h4 style="color: #721c24;"><?php _e('Recent Errors', 'linguateq'); ?></h4>
                             <div id="lingua-errors-list" style="background: #f8d7da; padding: 10px; border-radius: 4px; max-height: 150px; overflow-y: auto;"></div>
                         </div>
 
                         <!-- Processing Status -->
                         <div id="lingua-processing-status" style="display: none; margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 4px;">
                             <span class="spinner is-active" style="float: none; margin-right: 10px;"></span>
-                            <span id="processing-text"><?php _e('Processing...', 'yourtranslater'); ?></span>
+                            <span id="processing-text"><?php _e('Processing...', 'linguateq'); ?></span>
                         </div>
                     </div>
                 </div>
@@ -581,21 +581,21 @@ $available_languages = Lingua_Languages::get_all();
                 <!-- v5.3.20: Debug Mode Setting -->
                 <?php $debug_mode = get_option('lingua_debug_mode', false); ?>
                 <div id="lingua-debug-section" class="lingua-debug-section" style="margin-top: 20px; padding: 20px; background: #fff; border: 1px solid #ccd0d4; border-radius: 4px;">
-                    <h3 style="margin-top: 0;"><?php _e('Debug Mode', 'yourtranslater'); ?></h3>
+                    <h3 style="margin-top: 0;"><?php _e('Debug Mode', 'linguateq'); ?></h3>
                     <table class="form-table" style="margin: 0;">
                         <tr>
-                            <th scope="row"><?php _e('Enable Debug Logging', 'yourtranslater'); ?></th>
+                            <th scope="row"><?php _e('Enable Debug Logging', 'linguateq'); ?></th>
                             <td>
                                 <fieldset>
                                     <label>
                                         <input type="checkbox" name="debug_mode" value="1" <?php checked($debug_mode); ?> />
-                                        <?php _e('Write debug logs to wp-content/debug.log', 'yourtranslater'); ?>
+                                        <?php _e('Write debug logs to wp-content/debug.log', 'linguateq'); ?>
                                     </label>
                                 </fieldset>
                                 <p class="description">
-                                    <?php _e('Enable this only when troubleshooting issues. Debug logging may slow down your site and create large log files.', 'yourtranslater'); ?>
+                                    <?php _e('Enable this only when troubleshooting issues. Debug logging may slow down your site and create large log files.', 'linguateq'); ?>
                                     <?php if (defined('LINGUA_DEBUG')): ?>
-                                        <br><strong style="color: #d63638;"><?php _e('Note: LINGUA_DEBUG constant is defined in wp-config.php and takes priority over this setting.', 'yourtranslater'); ?></strong>
+                                        <br><strong style="color: #d63638;"><?php _e('Note: LINGUA_DEBUG constant is defined in wp-config.php and takes priority over this setting.', 'linguateq'); ?></strong>
                                     <?php endif; ?>
                                 </p>
                                 <?php if ($debug_mode || (defined('LINGUA_DEBUG') && LINGUA_DEBUG)): ?>
@@ -619,10 +619,10 @@ $available_languages = Lingua_Languages::get_all();
 
             <!-- Language Switcher Tab -->
             <div id="switcher-settings" class="tab-content">
-                <h3><?php _e('Display Format', 'yourtranslater'); ?></h3>
+                <h3><?php _e('Display Format', 'linguateq'); ?></h3>
                 <table class="form-table">
                     <tr>
-                        <th scope="row"><?php _e('Language Switcher Format', 'yourtranslater'); ?></th>
+                        <th scope="row"><?php _e('Language Switcher Format', 'linguateq'); ?></th>
                         <td>
                             <?php 
                             $switcher_format = get_option('lingua_switcher_format', 'flags_full');
@@ -630,34 +630,34 @@ $available_languages = Lingua_Languages::get_all();
                             <fieldset>
                                 <label>
                                     <input type="radio" name="switcher_format" value="flags_full" <?php checked($switcher_format, 'flags_full'); ?> />
-                                    <span class="fi fi-us"></span> English, <span class="fi fi-ru"></span> Русский - <?php _e('Flags with Full Language Names', 'yourtranslater'); ?>
+                                    <span class="fi fi-us"></span> English, <span class="fi fi-ru"></span> Русский - <?php _e('Flags with Full Language Names', 'linguateq'); ?>
                                 </label><br><br>
                                 <label>
                                     <input type="radio" name="switcher_format" value="full" <?php checked($switcher_format, 'full'); ?> />
-                                    English, Русский - <?php _e('Full Language Names', 'yourtranslater'); ?>
+                                    English, Русский - <?php _e('Full Language Names', 'linguateq'); ?>
                                 </label><br><br>
                                 <label>
                                     <input type="radio" name="switcher_format" value="short" <?php checked($switcher_format, 'short'); ?> />
-                                    EN, RU - <?php _e('Short Language Names', 'yourtranslater'); ?>
+                                    EN, RU - <?php _e('Short Language Names', 'linguateq'); ?>
                                 </label><br><br>
                                 <label>
                                     <input type="radio" name="switcher_format" value="flags_short" <?php checked($switcher_format, 'flags_short'); ?> />
-                                    <span class="fi fi-us"></span> EN, <span class="fi fi-ru"></span> RU - <?php _e('Flags with Short Language Names', 'yourtranslater'); ?>
+                                    <span class="fi fi-us"></span> EN, <span class="fi fi-ru"></span> RU - <?php _e('Flags with Short Language Names', 'linguateq'); ?>
                                 </label><br><br>
                                 <label>
                                     <input type="radio" name="switcher_format" value="flags_only" <?php checked($switcher_format, 'flags_only'); ?> />
-                                    <span class="fi fi-us"></span> <span class="fi fi-ru"></span> - <?php _e('Only Flags', 'yourtranslater'); ?>
+                                    <span class="fi fi-us"></span> <span class="fi fi-ru"></span> - <?php _e('Only Flags', 'linguateq'); ?>
                                 </label>
                             </fieldset>
-                            <p class="description"><?php _e('Choose how language names are displayed in all language switchers (menu, shortcode, floating).', 'yourtranslater'); ?></p>
+                            <p class="description"><?php _e('Choose how language names are displayed in all language switchers (menu, shortcode, floating).', 'linguateq'); ?></p>
                         </td>
                     </tr>
                 </table>
 
-                <h3><?php _e('Advanced Options', 'yourtranslater'); ?></h3>
+                <h3><?php _e('Advanced Options', 'linguateq'); ?></h3>
                 <table class="form-table">
                     <tr>
-                        <th scope="row"><?php _e('Display Options', 'yourtranslater'); ?></th>
+                        <th scope="row"><?php _e('Display Options', 'linguateq'); ?></th>
                         <td>
                             <?php
                             $native_names = get_option('lingua_native_names', false);
@@ -665,11 +665,11 @@ $available_languages = Lingua_Languages::get_all();
                             <fieldset>
                                 <label>
                                     <input type="checkbox" name="native_names" value="1" <?php checked($native_names); ?> />
-                                    <?php _e('Use native language names', 'yourtranslater'); ?>
+                                    <?php _e('Use native language names', 'linguateq'); ?>
                                     <span class="description">(English, Русский, Français)</span>
                                 </label>
                             </fieldset>
-                            <p class="description"><?php _e('When enabled, language names will be shown in their native language instead of the current site language.', 'yourtranslater'); ?></p>
+                            <p class="description"><?php _e('When enabled, language names will be shown in their native language instead of the current site language.', 'linguateq'); ?></p>
                         </td>
                     </tr>
                 </table>
@@ -678,7 +678,7 @@ $available_languages = Lingua_Languages::get_all();
                 <!-- Menu Integration is always enabled by default -->
             </div>
 
-        <?php submit_button(__('Save Settings', 'yourtranslater')); ?>
+        <?php submit_button(__('Save Settings', 'linguateq')); ?>
     </form>
     </div><!-- /.lingua-admin-tabs -->
 </div><!-- /.wrap -->
@@ -876,8 +876,8 @@ jQuery(document).ready(function($) {
                         // Lost Pro status - update UI
                         $notice.removeClass('notice-success').addClass('notice-error')
                             .attr('data-status', 'expired')
-                            .html('<p><strong>❌ <?php _e('License Expired or Invalid', 'yourtranslater'); ?></strong></p><p><?php _e('Please re-activate your license.', 'yourtranslater'); ?></p>');
-                        $result.html('<span class="error">✗ <?php _e('License invalid', 'yourtranslater'); ?></span>');
+                            .html('<p><strong>❌ <?php _e('License Expired or Invalid', 'linguateq'); ?></strong></p><p><?php _e('Please re-activate your license.', 'linguateq'); ?></p>');
+                        $result.html('<span class="error">✗ <?php _e('License invalid', 'linguateq'); ?></span>');
                     }
                 }
             }
@@ -934,7 +934,7 @@ jQuery(document).ready(function($) {
 
         // Validate API key
         if (!apiKey) {
-            $result.html('<span class="error">✗ <?php _e('Please enter your API key', 'yourtranslater'); ?></span>');
+            $result.html('<span class="error">✗ <?php _e('Please enter your API key', 'linguateq'); ?></span>');
             $('#middleware_api_key').focus();
             return;
         }
@@ -952,7 +952,7 @@ jQuery(document).ready(function($) {
             currentRetry++;
 
             if (currentRetry > 1) {
-                $result.html('<span class="retrying">⟳ <?php _e('Retrying...', 'yourtranslater'); ?> (' + currentRetry + '/' + maxRetries + ')</span>');
+                $result.html('<span class="retrying">⟳ <?php _e('Retrying...', 'linguateq'); ?> (' + currentRetry + '/' + maxRetries + ')</span>');
             }
 
             // Step 1: Save API settings
@@ -980,7 +980,7 @@ jQuery(document).ready(function($) {
                         },
                         success: function(response) {
                             if (response.success) {
-                                $result.html('<span class="success">✓ <?php _e('License activated! Reloading...', 'yourtranslater'); ?></span>');
+                                $result.html('<span class="success">✓ <?php _e('License activated! Reloading...', 'linguateq'); ?></span>');
                                 setTimeout(function() {
                                     window.location.reload();
                                 }, 1000);
@@ -990,7 +990,7 @@ jQuery(document).ready(function($) {
                                     setTimeout(attemptActivation, 1000);
                                 } else {
                                     setLoading(false);
-                                    $result.html('<span class="error">✗ ' + (response.data || '<?php _e('Activation failed', 'yourtranslater'); ?>') + '</span>');
+                                    $result.html('<span class="error">✗ ' + (response.data || '<?php _e('Activation failed', 'linguateq'); ?>') + '</span>');
                                 }
                             }
                         },
@@ -1001,7 +1001,7 @@ jQuery(document).ready(function($) {
                                 setTimeout(attemptActivation, 1500);
                             } else {
                                 setLoading(false);
-                                $result.html('<span class="error">✗ <?php _e('Connection failed. Please try again.', 'yourtranslater'); ?></span>');
+                                $result.html('<span class="error">✗ <?php _e('Connection failed. Please try again.', 'linguateq'); ?></span>');
                             }
                         }
                     });
@@ -1012,7 +1012,7 @@ jQuery(document).ready(function($) {
                         setTimeout(attemptActivation, 1500);
                     } else {
                         setLoading(false);
-                        $result.html('<span class="error">✗ <?php _e('Failed to save settings. Please try again.', 'yourtranslater'); ?></span>');
+                        $result.html('<span class="error">✗ <?php _e('Failed to save settings. Please try again.', 'linguateq'); ?></span>');
                     }
                 }
             });
@@ -1042,7 +1042,7 @@ jQuery(document).ready(function($) {
 
     // v5.2.171: Disconnect license
     $('#disconnect-license').on('click', function() {
-        if (!confirm('<?php _e('Are you sure you want to disconnect this license?', 'yourtranslater'); ?>')) {
+        if (!confirm('<?php _e('Are you sure you want to disconnect this license?', 'linguateq'); ?>')) {
             return;
         }
 
@@ -1065,7 +1065,7 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
-                    $result.html('<span class="success">✓ <?php _e('License disconnected. Reloading...', 'yourtranslater'); ?></span>');
+                    $result.html('<span class="success">✓ <?php _e('License disconnected. Reloading...', 'linguateq'); ?></span>');
                     setTimeout(function() {
                         window.location.reload();
                     }, 1000);
@@ -1073,14 +1073,14 @@ jQuery(document).ready(function($) {
                     $text.show();
                     $spinner.hide();
                     $button.prop('disabled', false);
-                    $result.html('<span class="error">✗ ' + (response.data || '<?php _e('Failed to disconnect', 'yourtranslater'); ?>') + '</span>');
+                    $result.html('<span class="error">✗ ' + (response.data || '<?php _e('Failed to disconnect', 'linguateq'); ?>') + '</span>');
                 }
             },
             error: function() {
                 $text.show();
                 $spinner.hide();
                 $button.prop('disabled', false);
-                $result.html('<span class="error">✗ <?php _e('Connection error', 'yourtranslater'); ?></span>');
+                $result.html('<span class="error">✗ <?php _e('Connection error', 'linguateq'); ?></span>');
             }
         });
     });
@@ -1109,7 +1109,7 @@ jQuery(document).ready(function($) {
             '<td>' +
                 '<span class="lingua-sortable-handle" style="cursor: move;">☰</span>' +
                 '<span class="lingua-flag-display"><span class="fi fi-' + (language.country_code || selectedCode) + '"></span></span> ' + language.name +
-                (isDefault ? ' <span style="color: #666; font-style: italic;">(<?php _e('Default', 'yourtranslater'); ?>)</span>' : '') +
+                (isDefault ? ' <span style="color: #666; font-style: italic;">(<?php _e('Default', 'linguateq'); ?>)</span>' : '') +
                 '<input type="hidden" name="translation_languages[]" value="' + selectedCode + '" />' +
             '</td>' +
             '<td>' + selectedCode + '</td>' +
@@ -1117,7 +1117,7 @@ jQuery(document).ready(function($) {
                 '<input type="text" name="url_slugs[' + selectedCode + ']" value="' + selectedCode.substring(0, 2) + '" class="small-text" style="width: 60px;" />' +
             '</td>' +
             '<td>' +
-                (isDefault ? '' : '<a href="#" class="lingua-remove-language" style="color: #d63638;"><?php _e('Remove', 'yourtranslater'); ?></a>') +
+                (isDefault ? '' : '<a href="#" class="lingua-remove-language" style="color: #d63638;"><?php _e('Remove', 'linguateq'); ?></a>') +
             '</td>' +
         '</tr>';
         
@@ -1130,7 +1130,7 @@ jQuery(document).ready(function($) {
         // v5.2.133: Check language limit and hide add row if reached
         if (languageLimit !== null && $('.lingua-language-row').length >= languageLimit) {
             $('.lingua-add-language-row').hide();
-            $('.lingua-add-language-row').after('<div class="notice notice-warning inline lingua-limit-notice" style="margin-top: 10px;"><p><?php printf(__('You have reached your plan limit of %d languages. Upgrade your plan to add more languages.', 'yourtranslater'), $language_limit); ?></p></div>');
+            $('.lingua-add-language-row').after('<div class="notice notice-warning inline lingua-limit-notice" style="margin-top: 10px;"><p><?php printf(__('You have reached your plan limit of %d languages. Upgrade your plan to add more languages.', 'linguateq'), $language_limit); ?></p></div>');
         }
     });
     
@@ -1138,7 +1138,7 @@ jQuery(document).ready(function($) {
     $(document).on('click', '.lingua-remove-language', function(e) {
         e.preventDefault();
         
-        if (!confirm('<?php _e('Are you sure you want to remove this language?', 'yourtranslater'); ?>')) {
+        if (!confirm('<?php _e('Are you sure you want to remove this language?', 'linguateq'); ?>')) {
             return;
         }
         
@@ -1177,7 +1177,7 @@ jQuery(document).ready(function($) {
         
         if (newDefault !== currentDefault) {
             if (!$('.lingua-warning').length) {
-                $(this).closest('td').append('<p class="lingua-warning" style="color: #d63638; font-weight: bold;"><?php _e('WARNING: Changing the default language will invalidate existing translations.', 'yourtranslater'); ?></p>');
+                $(this).closest('td').append('<p class="lingua-warning" style="color: #d63638; font-weight: bold;"><?php _e('WARNING: Changing the default language will invalidate existing translations.', 'linguateq'); ?></p>');
             }
         } else {
             $('.lingua-warning').remove();
@@ -1194,7 +1194,7 @@ jQuery(document).ready(function($) {
             var content = $firstTd.html();
             
             if (isNewDefault && content.indexOf('(Default)') === -1) {
-                content = content.replace('</span>', '</span> <span style="color: #666; font-style: italic;">(<?php _e('Default', 'yourtranslater'); ?>)</span>');
+                content = content.replace('</span>', '</span> <span style="color: #666; font-style: italic;">(<?php _e('Default', 'linguateq'); ?>)</span>');
             } else if (!isNewDefault) {
                 content = content.replace(/ <span style="color: #666; font-style: italic;">\(.*?\)<\/span>/, '');
             }
@@ -1206,7 +1206,7 @@ jQuery(document).ready(function($) {
             if (isNewDefault) {
                 $lastTd.html('');
             } else if ($lastTd.find('.lingua-remove-language').length === 0) {
-                $lastTd.html('<a href="#" class="lingua-remove-language" style="color: #d63638;"><?php _e('Remove', 'yourtranslater'); ?></a>');
+                $lastTd.html('<a href="#" class="lingua-remove-language" style="color: #d63638;"><?php _e('Remove', 'linguateq'); ?></a>');
             }
         });
         
@@ -1238,7 +1238,7 @@ jQuery(document).ready(function($) {
         }
 
         $('#default_language').select2({
-            placeholder: '<?php _e('Search languages...', 'yourtranslater'); ?>',
+            placeholder: '<?php _e('Search languages...', 'linguateq'); ?>',
             allowClear: false,
             width: '300px',
             templateResult: linguaFormatLanguage,
@@ -1246,7 +1246,7 @@ jQuery(document).ready(function($) {
         });
 
         $('#lingua-select-language').select2({
-            placeholder: '<?php _e('Search and select language to add...', 'yourtranslater'); ?>',
+            placeholder: '<?php _e('Search and select language to add...', 'linguateq'); ?>',
             allowClear: true,
             width: '300px',
             templateResult: linguaFormatLanguage,
@@ -1266,7 +1266,7 @@ jQuery(document).ready(function($) {
                 '<td>' +
                     '<span class="lingua-sortable-handle" style="cursor: move;">☰</span>' +
                     '<span class="lingua-flag-display"><span class="fi fi-' + (language.country_code || selectedCode) + '"></span></span> ' + language.name +
-                    (isDefault ? ' <span style="color: #666; font-style: italic;">(<?php _e('Default', 'yourtranslater'); ?>)</span>' : '') +
+                    (isDefault ? ' <span style="color: #666; font-style: italic;">(<?php _e('Default', 'linguateq'); ?>)</span>' : '') +
                     '<input type="hidden" name="translation_languages[]" value="' + selectedCode + '" />' +
                 '</td>' +
                 '<td>' + selectedCode + '</td>' +
@@ -1274,7 +1274,7 @@ jQuery(document).ready(function($) {
                     '<input type="text" name="url_slugs[' + selectedCode + ']" value="' + selectedCode.substring(0, 2) + '" class="small-text" style="width: 60px;" />' +
                 '</td>' +
                 '<td>' +
-                    (isDefault ? '' : '<a href="#" class="lingua-remove-language" style="color: #d63638;"><?php _e('Remove', 'yourtranslater'); ?></a>') +
+                    (isDefault ? '' : '<a href="#" class="lingua-remove-language" style="color: #d63638;"><?php _e('Remove', 'linguateq'); ?></a>') +
                 '</td>' +
             '</tr>';
 
@@ -1287,7 +1287,7 @@ jQuery(document).ready(function($) {
             // v5.2.133: Check language limit and hide add row if reached
             if (languageLimit !== null && $('.lingua-language-row').length >= languageLimit) {
                 $('.lingua-add-language-row').hide();
-                $('.lingua-add-language-row').after('<div class="notice notice-warning inline lingua-limit-notice" style="margin-top: 10px;"><p><?php printf(__('You have reached your plan limit of %d languages. Upgrade your plan to add more languages.', 'yourtranslater'), $language_limit); ?></p></div>');
+                $('.lingua-add-language-row').after('<div class="notice notice-warning inline lingua-limit-notice" style="margin-top: 10px;"><p><?php printf(__('You have reached your plan limit of %d languages. Upgrade your plan to add more languages.', 'linguateq'), $language_limit); ?></p></div>');
             }
         });
     }
@@ -1448,11 +1448,11 @@ jQuery(document).ready(function($) {
         translateAll: function() {
             var self = this;
 
-            if (!confirm('<?php _e('This will add all published posts to the translation queue and start translating. Continue?', 'yourtranslater'); ?>')) {
+            if (!confirm('<?php _e('This will add all published posts to the translation queue and start translating. Continue?', 'linguateq'); ?>')) {
                 return;
             }
 
-            $('#btn-translate-all').prop('disabled', true).text('<?php _e('Populating queue...', 'yourtranslater'); ?>');
+            $('#btn-translate-all').prop('disabled', true).text('<?php _e('Populating queue...', 'linguateq'); ?>');
 
             // v5.3.17: Post types are now taken from saved settings
             $.post(ajaxurl, {
@@ -1465,15 +1465,15 @@ jQuery(document).ready(function($) {
                     self.startProcessing();
                 } else {
                     $('#btn-translate-all').prop('disabled', false).html(
-                        '<span class="dashicons dashicons-translation" style="vertical-align: middle; margin-right: 5px;"></span><?php _e('Translate All Posts', 'yourtranslater'); ?>'
+                        '<span class="dashicons dashicons-translation" style="vertical-align: middle; margin-right: 5px;"></span><?php _e('Translate All Posts', 'linguateq'); ?>'
                     );
                     alert('Error: ' + (response.data || 'Unknown error'));
                 }
             }).fail(function() {
                 $('#btn-translate-all').prop('disabled', false).html(
-                    '<span class="dashicons dashicons-translation" style="vertical-align: middle; margin-right: 5px;"></span><?php _e('Translate All Posts', 'yourtranslater'); ?>'
+                    '<span class="dashicons dashicons-translation" style="vertical-align: middle; margin-right: 5px;"></span><?php _e('Translate All Posts', 'linguateq'); ?>'
                 );
-                alert('<?php _e('Network error. Please try again.', 'yourtranslater'); ?>');
+                alert('<?php _e('Network error. Please try again.', 'linguateq'); ?>');
             });
         },
 
@@ -1530,19 +1530,19 @@ jQuery(document).ready(function($) {
             $('#btn-resume-queue').hide();
             $('#btn-retry-failed').hide();
             $('#btn-pause-queue').show().html(
-                '<span class="dashicons dashicons-controls-pause" style="vertical-align: middle; margin-right: 5px;"></span><?php _e('Stop', 'yourtranslater'); ?>'
+                '<span class="dashicons dashicons-controls-pause" style="vertical-align: middle; margin-right: 5px;"></span><?php _e('Stop', 'linguateq'); ?>'
             );
             $('#lingua-processing-status').show();
-            $('#processing-text').text('<?php _e('Starting...', 'yourtranslater'); ?>');
+            $('#processing-text').text('<?php _e('Starting...', 'linguateq'); ?>');
 
             this.processNext();
         },
 
         stopProcessing: function() {
             this.isProcessing = false;
-            var msg = '<?php _e('Stopped.', 'yourtranslater'); ?> ' + this.processedCount + ' <?php _e('processed', 'yourtranslater'); ?>';
+            var msg = '<?php _e('Stopped.', 'linguateq'); ?> ' + this.processedCount + ' <?php _e('processed', 'linguateq'); ?>';
             if (this.errorCount > 0) {
-                msg += ', ' + this.errorCount + ' <?php _e('errors', 'yourtranslater'); ?>';
+                msg += ', ' + this.errorCount + ' <?php _e('errors', 'linguateq'); ?>';
                 // v5.3.32: Show last error message
                 if (this.lastError) {
                     msg += ' (' + this.lastError + ')';
@@ -1554,11 +1554,11 @@ jQuery(document).ready(function($) {
             var self = this;
             setTimeout(function() {
                 $('#btn-pause-queue').hide().html(
-                    '<span class="dashicons dashicons-controls-pause" style="vertical-align: middle; margin-right: 5px;"></span><?php _e('Pause', 'yourtranslater'); ?>'
+                    '<span class="dashicons dashicons-controls-pause" style="vertical-align: middle; margin-right: 5px;"></span><?php _e('Pause', 'linguateq'); ?>'
                 );
                 $('#lingua-processing-status').hide();
                 $('#btn-translate-all').show().html(
-                    '<span class="dashicons dashicons-translation" style="vertical-align: middle; margin-right: 5px;"></span><?php _e('Translate All Posts', 'yourtranslater'); ?>'
+                    '<span class="dashicons dashicons-translation" style="vertical-align: middle; margin-right: 5px;"></span><?php _e('Translate All Posts', 'linguateq'); ?>'
                 );
                 self.loadStatus();
             }, 1500);
@@ -1575,9 +1575,9 @@ jQuery(document).ready(function($) {
                 return;
             }
 
-            var statusText = '<?php _e('Translating...', 'yourtranslater'); ?> (' + this.processedCount + ' <?php _e('done', 'yourtranslater'); ?>';
+            var statusText = '<?php _e('Translating...', 'linguateq'); ?> (' + this.processedCount + ' <?php _e('done', 'linguateq'); ?>';
             if (this.errorCount > 0) {
-                statusText += ', ' + this.errorCount + ' <?php _e('errors', 'yourtranslater'); ?>';
+                statusText += ', ' + this.errorCount + ' <?php _e('errors', 'linguateq'); ?>';
                 // v5.3.32: Show last error message
                 if (this.lastError) {
                     statusText += ' - ' + this.lastError;
@@ -1611,12 +1611,12 @@ jQuery(document).ready(function($) {
                         } else {
                             // All done
                             self.isProcessing = false;
-                            $('#processing-text').text('<?php _e('Complete!', 'yourtranslater'); ?> ' + self.processedCount + ' <?php _e('items translated', 'yourtranslater'); ?>');
+                            $('#processing-text').text('<?php _e('Complete!', 'linguateq'); ?> ' + self.processedCount + ' <?php _e('items translated', 'linguateq'); ?>');
                             setTimeout(function() {
                                 $('#lingua-processing-status').hide();
                                 $('#btn-pause-queue').hide();
                                 $('#btn-translate-all').show().html(
-                                    '<span class="dashicons dashicons-translation" style="vertical-align: middle; margin-right: 5px;"></span><?php _e('Translate All Posts', 'yourtranslater'); ?>'
+                                    '<span class="dashicons dashicons-translation" style="vertical-align: middle; margin-right: 5px;"></span><?php _e('Translate All Posts', 'linguateq'); ?>'
                                 );
                                 self.loadStatus();
                             }, 2000);
@@ -1624,12 +1624,12 @@ jQuery(document).ready(function($) {
                     } else {
                         // No more items in queue
                         self.isProcessing = false;
-                        $('#processing-text').text(response.data.message || '<?php _e('Queue is empty', 'yourtranslater'); ?>');
+                        $('#processing-text').text(response.data.message || '<?php _e('Queue is empty', 'linguateq'); ?>');
                         setTimeout(function() {
                             $('#lingua-processing-status').hide();
                             $('#btn-pause-queue').hide();
                             $('#btn-translate-all').show().html(
-                                '<span class="dashicons dashicons-translation" style="vertical-align: middle; margin-right: 5px;"></span><?php _e('Translate All Posts', 'yourtranslater'); ?>'
+                                '<span class="dashicons dashicons-translation" style="vertical-align: middle; margin-right: 5px;"></span><?php _e('Translate All Posts', 'linguateq'); ?>'
                             );
                             self.loadStatus();
                         }, 1500);
@@ -1638,7 +1638,7 @@ jQuery(document).ready(function($) {
                     self.errorCount++;
                     // v5.3.37: Extract error message from response object
                     if (response.data && typeof response.data === 'object') {
-                        self.lastError = response.data.message || '<?php _e('Unknown error', 'yourtranslater'); ?>';
+                        self.lastError = response.data.message || '<?php _e('Unknown error', 'linguateq'); ?>';
                         // Update stats from error response too
                         if (response.data.stats) {
                             self.updateStatsFromResponse(response.data.stats);
@@ -1647,7 +1647,7 @@ jQuery(document).ready(function($) {
                             self.updateLanguageProgress(response.data.by_language);
                         }
                     } else {
-                        self.lastError = response.data || '<?php _e('Unknown error', 'yourtranslater'); ?>';
+                        self.lastError = response.data || '<?php _e('Unknown error', 'linguateq'); ?>';
                     }
                     console.log('Queue item error:', self.lastError);
                     // Continue to next item if there are more

@@ -59,14 +59,14 @@ $default_language = get_option('lingua_default_language', 'ru');
 ?>
 
 <div class="wrap">
-    <h1 class="wp-heading-inline"><?php _e('Manage Translations', 'yourtranslater'); ?></h1>
-    <a href="#" class="page-title-action" id="bulk-translate-posts"><?php _e('Bulk Translate', 'yourtranslater'); ?></a>
+    <h1 class="wp-heading-inline"><?php _e('Manage Translations', 'linguateq'); ?></h1>
+    <a href="#" class="page-title-action" id="bulk-translate-posts"><?php _e('Bulk Translate', 'linguateq'); ?></a>
     
     <!-- Statistics Cards -->
     <div class="lingua-stats-row">
         <div class="lingua-stat-card">
             <div class="lingua-stat-number"><?php echo esc_html($stats['total']); ?></div>
-            <div class="lingua-stat-label"><?php _e('Total Translations', 'yourtranslater'); ?></div>
+            <div class="lingua-stat-label"><?php _e('Total Translations', 'linguateq'); ?></div>
         </div>
         
         <?php foreach ($stats['by_language'] as $lang => $count): ?>
@@ -86,13 +86,13 @@ $default_language = get_option('lingua_default_language', 'ru');
     <div class="tablenav top">
         <div class="alignleft actions">
             <select name="post_type" id="filter-by-post-type">
-                <option value="any" <?php selected($post_type_filter, 'any'); ?>><?php _e('All Post Types', 'yourtranslater'); ?></option>
-                <option value="post" <?php selected($post_type_filter, 'post'); ?>><?php _e('Posts', 'yourtranslater'); ?></option>
-                <option value="page" <?php selected($post_type_filter, 'page'); ?>><?php _e('Pages', 'yourtranslater'); ?></option>
+                <option value="any" <?php selected($post_type_filter, 'any'); ?>><?php _e('All Post Types', 'linguateq'); ?></option>
+                <option value="post" <?php selected($post_type_filter, 'post'); ?>><?php _e('Posts', 'linguateq'); ?></option>
+                <option value="page" <?php selected($post_type_filter, 'page'); ?>><?php _e('Pages', 'linguateq'); ?></option>
             </select>
             
             <select name="language" id="filter-by-language">
-                <option value=""><?php _e('All Languages', 'yourtranslater'); ?></option>
+                <option value=""><?php _e('All Languages', 'linguateq'); ?></option>
                 <?php foreach ($languages as $code => $lang): ?>
                     <option value="<?php echo esc_attr($code); ?>" <?php selected($language_filter, $code); ?>>
                         <?php echo isset($lang['flag']) ? $lang['flag'] . ' ' : ''; ?>
@@ -101,7 +101,7 @@ $default_language = get_option('lingua_default_language', 'ru');
                 <?php endforeach; ?>
             </select>
             
-            <button type="button" class="button" id="filter-posts"><?php _e('Filter', 'yourtranslater'); ?></button>
+            <button type="button" class="button" id="filter-posts"><?php _e('Filter', 'linguateq'); ?></button>
         </div>
     </div>
 
@@ -113,11 +113,11 @@ $default_language = get_option('lingua_default_language', 'ru');
                     <td class="manage-column column-cb check-column">
                         <input type="checkbox" id="cb-select-all" />
                     </td>
-                    <th class="manage-column column-title"><?php _e('Title', 'yourtranslater'); ?></th>
-                    <th class="manage-column column-type"><?php _e('Type', 'yourtranslater'); ?></th>
-                    <th class="manage-column column-date"><?php _e('Date', 'yourtranslater'); ?></th>
-                    <th class="manage-column column-translations"><?php _e('Translations', 'yourtranslater'); ?></th>
-                    <th class="manage-column column-actions"><?php _e('Actions', 'yourtranslater'); ?></th>
+                    <th class="manage-column column-title"><?php _e('Title', 'linguateq'); ?></th>
+                    <th class="manage-column column-type"><?php _e('Type', 'linguateq'); ?></th>
+                    <th class="manage-column column-date"><?php _e('Date', 'linguateq'); ?></th>
+                    <th class="manage-column column-translations"><?php _e('Translations', 'linguateq'); ?></th>
+                    <th class="manage-column column-actions"><?php _e('Actions', 'linguateq'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -143,13 +143,13 @@ $default_language = get_option('lingua_default_language', 'ru');
                                 </strong>
                                 <div class="row-actions">
                                     <span class="edit">
-                                        <a href="<?php echo esc_url(get_edit_post_link($post_id)); ?>"><?php _e('Edit', 'yourtranslater'); ?></a> |
+                                        <a href="<?php echo esc_url(get_edit_post_link($post_id)); ?>"><?php _e('Edit', 'linguateq'); ?></a> |
                                     </span>
                                     <span class="view">
-                                        <a href="<?php echo esc_url(get_permalink($post_id)); ?>" target="_blank"><?php _e('View', 'yourtranslater'); ?></a> |
+                                        <a href="<?php echo esc_url(get_permalink($post_id)); ?>" target="_blank"><?php _e('View', 'linguateq'); ?></a> |
                                     </span>
                                     <span class="translate">
-                                        <a href="#" class="lingua-translate-post" data-post-id="<?php echo esc_attr($post_id); ?>"><?php _e('Translate', 'yourtranslater'); ?></a>
+                                        <a href="#" class="lingua-translate-post" data-post-id="<?php echo esc_attr($post_id); ?>"><?php _e('Translate', 'linguateq'); ?></a>
                                     </span>
                                 </div>
                             </td>
@@ -172,7 +172,7 @@ $default_language = get_option('lingua_default_language', 'ru');
                             </td>
                             <td class="column-actions">
                                 <button type="button" class="button button-small lingua-translate-post" data-post-id="<?php echo esc_attr($post_id); ?>">
-                                    <?php _e('Translate', 'yourtranslater'); ?>
+                                    <?php _e('Translate', 'linguateq'); ?>
                                 </button>
                             </td>
                         </tr>
@@ -181,8 +181,8 @@ $default_language = get_option('lingua_default_language', 'ru');
                 <?php else: ?>
                     <tr>
                         <td colspan="6" style="text-align: center; padding: 50px;">
-                            <p><?php _e('No posts found.', 'yourtranslater'); ?></p>
-                            <p><a href="<?php echo esc_url(admin_url('post-new.php')); ?>" class="button button-primary"><?php _e('Create your first post', 'yourtranslater'); ?></a></p>
+                            <p><?php _e('No posts found.', 'linguateq'); ?></p>
+                            <p><a href="<?php echo esc_url(admin_url('post-new.php')); ?>" class="button button-primary"><?php _e('Create your first post', 'linguateq'); ?></a></p>
                         </td>
                     </tr>
                 <?php endif; ?>
@@ -193,11 +193,11 @@ $default_language = get_option('lingua_default_language', 'ru');
         <div class="tablenav bottom">
             <div class="alignleft actions bulkactions">
                 <select name="action">
-                    <option value="-1"><?php _e('Bulk Actions', 'yourtranslater'); ?></option>
-                    <option value="bulk_translate"><?php _e('Translate Selected', 'yourtranslater'); ?></option>
-                    <option value="bulk_delete"><?php _e('Delete Translations', 'yourtranslater'); ?></option>
+                    <option value="-1"><?php _e('Bulk Actions', 'linguateq'); ?></option>
+                    <option value="bulk_translate"><?php _e('Translate Selected', 'linguateq'); ?></option>
+                    <option value="bulk_delete"><?php _e('Delete Translations', 'linguateq'); ?></option>
                 </select>
-                <input type="submit" class="button action" value="<?php _e('Apply', 'yourtranslater'); ?>" />
+                <input type="submit" class="button action" value="<?php _e('Apply', 'linguateq'); ?>" />
             </div>
         </div>
     </form>

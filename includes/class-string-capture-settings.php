@@ -114,18 +114,18 @@ add_action('admin_init', function() {
     
     add_settings_section(
         'lingua_string_capture',
-        __('String Capture Settings', 'yourtranslater'),
+        __('String Capture Settings', 'linguateq'),
         null,
         'lingua-settings'
     );
     
     add_settings_field(
         'min_string_length',
-        __('Minimum String Length', 'yourtranslater'),
+        __('Minimum String Length', 'linguateq'),
         function() {
             $settings = Lingua_String_Capture_Settings::get_settings();
             echo '<input type="number" name="lingua_string_capture_settings[min_string_length]" value="' . $settings['min_string_length'] . '" min="1" max="50">';
-            echo '<p class="description">' . __('Minimum number of characters for a string to be captured', 'yourtranslater') . '</p>';
+            echo '<p class="description">' . __('Minimum number of characters for a string to be captured', 'linguateq') . '</p>';
         },
         'lingua-settings',
         'lingua_string_capture'
@@ -133,11 +133,11 @@ add_action('admin_init', function() {
     
     add_settings_field(
         'max_string_length',
-        __('Maximum String Length', 'yourtranslater'),
+        __('Maximum String Length', 'linguateq'),
         function() {
             $settings = Lingua_String_Capture_Settings::get_settings();
             echo '<input type="number" name="lingua_string_capture_settings[max_string_length]" value="' . $settings['max_string_length'] . '" min="50" max="5000">';
-            echo '<p class="description">' . __('Maximum number of characters for a string to be captured', 'yourtranslater') . '</p>';
+            echo '<p class="description">' . __('Maximum number of characters for a string to be captured', 'linguateq') . '</p>';
         },
         'lingua-settings',
         'lingua_string_capture'
@@ -145,11 +145,11 @@ add_action('admin_init', function() {
     
     add_settings_field(
         'skip_admin_bar',
-        __('Skip Admin Bar', 'yourtranslater'),
+        __('Skip Admin Bar', 'linguateq'),
         function() {
             $settings = Lingua_String_Capture_Settings::get_settings();
             echo '<input type="checkbox" name="lingua_string_capture_settings[skip_admin_bar]" value="1" ' . checked($settings['skip_admin_bar'], true, false) . '>';
-            echo '<p class="description">' . __('Do not capture strings from WordPress admin bar', 'yourtranslater') . '</p>';
+            echo '<p class="description">' . __('Do not capture strings from WordPress admin bar', 'linguateq') . '</p>';
         },
         'lingua-settings',
         'lingua_string_capture'

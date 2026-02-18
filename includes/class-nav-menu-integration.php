@@ -39,7 +39,7 @@ class Lingua_Nav_Menu_Integration {
             'show_in_admin_bar'     => false,
             'can_export'            => false,
             'public'                => false,
-            'label'                 => __('Language Switcher', 'yourtranslater')
+            'label'                 => __('Language Switcher', 'linguateq')
         );
         register_post_type('lingua_switcher', $args);
 
@@ -91,7 +91,7 @@ class Lingua_Nav_Menu_Integration {
         }
 
         // Add "Current Language" placeholder
-        $published_languages['current_language'] = __('Current Language', 'yourtranslater');
+        $published_languages['current_language'] = __('Current Language', 'linguateq');
         $language_codes = array_keys($published_languages);
 
         // Get existing posts

@@ -19,20 +19,20 @@ $post_types = get_post_types(array('public' => true), 'objects');
 ?>
 
 <div class="wrap">
-    <h1><?php _e('Bulk Translation', 'yourtranslater'); ?></h1>
+    <h1><?php _e('Bulk Translation', 'linguateq'); ?></h1>
     
     <?php settings_errors('lingua_bulk'); ?>
     
     <div class="card">
-        <h2><?php _e('Auto-translate Multiple Posts', 'yourtranslater'); ?></h2>
-        <p><?php _e('Select posts and languages for bulk auto-translation. Translations will be processed in the background.', 'yourtranslater'); ?></p>
+        <h2><?php _e('Auto-translate Multiple Posts', 'linguateq'); ?></h2>
+        <p><?php _e('Select posts and languages for bulk auto-translation. Translations will be processed in the background.', 'linguateq'); ?></p>
         
         <form method="post" action="">
             <?php wp_nonce_field('lingua_bulk_translate', 'lingua_bulk_nonce'); ?>
             
             <table class="form-table">
                 <tr>
-                    <th scope="row"><?php _e('Post Types', 'yourtranslater'); ?></th>
+                    <th scope="row"><?php _e('Post Types', 'linguateq'); ?></th>
                     <td>
                         <?php foreach ($post_types as $post_type): ?>
                             <label>
@@ -44,10 +44,10 @@ $post_types = get_post_types(array('public' => true), 'objects');
                 </tr>
                 
                 <tr>
-                    <th scope="row"><?php _e('Target Languages', 'yourtranslater'); ?></th>
+                    <th scope="row"><?php _e('Target Languages', 'linguateq'); ?></th>
                     <td>
                         <?php if (empty($target_languages)): ?>
-                            <p><?php _e('No target languages available. Please configure languages in Settings first.', 'yourtranslater'); ?></p>
+                            <p><?php _e('No target languages available. Please configure languages in Settings first.', 'linguateq'); ?></p>
                         <?php else: ?>
                             <?php foreach ($target_languages as $code => $lang_data): ?>
                                 <label>
@@ -60,35 +60,35 @@ $post_types = get_post_types(array('public' => true), 'objects');
                 </tr>
                 
                 <tr>
-                    <th scope="row"><?php _e('Post Status', 'yourtranslater'); ?></th>
+                    <th scope="row"><?php _e('Post Status', 'linguateq'); ?></th>
                     <td>
                         <select name="post_status">
-                            <option value="publish"><?php _e('Published', 'yourtranslater'); ?></option>
-                            <option value="draft"><?php _e('Draft', 'yourtranslater'); ?></option>
-                            <option value="any"><?php _e('Any Status', 'yourtranslater'); ?></option>
+                            <option value="publish"><?php _e('Published', 'linguateq'); ?></option>
+                            <option value="draft"><?php _e('Draft', 'linguateq'); ?></option>
+                            <option value="any"><?php _e('Any Status', 'linguateq'); ?></option>
                         </select>
                     </td>
                 </tr>
                 
                 <tr>
-                    <th scope="row"><?php _e('Limit', 'yourtranslater'); ?></th>
+                    <th scope="row"><?php _e('Limit', 'linguateq'); ?></th>
                     <td>
                         <input type="number" name="limit" value="10" min="1" max="100" />
-                        <p class="description"><?php _e('Maximum number of posts to translate (1-100)', 'yourtranslater'); ?></p>
+                        <p class="description"><?php _e('Maximum number of posts to translate (1-100)', 'linguateq'); ?></p>
                     </td>
                 </tr>
             </table>
             
             <?php if (!empty($target_languages)): ?>
                 <p class="submit">
-                    <input type="submit" name="bulk_translate" class="button-primary" value="<?php _e('Start Bulk Translation', 'yourtranslater'); ?>" />
+                    <input type="submit" name="bulk_translate" class="button-primary" value="<?php _e('Start Bulk Translation', 'linguateq'); ?>" />
                 </p>
             <?php endif; ?>
         </form>
     </div>
     
     <div class="card">
-        <h2><?php _e('Translation Status', 'yourtranslater'); ?></h2>
+        <h2><?php _e('Translation Status', 'linguateq'); ?></h2>
         <?php
         // Show translation statistics
         $translation_manager = new Lingua_Translation_Manager();
@@ -98,19 +98,19 @@ $post_types = get_post_types(array('public' => true), 'objects');
         <table class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
-                    <th><?php _e('Metric', 'yourtranslater'); ?></th>
-                    <th><?php _e('Count', 'yourtranslater'); ?></th>
+                    <th><?php _e('Metric', 'linguateq'); ?></th>
+                    <th><?php _e('Count', 'linguateq'); ?></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><?php _e('Total Translations', 'yourtranslater'); ?></td>
+                    <td><?php _e('Total Translations', 'linguateq'); ?></td>
                     <td><?php echo intval($stats['total']); ?></td>
                 </tr>
                 <?php if (!empty($stats['by_language'])): ?>
                     <?php foreach ($stats['by_language'] as $lang => $count): ?>
                         <tr>
-                            <td><?php echo sprintf(__('Translations to %s', 'yourtranslater'), $lang); ?></td>
+                            <td><?php echo sprintf(__('Translations to %s', 'linguateq'), $lang); ?></td>
                             <td><?php echo intval($count); ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -118,7 +118,7 @@ $post_types = get_post_types(array('public' => true), 'objects');
                 <?php if (!empty($stats['by_status'])): ?>
                     <?php foreach ($stats['by_status'] as $status => $count): ?>
                         <tr>
-                            <td><?php echo sprintf(__('Status: %s', 'yourtranslater'), ucfirst($status)); ?></td>
+                            <td><?php echo sprintf(__('Status: %s', 'linguateq'), ucfirst($status)); ?></td>
                             <td><?php echo intval($count); ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -126,7 +126,7 @@ $post_types = get_post_types(array('public' => true), 'objects');
             </tbody>
         </table>
         
-        <h3><?php _e('Recent Translation Jobs', 'yourtranslater'); ?></h3>
+        <h3><?php _e('Recent Translation Jobs', 'linguateq'); ?></h3>
         <?php
         // Show scheduled cron jobs
         $cron_jobs = _get_cron_array();
@@ -146,14 +146,14 @@ $post_types = get_post_types(array('public' => true), 'objects');
         ?>
         
         <?php if (empty($lingua_jobs)): ?>
-            <p><?php _e('No translation jobs scheduled.', 'yourtranslater'); ?></p>
+            <p><?php _e('No translation jobs scheduled.', 'linguateq'); ?></p>
         <?php else: ?>
             <table class="wp-list-table widefat fixed striped">
                 <thead>
                     <tr>
-                        <th><?php _e('Post ID', 'yourtranslater'); ?></th>
-                        <th><?php _e('Language', 'yourtranslater'); ?></th>
-                        <th><?php _e('Scheduled Time', 'yourtranslater'); ?></th>
+                        <th><?php _e('Post ID', 'linguateq'); ?></th>
+                        <th><?php _e('Language', 'linguateq'); ?></th>
+                        <th><?php _e('Scheduled Time', 'linguateq'); ?></th>
                     </tr>
                 </thead>
                 <tbody>

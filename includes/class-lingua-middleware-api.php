@@ -151,7 +151,7 @@ class Lingua_Middleware_API {
         if (empty($this->api_key) || empty($this->api_url)) {
             return new WP_Error(
                 'missing_credentials',
-                __('API key not configured. Please configure Middleware API in Settings → Linguateq.', 'yourtranslater')
+                __('API key not configured. Please configure Middleware API in Settings → Linguateq.', 'linguateq')
             );
         }
 
@@ -159,7 +159,7 @@ class Lingua_Middleware_API {
         if (empty($text) || empty($target_lang)) {
             return new WP_Error(
                 'invalid_params',
-                __('Missing required parameters: text and targetLanguage', 'yourtranslater')
+                __('Missing required parameters: text and targetLanguage', 'linguateq')
             );
         }
 
@@ -292,7 +292,7 @@ class Lingua_Middleware_API {
             lingua_debug_log('[Lingua Middleware API] Request error: ' . $response->get_error_message());
             return new WP_Error(
                 'api_request_failed',
-                sprintf(__('API request failed: %s', 'yourtranslater'), $response->get_error_message())
+                sprintf(__('API request failed: %s', 'linguateq'), $response->get_error_message())
             );
         }
 
@@ -320,7 +320,7 @@ class Lingua_Middleware_API {
                     return new WP_Error(
                         'rate_limit_exceeded',
                         sprintf(
-                            __('Превышен лимит запросов (%d запросов в минуту). Попробуйте снова через %d секунд. Обновите тариф для увеличения лимита.', 'yourtranslater'),
+                            __('Превышен лимит запросов (%d запросов в минуту). Попробуйте снова через %d секунд. Обновите тариф для увеличения лимита.', 'linguateq'),
                             $limit,
                             $reset_in
                         )
@@ -332,7 +332,7 @@ class Lingua_Middleware_API {
                     return new WP_Error(
                         'insufficient_tokens',
                         sprintf(
-                            __('Недостаточно токенов. Требуется: %s, доступно: %s. Пополните баланс или обновите тариф.', 'yourtranslater'),
+                            __('Недостаточно токенов. Требуется: %s, доступно: %s. Пополните баланс или обновите тариф.', 'linguateq'),
                             $tokens_required,
                             $tokens_available
                         )
@@ -344,14 +344,14 @@ class Lingua_Middleware_API {
                         return new WP_Error(
                             'language_not_supported',
                             sprintf(
-                                __('Язык не доступен в вашем тарифе. Доступные языки: %s. Обновите тариф для доступа к большему количеству языков.', 'yourtranslater'),
+                                __('Язык не доступен в вашем тарифе. Доступные языки: %s. Обновите тариф для доступа к большему количеству языков.', 'linguateq'),
                                 $supported
                             )
                         );
                     }
                     return new WP_Error(
                         'plan_restriction',
-                        $detailed_message . ' ' . __('Обновите тариф для доступа к этой функции.', 'yourtranslater')
+                        $detailed_message . ' ' . __('Обновите тариф для доступа к этой функции.', 'linguateq')
                     );
 
                 case 413: // Request too large
@@ -360,7 +360,7 @@ class Lingua_Middleware_API {
                     return new WP_Error(
                         'request_too_large',
                         sprintf(
-                            __('Запрос слишком большой (%s токенов). Максимум для вашего тарифа: %s токенов. Разбейте текст на части или обновите тариф.', 'yourtranslater'),
+                            __('Запрос слишком большой (%s токенов). Максимум для вашего тарифа: %s токенов. Разбейте текст на части или обновите тариф.', 'linguateq'),
                             $tokens_requested,
                             $max_allowed
                         )
@@ -369,13 +369,13 @@ class Lingua_Middleware_API {
                 case 401: // Authentication failed
                     return new WP_Error(
                         'auth_failed',
-                        __('Ошибка аутентификации. Проверьте API ключ и домен в настройках плагина.', 'yourtranslater')
+                        __('Ошибка аутентификации. Проверьте API ключ и домен в настройках плагина.', 'linguateq')
                     );
 
                 default:
                     return new WP_Error(
                         'api_error',
-                        sprintf(__('Ошибка API (%d): %s', 'yourtranslater'), $status_code, $detailed_message)
+                        sprintf(__('Ошибка API (%d): %s', 'linguateq'), $status_code, $detailed_message)
                     );
             }
         }
@@ -407,7 +407,7 @@ class Lingua_Middleware_API {
             lingua_debug_log('[Lingua_Middleware_API] Missing credentials!');
             return new WP_Error(
                 'missing_api_key',
-                __('API credentials not configured. Please enter Middleware URL and API Key.', 'yourtranslater')
+                __('API credentials not configured. Please enter Middleware URL and API Key.', 'linguateq')
             );
         }
 
@@ -451,7 +451,7 @@ class Lingua_Middleware_API {
         if (empty($this->api_key) || empty($this->api_url)) {
             return new WP_Error(
                 'missing_credentials',
-                __('API credentials not configured', 'yourtranslater')
+                __('API credentials not configured', 'linguateq')
             );
         }
 
@@ -511,7 +511,7 @@ class Lingua_Middleware_API {
         if (empty($this->api_key) || empty($this->api_url)) {
             return new WP_Error(
                 'missing_credentials',
-                __('API credentials not configured', 'yourtranslater')
+                __('API credentials not configured', 'linguateq')
             );
         }
 
@@ -575,7 +575,7 @@ class Lingua_Middleware_API {
         if (!$this->is_pro_active()) {
             return new WP_Error(
                 'missing_credentials',
-                __('API key not configured', 'yourtranslater')
+                __('API key not configured', 'linguateq')
             );
         }
 
@@ -698,7 +698,7 @@ class Lingua_Middleware_API {
             return array_values($all_translations);
         }
 
-        return new WP_Error('invalid_response', __('Invalid batch response format', 'yourtranslater'));
+        return new WP_Error('invalid_response', __('Invalid batch response format', 'linguateq'));
     }
 
     /**
@@ -917,7 +917,7 @@ class Lingua_Middleware_API {
         if (!$this->is_pro_active()) {
             return new WP_Error(
                 'missing_credentials',
-                __('API key not configured', 'yourtranslater')
+                __('API key not configured', 'linguateq')
             );
         }
 
@@ -935,7 +935,7 @@ class Lingua_Middleware_API {
 
         return new WP_Error(
             'detection_failed',
-            __('Could not detect language', 'yourtranslater')
+            __('Could not detect language', 'linguateq')
         );
     }
 }

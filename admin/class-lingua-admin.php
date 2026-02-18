@@ -52,9 +52,9 @@ class Lingua_Admin {
                     nonce: freshNonce,
                     is_pro: <?php echo $is_pro ? 'true' : 'false'; ?>,
                     strings: {
-                        confirm_delete: '<?php echo esc_js(__('Are you sure?', 'yourtranslater')); ?>',
-                        loading: '<?php echo esc_js(__('Loading...', 'yourtranslater')); ?>',
-                        error: '<?php echo esc_js(__('Error', 'yourtranslater')); ?>'
+                        confirm_delete: '<?php echo esc_js(__('Are you sure?', 'linguateq')); ?>',
+                        loading: '<?php echo esc_js(__('Loading...', 'linguateq')); ?>',
+                        error: '<?php echo esc_js(__('Error', 'linguateq')); ?>'
                     }
                 };
                 console.log('[Lingua v5.2.155 INLINE CREATE] Created lingua_admin object with nonce: ' + noncePrefix + '..., is_pro: <?php echo $is_pro ? 'true' : 'false'; ?>');
@@ -98,8 +98,8 @@ class Lingua_Admin {
         // Главная страница меню плагина в админке WordPress
         // Используем права 'edit_posts' для доступа редакторов к переводам
         $hook = add_menu_page(
-            __('Linguateq Settings', 'yourtranslater'),    // Заголовок страницы
-            __('Linguateq', 'yourtranslater'),             // Название в меню
+            __('Linguateq Settings', 'linguateq'),    // Заголовок страницы
+            __('Linguateq', 'linguateq'),             // Название в меню
             'manage_options',                   // Права доступа - стандарт для настроек плагина
             'lingua-settings',                  // Slug страницы
             array($this, 'display_settings_page'), // Callback функция
@@ -113,8 +113,8 @@ class Lingua_Admin {
         // Settings submenu
         add_submenu_page(
             'lingua-settings',
-            __('Settings', 'yourtranslater'),
-            __('Settings', 'yourtranslater'),
+            __('Settings', 'linguateq'),
+            __('Settings', 'linguateq'),
             'manage_options',
             'lingua-settings',
             array($this, 'display_settings_page')
@@ -124,8 +124,8 @@ class Lingua_Admin {
         // v5.3.35: Renamed menu from "Strings" to "String Translations"
         add_submenu_page(
             'lingua-settings',
-            __('String Translations', 'yourtranslater'),
-            __('String Translations', 'yourtranslater'),
+            __('String Translations', 'linguateq'),
+            __('String Translations', 'linguateq'),
             'manage_options',
             'lingua-strings',
             array($this, 'display_strings_page')
@@ -650,57 +650,57 @@ class Lingua_Admin {
             'debug_mode' => lingua_is_debug_enabled(),
             'strings' => array(
                 // API тестирование
-                'testing_connection' => __('Testing connection...', 'yourtranslater'),
-                'connection_successful' => __('Connection successful!', 'yourtranslater'),
-                'connection_failed' => __('Connection failed!', 'yourtranslater'),
+                'testing_connection' => __('Testing connection...', 'linguateq'),
+                'connection_successful' => __('Connection successful!', 'linguateq'),
+                'connection_failed' => __('Connection failed!', 'linguateq'),
                 
                 // Модальное окно перевода
-                'invalid_post_id' => __('Invalid post ID', 'yourtranslater'),
-                'no_post_selected' => __('No post selected', 'yourtranslater'),
-                'select_target_language' => __('Please select target language', 'yourtranslater'),
-                'extracting_content' => __('Extracting content...', 'yourtranslater'),
-                'content_extracted' => __('Content extracted successfully', 'yourtranslater'),
-                'extraction_failed' => __('Content extraction failed', 'yourtranslater'),
-                'ajax_error' => __('AJAX request failed', 'yourtranslater'),
-                'ready_to_extract' => __('Ready to extract content', 'yourtranslater'),
+                'invalid_post_id' => __('Invalid post ID', 'linguateq'),
+                'no_post_selected' => __('No post selected', 'linguateq'),
+                'select_target_language' => __('Please select target language', 'linguateq'),
+                'extracting_content' => __('Extracting content...', 'linguateq'),
+                'content_extracted' => __('Content extracted successfully', 'linguateq'),
+                'extraction_failed' => __('Content extraction failed', 'linguateq'),
+                'ajax_error' => __('AJAX request failed', 'linguateq'),
+                'ready_to_extract' => __('Ready to extract content', 'linguateq'),
                 
                 // Переводы
-                'translating' => __('Translating...', 'yourtranslater'),
-                'translate' => __('Translate', 'yourtranslater'),
-                'translation' => __('Translation', 'yourtranslater'),
-                'original' => __('Original', 'yourtranslater'),
-                'enter_translation' => __('Enter translation...', 'yourtranslater'),
-                'translation_complete' => __('Translation completed!', 'yourtranslater'),
-                'translation_failed' => __('Translation failed', 'yourtranslater'),
-                'confirm_auto_translate' => __('Auto-translate all content?', 'yourtranslater'),
-                'no_content_to_translate' => __('No content to translate', 'yourtranslater'),
-                'auto_translate_complete' => __('Auto-translation completed', 'yourtranslater'),
+                'translating' => __('Translating...', 'linguateq'),
+                'translate' => __('Translate', 'linguateq'),
+                'translation' => __('Translation', 'linguateq'),
+                'original' => __('Original', 'linguateq'),
+                'enter_translation' => __('Enter translation...', 'linguateq'),
+                'translation_complete' => __('Translation completed!', 'linguateq'),
+                'translation_failed' => __('Translation failed', 'linguateq'),
+                'confirm_auto_translate' => __('Auto-translate all content?', 'linguateq'),
+                'no_content_to_translate' => __('No content to translate', 'linguateq'),
+                'auto_translate_complete' => __('Auto-translation completed', 'linguateq'),
                 
                 // Сохранение
-                'invalid_state' => __('Invalid state for saving', 'yourtranslater'),
-                'no_translations_to_save' => __('No translations to save', 'yourtranslater'),
-                'saving' => __('Saving...', 'yourtranslater'),
-                'saving_translations' => __('Saving translations...', 'yourtranslater'),
-                'translations_saved' => __('Translations saved successfully', 'yourtranslater'),
-                'save_failed' => __('Save failed', 'yourtranslater'),
-                'save_translation' => __('Save Translation', 'yourtranslater'),
+                'invalid_state' => __('Invalid state for saving', 'linguateq'),
+                'no_translations_to_save' => __('No translations to save', 'linguateq'),
+                'saving' => __('Saving...', 'linguateq'),
+                'saving_translations' => __('Saving translations...', 'linguateq'),
+                'translations_saved' => __('Translations saved successfully', 'linguateq'),
+                'save_failed' => __('Save failed', 'linguateq'),
+                'save_translation' => __('Save Translation', 'linguateq'),
 
                 // v5.3.35: SEO и медиа строки для модала
-                'seo_title' => __('SEO Title', 'yourtranslater'),
-                'seo_title_desc' => __('SEO title from Yoast/RankMath (shown in search engine results)', 'yourtranslater'),
-                'seo_description' => __('Meta Description', 'yourtranslater'),
-                'seo_description_desc' => __('Brief description of the page shown in search results', 'yourtranslater'),
-                'og_title' => __('OG Title', 'yourtranslater'),
-                'og_title_desc' => __('Title shown when shared on Facebook, LinkedIn, etc.', 'yourtranslater'),
-                'og_title_desc_default' => __('Title shown when shared on Facebook, LinkedIn, etc. (defaults to SEO Title if empty)', 'yourtranslater'),
-                'og_description' => __('OG Description', 'yourtranslater'),
-                'og_description_desc' => __('Description shown when shared on social media', 'yourtranslater'),
-                'og_description_desc_default' => __('Description shown when shared on social media (defaults to Meta Description if empty)', 'yourtranslater'),
-                'open_graph_social' => __('Open Graph (Social Media)', 'yourtranslater'),
-                'auto_translate' => __('Auto-translate', 'yourtranslater'),
-                'add_media' => __('Add Media', 'yourtranslater'),
-                'save_media' => __('Save Media', 'yourtranslater'),
-                'enter_url_or_add_media' => __('Enter URL or use Add Media button', 'yourtranslater')
+                'seo_title' => __('SEO Title', 'linguateq'),
+                'seo_title_desc' => __('SEO title from Yoast/RankMath (shown in search engine results)', 'linguateq'),
+                'seo_description' => __('Meta Description', 'linguateq'),
+                'seo_description_desc' => __('Brief description of the page shown in search results', 'linguateq'),
+                'og_title' => __('OG Title', 'linguateq'),
+                'og_title_desc' => __('Title shown when shared on Facebook, LinkedIn, etc.', 'linguateq'),
+                'og_title_desc_default' => __('Title shown when shared on Facebook, LinkedIn, etc. (defaults to SEO Title if empty)', 'linguateq'),
+                'og_description' => __('OG Description', 'linguateq'),
+                'og_description_desc' => __('Description shown when shared on social media', 'linguateq'),
+                'og_description_desc_default' => __('Description shown when shared on social media (defaults to Meta Description if empty)', 'linguateq'),
+                'open_graph_social' => __('Open Graph (Social Media)', 'linguateq'),
+                'auto_translate' => __('Auto-translate', 'linguateq'),
+                'add_media' => __('Add Media', 'linguateq'),
+                'save_media' => __('Save Media', 'linguateq'),
+                'enter_url_or_add_media' => __('Enter URL or use Add Media button', 'linguateq')
             )
         ));
     }
@@ -712,13 +712,13 @@ class Lingua_Admin {
         check_ajax_referer('lingua_admin_nonce', 'nonce');
 
         if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error(__('Permission denied', 'yourtranslater'));
+            wp_send_json_error(__('Permission denied', 'linguateq'));
         }
 
         $api_key = isset($_POST['api_key']) ? sanitize_text_field($_POST['api_key']) : '';
 
         if (empty($api_key)) {
-            wp_send_json_error(__('API key is required', 'yourtranslater'));
+            wp_send_json_error(__('API key is required', 'linguateq'));
         }
 
         // Clear old Pro status cache before saving new key
@@ -731,7 +731,7 @@ class Lingua_Admin {
         // Save new API key
         update_option('lingua_middleware_api_key', $api_key);
 
-        wp_send_json_success(__('Settings saved', 'yourtranslater'));
+        wp_send_json_success(__('Settings saved', 'linguateq'));
     }
 
     /**
@@ -748,7 +748,7 @@ class Lingua_Admin {
         $api_key = get_option('lingua_middleware_api_key');
 
         if (empty($api_key)) {
-            wp_send_json_error(__('API key is required', 'yourtranslater'));
+            wp_send_json_error(__('API key is required', 'linguateq'));
         }
 
         $api = new Lingua_Middleware_API();
@@ -757,7 +757,7 @@ class Lingua_Admin {
         if (is_wp_error($result)) {
             wp_send_json_error($result->get_error_message());
         } else {
-            wp_send_json_success(__('API connection successful!', 'yourtranslater'));
+            wp_send_json_success(__('API connection successful!', 'linguateq'));
         }
     }
 
@@ -768,7 +768,7 @@ class Lingua_Admin {
         check_ajax_referer('lingua_admin_nonce', 'nonce');
 
         if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error(__('Permission denied', 'yourtranslater'));
+            wp_send_json_error(__('Permission denied', 'linguateq'));
         }
 
         $api_key = get_option('lingua_middleware_api_key');
@@ -798,7 +798,7 @@ class Lingua_Admin {
         check_ajax_referer('lingua_admin_nonce', 'nonce');
 
         if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error(__('Permission denied', 'yourtranslater'));
+            wp_send_json_error(__('Permission denied', 'linguateq'));
         }
 
         $api_key = get_option('lingua_middleware_api_key', '');
@@ -812,7 +812,7 @@ class Lingua_Admin {
         // Clear API key
         delete_option('lingua_middleware_api_key');
 
-        wp_send_json_success(__('License disconnected', 'yourtranslater'));
+        wp_send_json_success(__('License disconnected', 'linguateq'));
     }
 
     /**
@@ -836,7 +836,7 @@ class Lingua_Admin {
         
         
         if (!$target_lang) {
-            wp_send_json_error(__('Invalid parameters', 'yourtranslater'));
+            wp_send_json_error(__('Invalid parameters', 'linguateq'));
         }
         
         // Для главной страницы используем другую логику
@@ -846,12 +846,12 @@ class Lingua_Admin {
         }
         
         if (!$post_id) {
-            wp_send_json_error(__('No post ID provided', 'yourtranslater'));
+            wp_send_json_error(__('No post ID provided', 'linguateq'));
         }
         
         $post = get_post($post_id);
         if (!$post) {
-            wp_send_json_error(__('Post not found', 'yourtranslater'));
+            wp_send_json_error(__('Post not found', 'linguateq'));
         }
         
         
@@ -888,11 +888,11 @@ class Lingua_Admin {
             // Это требует специальной обработки, пока вернем заглушку
             
             wp_send_json_success(array(
-                'title' => get_bloginfo('name') . ' - ' . __('Front Page', 'yourtranslater'),
+                'title' => get_bloginfo('name') . ' - ' . __('Front Page', 'linguateq'),
                 'content' => array(
                     array(
                         'type' => 'text',
-                        'original' => __('Front page content extraction is not yet implemented. Please select a specific post or page to translate.', 'yourtranslater')
+                        'original' => __('Front page content extraction is not yet implemented. Please select a specific post or page to translate.', 'linguateq')
                     )
                 ),
                 'excerpt' => '',
@@ -940,10 +940,10 @@ class Lingua_Admin {
         $is_taxonomy = ($page_type === 'taxonomy' && $term_id > 0);
         $is_archive = ($page_type === 'post_type_archive');
         if (!$is_taxonomy && !$is_archive && !$post_id) {
-            wp_send_json_error(__('Invalid parameters: missing post_id or term_id', 'yourtranslater'));
+            wp_send_json_error(__('Invalid parameters: missing post_id or term_id', 'linguateq'));
         }
         if (!$language || empty($translations)) {
-            wp_send_json_error(__('Invalid parameters: missing language or translations', 'yourtranslater'));
+            wp_send_json_error(__('Invalid parameters: missing language or translations', 'linguateq'));
         }
         
         // LINGUA v2.1 unified pipeline: Process all translations through single JSON structure
@@ -1171,18 +1171,18 @@ class Lingua_Admin {
                     ));
                 } else {
                     wp_send_json_error(array(
-                        'message' => __('Failed to save unified translation', 'yourtranslater'),
+                        'message' => __('Failed to save unified translation', 'linguateq'),
                         'errors' => $save_results['errors'],
                         'save_results' => $save_results
                     ));
                 }
             } else {
-                wp_send_json_error(__('Invalid translation strings format', 'yourtranslater'));
+                wp_send_json_error(__('Invalid translation strings format', 'linguateq'));
             }
         }
         else {
             // v2 unified only - no legacy fallback
-            wp_send_json_error(__('Invalid unified translation format', 'yourtranslater'));
+            wp_send_json_error(__('Invalid unified translation format', 'linguateq'));
         }
     }
 
@@ -1375,12 +1375,12 @@ class Lingua_Admin {
         // Упрощенная проверка - показываем кнопку везде, где есть админ бар
         $wp_admin_bar->add_node(array(
             'id'    => 'lingua-translate-page',
-            'title' => '<span class="ab-icon dashicons-translation"></span>' . __('Translate Page', 'yourtranslater'),
+            'title' => '<span class="ab-icon dashicons-translation"></span>' . __('Translate Page', 'linguateq'),
             'href'  => '#',
             'meta'  => array(
                 'class' => 'lingua-admin-bar-translate-btn',
                 'onclick' => 'return false;',
-                'title' => __('Open translation manager for this page', 'yourtranslater')
+                'title' => __('Open translation manager for this page', 'linguateq')
             )
         ));
     }
@@ -1442,7 +1442,7 @@ class Lingua_Admin {
         $api = new Lingua_Middleware_API();
         if (!$api->is_pro_active()) {
             wp_send_json_error(array(
-                'message' => __('Auto-translation is a Pro feature. Please activate your license in Settings → License.', 'yourtranslater'),
+                'message' => __('Auto-translation is a Pro feature. Please activate your license in Settings → License.', 'linguateq'),
                 'upgrade_required' => true
             ));
             return;
@@ -1454,7 +1454,7 @@ class Lingua_Admin {
         $target_lang = isset($_POST['target_lang']) ? sanitize_text_field($_POST['target_lang']) : '';
 
         if (empty($text) || empty($target_lang)) {
-            wp_send_json_error(__('Invalid parameters for translation', 'yourtranslater'));
+            wp_send_json_error(__('Invalid parameters for translation', 'linguateq'));
         }
 
         // Проверяем наличие HTML тегов и используем соответствующий метод перевода
@@ -1490,7 +1490,7 @@ class Lingua_Admin {
         $api = new Lingua_Middleware_API();
         if (!$api->is_pro_active()) {
             wp_send_json_error(array(
-                'message' => __('Auto-translation is a Pro feature.', 'yourtranslater'),
+                'message' => __('Auto-translation is a Pro feature.', 'linguateq'),
                 'upgrade_required' => true
             ));
             return;
@@ -1501,7 +1501,7 @@ class Lingua_Admin {
         $source_lang = isset($_POST['source_lang']) ? sanitize_text_field($_POST['source_lang']) : 'auto';
 
         if (empty($texts) || empty($target_lang)) {
-            wp_send_json_error(__('Invalid parameters', 'yourtranslater'));
+            wp_send_json_error(__('Invalid parameters', 'linguateq'));
             return;
         }
 
@@ -1534,7 +1534,7 @@ class Lingua_Admin {
         $limit = isset($_POST['limit']) ? intval($_POST['limit']) : 10;
         
         if (empty($post_types) || empty($target_languages)) {
-            add_settings_error('lingua_bulk', 'missing_params', __('Please select post types and target languages.', 'yourtranslater'));
+            add_settings_error('lingua_bulk', 'missing_params', __('Please select post types and target languages.', 'linguateq'));
             return;
         }
         
@@ -1566,7 +1566,7 @@ class Lingua_Admin {
         }
         
         add_settings_error('lingua_bulk', 'success',
-            sprintf(__('Scheduled %d translations for %d posts.', 'yourtranslater'), $scheduled_count, count($posts)),
+            sprintf(__('Scheduled %d translations for %d posts.', 'linguateq'), $scheduled_count, count($posts)),
             'updated'
         );
     }
@@ -2412,7 +2412,7 @@ class Lingua_Admin {
         check_ajax_referer('lingua_test_connection', 'nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Unauthorized', 'yourtranslater'));
+            wp_send_json_error(__('Unauthorized', 'linguateq'));
             return;
         }
 
@@ -2426,7 +2426,7 @@ class Lingua_Admin {
         } else {
             // v5.2.157: test_connection() already saved status via update_option() on success
             // No need to overwrite with set_transient() - this was causing conflicts
-            wp_send_json_success(__('Connection successful! API is working correctly.', 'yourtranslater'));
+            wp_send_json_success(__('Connection successful! API is working correctly.', 'linguateq'));
         }
     }
 
@@ -2436,12 +2436,12 @@ class Lingua_Admin {
      */
     public function ajax_save_string_translation() {
         if (!wp_verify_nonce($_POST['nonce'], 'lingua_admin_nonce')) {
-            wp_send_json_error(__('Security check failed', 'yourtranslater'));
+            wp_send_json_error(__('Security check failed', 'linguateq'));
             return;
         }
 
         if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error(__('Unauthorized', 'yourtranslater'));
+            wp_send_json_error(__('Unauthorized', 'linguateq'));
             return;
         }
 
@@ -2449,7 +2449,7 @@ class Lingua_Admin {
         $translation = isset($_POST['translation']) ? wp_kses_post($_POST['translation']) : '';
 
         if (!$string_id) {
-            wp_send_json_error(__('Invalid string ID', 'yourtranslater'));
+            wp_send_json_error(__('Invalid string ID', 'linguateq'));
             return;
         }
 
@@ -2469,9 +2469,9 @@ class Lingua_Admin {
         );
 
         if ($result !== false) {
-            wp_send_json_success(__('Translation saved', 'yourtranslater'));
+            wp_send_json_success(__('Translation saved', 'linguateq'));
         } else {
-            wp_send_json_error(__('Failed to save translation', 'yourtranslater'));
+            wp_send_json_error(__('Failed to save translation', 'linguateq'));
         }
     }
 
@@ -2481,12 +2481,12 @@ class Lingua_Admin {
      */
     public function ajax_get_plural_forms() {
         if (!wp_verify_nonce($_POST['nonce'], 'lingua_admin_nonce')) {
-            wp_send_json_error(__('Security check failed', 'yourtranslater'));
+            wp_send_json_error(__('Security check failed', 'linguateq'));
             return;
         }
 
         if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error(__('Unauthorized', 'yourtranslater'));
+            wp_send_json_error(__('Unauthorized', 'linguateq'));
             return;
         }
 
@@ -2495,7 +2495,7 @@ class Lingua_Admin {
         $original = isset($_POST['original']) ? wp_unslash($_POST['original']) : '';
 
         if (!$language || empty($original)) {
-            wp_send_json_error(__('Missing parameters', 'yourtranslater'));
+            wp_send_json_error(__('Missing parameters', 'linguateq'));
             return;
         }
 
@@ -2579,7 +2579,7 @@ class Lingua_Admin {
         }
 
         if (empty($forms)) {
-            wp_send_json_error(__('No plural forms found', 'yourtranslater'));
+            wp_send_json_error(__('No plural forms found', 'linguateq'));
             return;
         }
 
@@ -2602,12 +2602,12 @@ class Lingua_Admin {
      */
     public function ajax_save_plural_translations() {
         if (!wp_verify_nonce($_POST['nonce'], 'lingua_admin_nonce')) {
-            wp_send_json_error(__('Security check failed', 'yourtranslater'));
+            wp_send_json_error(__('Security check failed', 'linguateq'));
             return;
         }
 
         if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error(__('Unauthorized', 'yourtranslater'));
+            wp_send_json_error(__('Unauthorized', 'linguateq'));
             return;
         }
 
@@ -2615,7 +2615,7 @@ class Lingua_Admin {
         $forms = json_decode($forms_json, true);
 
         if (empty($forms) || !is_array($forms)) {
-            wp_send_json_error(__('Invalid forms data', 'yourtranslater'));
+            wp_send_json_error(__('Invalid forms data', 'linguateq'));
             return;
         }
 
@@ -2648,7 +2648,7 @@ class Lingua_Admin {
         }
 
         wp_send_json_success(array(
-            'message' => sprintf(__('Saved %d translations', 'yourtranslater'), $saved),
+            'message' => sprintf(__('Saved %d translations', 'linguateq'), $saved),
             'saved' => $saved
         ));
     }

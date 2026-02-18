@@ -944,7 +944,7 @@ class Lingua_Translation_Render {
         if ($components_loaded) {
             echo '<div class="notice notice-success is-dismissible" data-notice="lingua-v2-upgrade">';
             echo '<p><strong>Linguateq:</strong> ';
-            echo esc_html__('New architecture v2.0 is active! Enhanced performance and better string capture are now available.', 'yourtranslater');
+            echo esc_html__('New architecture v2.0 is active! Enhanced performance and better string capture are now available.', 'linguateq');
             echo '</p>';
             echo '</div>';
 
