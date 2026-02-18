@@ -151,7 +151,7 @@ class Lingua_Middleware_API {
         if (empty($this->api_key) || empty($this->api_url)) {
             return new WP_Error(
                 'missing_credentials',
-                __('API key not configured. Please configure Middleware API in Settings → YourTranslate.', 'yourtranslater')
+                __('API key not configured. Please configure Middleware API in Settings → Linguateq.', 'yourtranslater')
             );
         }
 

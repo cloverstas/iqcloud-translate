@@ -98,8 +98,8 @@ class Lingua_Admin {
         // Главная страница меню плагина в админке WordPress
         // Используем права 'edit_posts' для доступа редакторов к переводам
         $hook = add_menu_page(
-            __('YourTranslate Settings', 'yourtranslater'),    // Заголовок страницы
-            __('YourTranslate', 'yourtranslater'),             // Название в меню
+            __('Linguateq Settings', 'yourtranslater'),    // Заголовок страницы
+            __('Linguateq', 'yourtranslater'),             // Название в меню
             'manage_options',                   // Права доступа - стандарт для настроек плагина
             'lingua-settings',                  // Slug страницы
             array($this, 'display_settings_page'), // Callback функция

@@ -1,18 +1,18 @@
-=== YourTranslate – Easy Website Translation ===
+=== Linguateq — Site Translation Toolkit ===
 Contributors: iqcloud
 Tags: translation, multilingual, language, translate, localization, woocommerce, seo, rtl, multi-language
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Powerful multilingual translation solution with visual editor and WooCommerce support.
+Powerful multilingual translation toolkit with visual editor and WooCommerce support.
 
 == Description ==
 
-YourTranslate is a modern translation plugin that makes your WordPress site multilingual with ease. Translate any content directly from the frontend using a convenient visual editor.
+Linguateq is a modern translation plugin that makes your WordPress site multilingual with ease. Translate any content directly from the frontend using a convenient visual editor.
 
 = Key Features =
 
@@ -30,7 +30,7 @@ YourTranslate is a modern translation plugin that makes your WordPress site mult
 = How It Works =
 
 1. Install and activate the plugin
-2. Add your target languages in Settings > YourTranslate
+2. Add your target languages in Settings > Linguateq
 3. Visit any page on the frontend while logged in as admin
 4. Click "Translate Page" in the admin bar
 5. Translate content in the visual editor panel
@@ -45,7 +45,7 @@ Upgrade to Pro for additional features:
 * **Translation Queue** - Background processing for large sites
 * **Priority Support** - Get help when you need it
 
-[Get YourTranslate Pro](https://translate.yournewsite.ru)
+[Get Linguateq Pro](https://translate.yournewsite.ru)
 
 = Requirements =
 
@@ -55,9 +55,9 @@ Upgrade to Pro for additional features:
 
 == Installation ==
 
-1. Upload the `yourtranslate` folder to `/wp-content/plugins/`
+1. Upload the `linguateq` folder to `/wp-content/plugins/`
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > YourTranslate to configure your languages
+3. Go to Settings > Linguateq to configure your languages
 4. Add a Language Switcher to your navigation menu (Appearance > Menus)
 5. Start translating your content!
 
@@ -65,7 +65,7 @@ Upgrade to Pro for additional features:
 
 = Does this plugin work with WooCommerce? =
 
-Yes! YourTranslate has full WooCommerce support including product translations, cart, checkout, and all e-commerce strings.
+Yes! Linguateq has full WooCommerce support including product translations, cart, checkout, and all e-commerce strings.
 
 = Can I translate theme strings? =
 
@@ -81,15 +81,15 @@ No, translations are cached and served efficiently. The visual editor only loads
 
 = Can I use automatic translation? =
 
-Yes, with YourTranslate Pro you get access to automatic translation via API.
+Yes, with Linguateq Pro you get access to automatic translation via API.
 
 = How does the language switcher work? =
 
-The plugin adds a "Language Switcher" option to your WordPress menus. Go to Appearance > Menus, and you'll see the YourTranslate language switcher available to add to any menu.
+The plugin adds a "Language Switcher" option to your WordPress menus. Go to Appearance > Menus, and you'll see the Linguateq language switcher available to add to any menu.
 
 = Does it work with page builders? =
 
-Yes, YourTranslate works with Elementor, WPBakery, Gutenberg, and other page builders. The DOM-based extraction captures all visible content regardless of how it was created.
+Yes, Linguateq works with Elementor, WPBakery, Gutenberg, and other page builders. The DOM-based extraction captures all visible content regardless of how it was created.
 
 = Can I translate custom post types? =
 
@@ -109,9 +109,11 @@ Your translations are stored in the database and will be preserved. If you react
 
 == Changelog ==
 
+= 1.0.4 =
+* Renamed plugin to Linguateq — Site Translation Toolkit
+
 = 1.0.3 =
 * Fix URL attributes being translated in image filenames
-* Renamed plugin to YourTranslate
 
 = 1.0.2 =
 * Removed deprecated load_plugin_textdomain() call (handled by WordPress.org since WP 4.6)
@@ -132,11 +134,14 @@ Your translations are stored in the database and will be preserved. If you react
 
 == Upgrade Notice ==
 
+= 1.0.4 =
+Plugin renamed to Linguateq — Site Translation Toolkit.
+
 = 1.0.3 =
-Plugin renamed to YourTranslate. Updated compatibility with WordPress 6.9.
+Updated compatibility with WordPress 6.9.
 
 = 1.0.0 =
-Initial release of YourTranslate - make your WordPress site multilingual!
+Initial release of Linguateq - make your WordPress site multilingual!
 
 == Third Party Services ==
 

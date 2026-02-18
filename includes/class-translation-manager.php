@@ -1569,7 +1569,7 @@ class Lingua_Translation_Manager {
         echo '<script type="text/javascript">
         (function() {
             // Only change title if it still shows default
-            if (document.title === "YourTranslate") {
+            if (document.title === "Linguateq") {
                 document.title = "' . $translated_title . '";
             }
         })();
