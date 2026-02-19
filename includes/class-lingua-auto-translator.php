@@ -863,7 +863,7 @@ class Lingua_Auto_Translator {
         $theme_domain = $theme->get('TextDomain');
 
         foreach ($l10n as $domain => $mo) {
-            if ($domain === 'linguateq') {
+            if ($domain === 'iqcloud-translate') {
                 continue;
             }
 
@@ -911,13 +911,13 @@ class Lingua_Auto_Translator {
      */
     private static function get_domain_label($domain, $source) {
         if ($domain === 'default') {
-            return __('WordPress Core', 'linguateq');
+            return __('WordPress Core', 'iqcloud-translate');
         }
 
         $source_labels = array(
-            'wordpress' => __('Core', 'linguateq'),
-            'theme' => __('Theme', 'linguateq'),
-            'plugin' => __('Plugin', 'linguateq')
+            'wordpress' => __('Core', 'iqcloud-translate'),
+            'theme' => __('Theme', 'iqcloud-translate'),
+            'plugin' => __('Plugin', 'iqcloud-translate')
         );
 
         $source_label = $source_labels[$source] ?? '';

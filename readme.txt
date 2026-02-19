@@ -1,4 +1,4 @@
-=== Linguateq — Site Translation Toolkit ===
+=== IQCloud Translate ===
 Contributors: iqcloud
 Tags: translation, multilingual, language, translate, localization, woocommerce, seo, rtl, multi-language
 Requires at least: 5.0
@@ -12,7 +12,7 @@ Powerful multilingual translation toolkit with visual editor and WooCommerce sup
 
 == Description ==
 
-Linguateq is a modern translation plugin that makes your WordPress site multilingual with ease. Translate any content directly from the frontend using a convenient visual editor.
+IQCloud Translate is a modern translation plugin that makes your WordPress site multilingual with ease. Translate any content directly from the frontend using a convenient visual editor.
 
 = Key Features =
 
@@ -30,7 +30,7 @@ Linguateq is a modern translation plugin that makes your WordPress site multilin
 = How It Works =
 
 1. Install and activate the plugin
-2. Add your target languages in Settings > Linguateq
+2. Add your target languages in Settings > IQCloud Translate
 3. Visit any page on the frontend while logged in as admin
 4. Click "Translate Page" in the admin bar
 5. Translate content in the visual editor panel
@@ -45,7 +45,7 @@ Upgrade to Pro for additional features:
 * **Translation Queue** - Background processing for large sites
 * **Priority Support** - Get help when you need it
 
-[Get Linguateq Pro](https://translate.yournewsite.ru)
+[Get IQCloud Translate Pro](https://translate.yournewsite.ru)
 
 = Requirements =
 
@@ -55,9 +55,9 @@ Upgrade to Pro for additional features:
 
 == Installation ==
 
-1. Upload the `linguateq` folder to `/wp-content/plugins/`
+1. Upload the `iqcloud-translate` folder to `/wp-content/plugins/`
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > Linguateq to configure your languages
+3. Go to Settings > IQCloud Translate to configure your languages
 4. Add a Language Switcher to your navigation menu (Appearance > Menus)
 5. Start translating your content!
 
@@ -65,7 +65,7 @@ Upgrade to Pro for additional features:
 
 = Does this plugin work with WooCommerce? =
 
-Yes! Linguateq has full WooCommerce support including product translations, cart, checkout, and all e-commerce strings.
+Yes! IQCloud Translate has full WooCommerce support including product translations, cart, checkout, and all e-commerce strings.
 
 = Can I translate theme strings? =
 
@@ -81,15 +81,15 @@ No, translations are cached and served efficiently. The visual editor only loads
 
 = Can I use automatic translation? =
 
-Yes, with Linguateq Pro you get access to automatic translation via API.
+Yes, with IQCloud Translate Pro you get access to automatic translation via API.
 
 = How does the language switcher work? =
 
-The plugin adds a "Language Switcher" option to your WordPress menus. Go to Appearance > Menus, and you'll see the Linguateq language switcher available to add to any menu.
+The plugin adds a "Language Switcher" option to your WordPress menus. Go to Appearance > Menus, and you'll see the IQCloud Translate language switcher available to add to any menu.
 
 = Does it work with page builders? =
 
-Yes, Linguateq works with Elementor, WPBakery, Gutenberg, and other page builders. The DOM-based extraction captures all visible content regardless of how it was created.
+Yes, IQCloud Translate works with Elementor, WPBakery, Gutenberg, and other page builders. The DOM-based extraction captures all visible content regardless of how it was created.
 
 = Can I translate custom post types? =
 
@@ -110,7 +110,7 @@ Your translations are stored in the database and will be preserved. If you react
 == Changelog ==
 
 = 1.0.4 =
-* Renamed plugin to Linguateq — Site Translation Toolkit
+* Renamed plugin to IQCloud Translate — Site Translation Toolkit
 
 = 1.0.3 =
 * Fix URL attributes being translated in image filenames
@@ -135,13 +135,13 @@ Your translations are stored in the database and will be preserved. If you react
 == Upgrade Notice ==
 
 = 1.0.4 =
-Plugin renamed to Linguateq — Site Translation Toolkit.
+Plugin renamed to IQCloud Translate — Site Translation Toolkit.
 
 = 1.0.3 =
 Updated compatibility with WordPress 6.9.
 
 = 1.0.0 =
-Initial release of Linguateq - make your WordPress site multilingual!
+Initial release of IQCloud Translate - make your WordPress site multilingual!
 
 == Third Party Services ==
 

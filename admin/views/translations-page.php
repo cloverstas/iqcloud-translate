@@ -59,14 +59,14 @@ $default_language = get_option('lingua_default_language', 'ru');
 ?>
 
 <div class="wrap">
-    <h1 class="wp-heading-inline"><?php _e('Manage Translations', 'linguateq'); ?></h1>
-    <a href="#" class="page-title-action" id="bulk-translate-posts"><?php _e('Bulk Translate', 'linguateq'); ?></a>
+    <h1 class="wp-heading-inline"><?php _e('Manage Translations', 'iqcloud-translate'); ?></h1>
+    <a href="#" class="page-title-action" id="bulk-translate-posts"><?php _e('Bulk Translate', 'iqcloud-translate'); ?></a>
     
     <!-- Statistics Cards -->
     <div class="lingua-stats-row">
         <div class="lingua-stat-card">
             <div class="lingua-stat-number"><?php echo esc_html($stats['total']); ?></div>
-            <div class="lingua-stat-label"><?php _e('Total Translations', 'linguateq'); ?></div>
+            <div class="lingua-stat-label"><?php _e('Total Translations', 'iqcloud-translate'); ?></div>
         </div>
         
         <?php foreach ($stats['by_language'] as $lang => $count): ?>
@@ -86,13 +86,13 @@ $default_language = get_option('lingua_default_language', 'ru');
     <div class="tablenav top">
         <div class="alignleft actions">
             <select name="post_type" id="filter-by-post-type">
-                <option value="any" <?php selected($post_type_filter, 'any'); ?>><?php _e('All Post Types', 'linguateq'); ?></option>
-                <option value="post" <?php selected($post_type_filter, 'post'); ?>><?php _e('Posts', 'linguateq'); ?></option>
-                <option value="page" <?php selected($post_type_filter, 'page'); ?>><?php _e('Pages', 'linguateq'); ?></option>
+                <option value="any" <?php selected($post_type_filter, 'any'); ?>><?php _e('All Post Types', 'iqcloud-translate'); ?></option>
+                <option value="post" <?php selected($post_type_filter, 'post'); ?>><?php _e('Posts', 'iqcloud-translate'); ?></option>
+                <option value="page" <?php selected($post_type_filter, 'page'); ?>><?php _e('Pages', 'iqcloud-translate'); ?></option>
             </select>
             
             <select name="language" id="filter-by-language">
-                <option value=""><?php _e('All Languages', 'linguateq'); ?></option>
+                <option value=""><?php _e('All Languages', 'iqcloud-translate'); ?></option>
                 <?php foreach ($languages as $code => $lang): ?>
                     <option value="<?php echo esc_attr($code); ?>" <?php selected($language_filter, $code); ?>>
                         <?php echo isset($lang['flag']) ? $lang['flag'] . ' ' : ''; ?>
@@ -101,7 +101,7 @@ $default_language = get_option('lingua_default_language', 'ru');
                 <?php endforeach; ?>
             </select>
             
-            <button type="button" class="button" id="filter-posts"><?php _e('Filter', 'linguateq'); ?></button>
+            <button type="button" class="button" id="filter-posts"><?php _e('Filter', 'iqcloud-translate'); ?></button>
         </div>
     </div>
 
@@ -113,11 +113,11 @@ $default_language = get_option('lingua_default_language', 'ru');
                     <td class="manage-column column-cb check-column">
                         <input type="checkbox" id="cb-select-all" />
                     </td>
-                    <th class="manage-column column-title"><?php _e('Title', 'linguateq'); ?></th>
-                    <th class="manage-column column-type"><?php _e('Type', 'linguateq'); ?></th>
-                    <th class="manage-column column-date"><?php _e('Date', 'linguateq'); ?></th>
-                    <th class="manage-column column-translations"><?php _e('Translations', 'linguateq'); ?></th>
-                    <th class="manage-column column-actions"><?php _e('Actions', 'linguateq'); ?></th>
+                    <th class="manage-column column-title"><?php _e('Title', 'iqcloud-translate'); ?></th>
+                    <th class="manage-column column-type"><?php _e('Type', 'iqcloud-translate'); ?></th>
+                    <th class="manage-column column-date"><?php _e('Date', 'iqcloud-translate'); ?></th>
+                    <th class="manage-column column-translations"><?php _e('Translations', 'iqcloud-translate'); ?></th>
+                    <th class="manage-column column-actions"><?php _e('Actions', 'iqcloud-translate'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -143,13 +143,13 @@ $default_language = get_option('lingua_default_language', 'ru');
                                 </strong>
                                 <div class="row-actions">
                                     <span class="edit">
-                                        <a href="<?php echo esc_url(get_edit_post_link($post_id)); ?>"><?php _e('Edit', 'linguateq'); ?></a> |
+                                        <a href="<?php echo esc_url(get_edit_post_link($post_id)); ?>"><?php _e('Edit', 'iqcloud-translate'); ?></a> |
                                     </span>
                                     <span class="view">
-                                        <a href="<?php echo esc_url(get_permalink($post_id)); ?>" target="_blank"><?php _e('View', 'linguateq'); ?></a> |
+                                        <a href="<?php echo esc_url(get_permalink($post_id)); ?>" target="_blank"><?php _e('View', 'iqcloud-translate'); ?></a> |
                                     </span>
                                     <span class="translate">
-                                        <a href="#" class="lingua-translate-post" data-post-id="<?php echo esc_attr($post_id); ?>"><?php _e('Translate', 'linguateq'); ?></a>
+                                        <a href="#" class="lingua-translate-post" data-post-id="<?php echo esc_attr($post_id); ?>"><?php _e('Translate', 'iqcloud-translate'); ?></a>
                                     </span>
                                 </div>
                             </td>
@@ -172,7 +172,7 @@ $default_language = get_option('lingua_default_language', 'ru');
                             </td>
                             <td class="column-actions">
                                 <button type="button" class="button button-small lingua-translate-post" data-post-id="<?php echo esc_attr($post_id); ?>">
-                                    <?php _e('Translate', 'linguateq'); ?>
+                                    <?php _e('Translate', 'iqcloud-translate'); ?>
                                 </button>
                             </td>
                         </tr>
@@ -181,8 +181,8 @@ $default_language = get_option('lingua_default_language', 'ru');
                 <?php else: ?>
                     <tr>
                         <td colspan="6" style="text-align: center; padding: 50px;">
-                            <p><?php _e('No posts found.', 'linguateq'); ?></p>
-                            <p><a href="<?php echo esc_url(admin_url('post-new.php')); ?>" class="button button-primary"><?php _e('Create your first post', 'linguateq'); ?></a></p>
+                            <p><?php _e('No posts found.', 'iqcloud-translate'); ?></p>
+                            <p><a href="<?php echo esc_url(admin_url('post-new.php')); ?>" class="button button-primary"><?php _e('Create your first post', 'iqcloud-translate'); ?></a></p>
                         </td>
                     </tr>
                 <?php endif; ?>
@@ -193,11 +193,11 @@ $default_language = get_option('lingua_default_language', 'ru');
         <div class="tablenav bottom">
             <div class="alignleft actions bulkactions">
                 <select name="action">
-                    <option value="-1"><?php _e('Bulk Actions', 'linguateq'); ?></option>
-                    <option value="bulk_translate"><?php _e('Translate Selected', 'linguateq'); ?></option>
-                    <option value="bulk_delete"><?php _e('Delete Translations', 'linguateq'); ?></option>
+                    <option value="-1"><?php _e('Bulk Actions', 'iqcloud-translate'); ?></option>
+                    <option value="bulk_translate"><?php _e('Translate Selected', 'iqcloud-translate'); ?></option>
+                    <option value="bulk_delete"><?php _e('Delete Translations', 'iqcloud-translate'); ?></option>
                 </select>
-                <input type="submit" class="button action" value="<?php _e('Apply', 'linguateq'); ?>" />
+                <input type="submit" class="button action" value="<?php _e('Apply', 'iqcloud-translate'); ?>" />
             </div>
         </div>
     </form>

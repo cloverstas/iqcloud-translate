@@ -114,18 +114,18 @@ add_action('admin_init', function() {
     
     add_settings_section(
         'lingua_string_capture',
-        __('String Capture Settings', 'linguateq'),
+        __('String Capture Settings', 'iqcloud-translate'),
         null,
         'lingua-settings'
     );
     
     add_settings_field(
         'min_string_length',
-        __('Minimum String Length', 'linguateq'),
+        __('Minimum String Length', 'iqcloud-translate'),
         function() {
             $settings = Lingua_String_Capture_Settings::get_settings();
             echo '<input type="number" name="lingua_string_capture_settings[min_string_length]" value="' . $settings['min_string_length'] . '" min="1" max="50">';
-            echo '<p class="description">' . __('Minimum number of characters for a string to be captured', 'linguateq') . '</p>';
+            echo '<p class="description">' . __('Minimum number of characters for a string to be captured', 'iqcloud-translate') . '</p>';
         },
         'lingua-settings',
         'lingua_string_capture'
@@ -133,11 +133,11 @@ add_action('admin_init', function() {
     
     add_settings_field(
         'max_string_length',
-        __('Maximum String Length', 'linguateq'),
+        __('Maximum String Length', 'iqcloud-translate'),
         function() {
             $settings = Lingua_String_Capture_Settings::get_settings();
             echo '<input type="number" name="lingua_string_capture_settings[max_string_length]" value="' . $settings['max_string_length'] . '" min="50" max="5000">';
-            echo '<p class="description">' . __('Maximum number of characters for a string to be captured', 'linguateq') . '</p>';
+            echo '<p class="description">' . __('Maximum number of characters for a string to be captured', 'iqcloud-translate') . '</p>';
         },
         'lingua-settings',
         'lingua_string_capture'
@@ -145,11 +145,11 @@ add_action('admin_init', function() {
     
     add_settings_field(
         'skip_admin_bar',
-        __('Skip Admin Bar', 'linguateq'),
+        __('Skip Admin Bar', 'iqcloud-translate'),
         function() {
             $settings = Lingua_String_Capture_Settings::get_settings();
             echo '<input type="checkbox" name="lingua_string_capture_settings[skip_admin_bar]" value="1" ' . checked($settings['skip_admin_bar'], true, false) . '>';
-            echo '<p class="description">' . __('Do not capture strings from WordPress admin bar', 'linguateq') . '</p>';
+            echo '<p class="description">' . __('Do not capture strings from WordPress admin bar', 'iqcloud-translate') . '</p>';
         },
         'lingua-settings',
         'lingua_string_capture'

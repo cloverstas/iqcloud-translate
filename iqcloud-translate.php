@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name: Linguateq — Site Translation Toolkit
+ * Plugin Name: IQCloud Translate
  * Description: Powerful multilingual translation toolkit with visual editor, auto-translation, and WooCommerce support.
  * Version: 1.0.4
  * Author: YourNewSite
  * Author URI: https://yournewsite.ru
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: linguateq
+ * Text Domain: iqcloud-translate
  * Domain Path: /languages
  */
 
@@ -151,7 +151,7 @@ require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-auto-translator.php'; //
 add_filter('cron_schedules', function($schedules) {
     $schedules['every_minute'] = array(
         'interval' => 60,
-        'display' => __('Every Minute', 'linguateq')
+        'display' => __('Every Minute', 'iqcloud-translate')
     );
     return $schedules;
 });

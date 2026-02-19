@@ -1,4 +1,4 @@
-# Linguateq — Site Translation Toolkit
+# IQCloud Translate — Site Translation Toolkit
 
 Powerful multilingual translation toolkit for WordPress with visual editor, auto-translation, and WooCommerce support.
 
@@ -18,9 +18,9 @@ Powerful multilingual translation toolkit for WordPress with visual editor, auto
 ## Installation
 
 1. Download the plugin
-2. Upload to `/wp-content/plugins/linguateq/`
+2. Upload to `/wp-content/plugins/iqcloud-translate/`
 3. Activate through WordPress admin
-4. Configure languages in Settings > Linguateq
+4. Configure languages in Settings > IQCloud Translate
 5. Start translating!
 
 ## Requirements

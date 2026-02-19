@@ -171,7 +171,7 @@ class Lingua_Gettext_Scan {
             'completed' => false,
             'progress' => round(($paths_completed / $total_paths) * 100),
             'progress_message' => sprintf(
-                __('Scanning item %1$d of %2$d...', 'linguateq'),
+                __('Scanning item %1$d of %2$d...', 'iqcloud-translate'),
                 $paths_completed,
                 $total_paths
             ),
@@ -181,7 +181,7 @@ class Lingua_Gettext_Scan {
         if ($paths_completed >= $total_paths) {
             delete_option('lingua_gettext_scan_progress');
             $return_array['completed'] = true;
-            $return_array['progress_message'] = __('Scan completed!', 'linguateq');
+            $return_array['progress_message'] = __('Scan completed!', 'iqcloud-translate');
         } else {
             update_option('lingua_gettext_scan_progress', array(
                 'paths_completed' => $paths_completed,

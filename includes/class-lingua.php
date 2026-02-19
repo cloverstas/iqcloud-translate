@@ -675,12 +675,12 @@ class Lingua {
         // Добавляем кнопку (data-атрибуты добавим через JavaScript)
         $wp_admin_bar->add_node(array(
             'id'    => 'lingua-translate-page',
-            'title' => '<span class="ab-icon dashicons-translation"></span>' . __('Translate Page', 'linguateq'),
+            'title' => '<span class="ab-icon dashicons-translation"></span>' . __('Translate Page', 'iqcloud-translate'),
             'href'  => '#lingua-translate-' . $post_id, // Добавляем post ID в href как альтернативу
             'meta'  => array(
                 'class' => 'lingua-admin-bar-translate-btn',
                 'onclick' => 'return false;',
-                'title' => __('Open translation manager for this page', 'linguateq')
+                'title' => __('Open translation manager for this page', 'iqcloud-translate')
             )
         ));
     }
@@ -1193,7 +1193,7 @@ class Lingua {
         // Check Pro status
         $api = new Lingua_Middleware_API();
         if (!$api->is_pro_active()) {
-            wp_send_json_error(__('Pro license required for auto-translation', 'linguateq'));
+            wp_send_json_error(__('Pro license required for auto-translation', 'iqcloud-translate'));
             return;
         }
 
@@ -1220,7 +1220,7 @@ class Lingua {
 
         wp_send_json_success(array(
             'added' => $added,
-            'message' => sprintf(__('Added %d items to translation queue', 'linguateq'), $added)
+            'message' => sprintf(__('Added %d items to translation queue', 'iqcloud-translate'), $added)
         ));
     }
 
@@ -1240,7 +1240,7 @@ class Lingua {
 
         wp_send_json_success(array(
             'paused' => true,
-            'message' => __('Queue processing paused', 'linguateq')
+            'message' => __('Queue processing paused', 'iqcloud-translate')
         ));
     }
 
@@ -1264,7 +1264,7 @@ class Lingua {
 
         wp_send_json_success(array(
             'paused' => false,
-            'message' => __('Queue processing resumed', 'linguateq')
+            'message' => __('Queue processing resumed', 'iqcloud-translate')
         ));
     }
 
@@ -1283,7 +1283,7 @@ class Lingua {
 
         wp_send_json_success(array(
             'retried' => $count,
-            'message' => sprintf(__('Reset %d failed items for retry', 'linguateq'), $count)
+            'message' => sprintf(__('Reset %d failed items for retry', 'iqcloud-translate'), $count)
         ));
     }
 
@@ -1301,7 +1301,7 @@ class Lingua {
         // Check Pro status
         $api = new Lingua_Middleware_API();
         if (!$api->is_pro_active()) {
-            wp_send_json_error(__('Pro license required', 'linguateq'));
+            wp_send_json_error(__('Pro license required', 'iqcloud-translate'));
             return;
         }
 
@@ -1311,7 +1311,7 @@ class Lingua {
         if (!$item) {
             wp_send_json_success(array(
                 'processed' => false,
-                'message' => __('No items in queue', 'linguateq'),
+                'message' => __('No items in queue', 'iqcloud-translate'),
                 'stats' => Lingua_Translation_Queue::get_stats()
             ));
             return;

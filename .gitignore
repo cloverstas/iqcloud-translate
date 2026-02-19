@@ -49,6 +49,7 @@ json.html
 # Claude / AI context
 .claude/
 
-# Old plugin files (renamed to linguateq.php)
+# Old plugin files (renamed to iqcloud-translate.php)
 yourtranslate.php
 yourtranslater.php
+linguateq.php
