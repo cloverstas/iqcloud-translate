@@ -2123,6 +2123,53 @@ class Lingua_Output_Buffer {
     }
 
     /**
+     * v5.6.0: Strip HTML tags for plaintext matching (TranslatePress-inspired approach)
+     *
+     * Instead of normalizing HTML variations (<br> vs <br />, attribute order, etc.),
+     * we strip ALL HTML tags and compare plain text only. This makes matching robust
+     * against any HTML variation while preserving the original HTML structure.
+     *
+     * @param string $text Text potentially containing HTML
+     * @return string Lowercase plaintext for matching (no HTML tags)
+     */
+    private function strip_tags_for_matching($text) {
+        if (empty($text) || !is_string($text)) {
+            return '';
+        }
+
+        // Step 1: HTML entity decode
+        $plain = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        // Step 2: Replace <br> tags with space (they represent line breaks in content)
+        $plain = preg_replace('/<br\s*\/?\s*>/i', ' ', $plain);
+
+        // Step 3: Strip all remaining HTML tags
+        $plain = wp_strip_all_tags($plain);
+
+        // Step 4: Normalize &nbsp;
+        $plain = str_replace("\xC2\xA0", ' ', $plain);
+
+        // Step 5: Normalize ё→е
+        $plain = str_replace(array('ё', 'Ё'), array('е', 'Е'), $plain);
+
+        // Step 6: Curly quotes → straight
+        $plain = str_replace(array("\xE2\x80\x9C", "\xE2\x80\x9D", "\xE2\x80\x9F", "\xE2\x80\x9E", '«', '»'), '"', $plain);
+        $plain = str_replace(array("\xE2\x80\x98", "\xE2\x80\x99", "\xE2\x80\x9B", "\xE2\x80\xB9", "\xE2\x80\xBA"), "'", $plain);
+
+        // Step 7: Dashes
+        $plain = str_replace(array('–', '—', '‐'), '-', $plain);
+
+        // Step 8: Ellipsis
+        $plain = str_replace('…', '...', $plain);
+
+        // Step 9: Collapse multiple spaces to single space
+        $plain = preg_replace('/\s+/', ' ', $plain);
+
+        // Step 10: Trim and lowercase
+        return mb_strtolower(trim($plain), 'UTF-8');
+    }
+
+    /**
      * v5.2.183: Check if inline element is inside a content block
      * Used during translation replacement to avoid translating inline elements separately
      *
@@ -2310,6 +2357,13 @@ class Lingua_Output_Buffer {
         // Ellipsis
         $html_string = str_replace('…', '...', $html_string);
 
+        // v5.5.2: Normalize <br> tags to match extraction format
+        // DOM renders <br> but extractor stores <br /> — must match for translations to apply
+        // Example: h1 contains "Text<br>\n\t\t<span>more</span>" but DB has "Text<br /> <span>more</span>"
+        $html_string = preg_replace('/<br\s*\/?\s*>/i', '<br />', $html_string);
+        // Normalize whitespace (newlines, tabs, multiple spaces) around <br /> to single space
+        $html_string = preg_replace('/<br\s*\/>\s+/', '<br /> ', $html_string);
+
         // v5.3.46: Protect URL attributes BEFORE applying translations
         // This prevents translating parts of URLs (e.g., "materials" in "/uploads/hs-materials.jpg")
         $protected = $this->protect_url_attributes($html_string);
@@ -2443,8 +2497,10 @@ class Lingua_Output_Buffer {
 
         // Step 1: Build translation hash map with normalized keys (O(n))
         // v5.3.19: Use lowercase keys for case-insensitive matching
+        // v5.6.0: Also build plaintext_map for HTML-agnostic matching
         $translation_map = array();
         $translation_map_partial = array(); // For partial matches
+        $plaintext_map = array(); // v5.6.0: Plaintext-key lookup for HTML-agnostic matching
 
         foreach ($translations as $t) {
             if (empty($t['original_text']) || empty($t['translated_text'])) {
@@ -2461,6 +2517,11 @@ class Lingua_Output_Buffer {
             $key = $this->normalize_text_for_lookup($t['original_text']);
             $key_normalized = $this->normalize_text_once($t['original_text']); // Keep original case for partial match replacement
 
+            // v5.6.0: Build plaintext key (stripped of ALL HTML tags) for HTML-agnostic matching
+            // This enables matching DOM content like "Text<br>\n\t<span>more</span>"
+            // against DB content like "Text<br /> <span>more</span>" — both strip to same plaintext
+            $plaintext_key = $this->strip_tags_for_matching($t['original_text']);
+
             // Debug log for problematic phrases
             if (stripos($t['original_text'], 'will be used') !== false) {
                 $this->debug_file_log('translation-map-build.txt', "Building key for: " . substr($t['original_text'], 0, 100));
@@ -2472,15 +2533,32 @@ class Lingua_Output_Buffer {
             $translation_map[$key] = array(
                 'translated' => $t['translated_text'],
                 'original_raw' => $t['original_text'],
-                'key_normalized' => $key_normalized // v5.3.19: For partial replacements
+                'key_normalized' => $key_normalized, // v5.3.19: For partial replacements
+                'plaintext_key' => $plaintext_key // v5.6.0: For plaintext matching
             );
+
+            // v5.6.0: Store in plaintext map for HTML-agnostic lookup
+            // Only store if the original contains HTML (plaintext originals are already matched by $translation_map)
+            // If multiple DB entries have same plaintext, prefer the longest (most specific) one
+            $original_has_html = preg_match('/<[a-z]/i', $t['original_text']);
+            if ($original_has_html && !empty($plaintext_key)) {
+                if (!isset($plaintext_map[$plaintext_key]) || strlen($key) > strlen($plaintext_map[$plaintext_key]['key'])) {
+                    $plaintext_map[$plaintext_key] = array(
+                        'key' => $key,
+                        'translated' => $t['translated_text'],
+                        'original_raw' => $t['original_text'],
+                        'key_normalized' => $key_normalized
+                    );
+                }
+            }
 
             // Also store for partial matching (substring search)
             $translation_map_partial[] = array(
                 'key' => $key,
                 'key_normalized' => $key_normalized, // v5.3.19: Original case for replacement
                 'translated' => $t['translated_text'],
-                'original_raw' => $t['original_text']
+                'original_raw' => $t['original_text'],
+                'plaintext_key' => $plaintext_key // v5.6.0
             );
         }
 
@@ -2656,6 +2734,61 @@ class Lingua_Output_Buffer {
                     $applied_count++;
                     $exact_matches++;
                     continue; // Skip to next node after exact match
+                }
+            }
+
+            // v5.6.0: Strategy 1.5: PLAINTEXT MATCH (HTML-agnostic, TranslatePress-inspired)
+            // If exact HTML match failed, try matching by stripped plaintext.
+            // This handles cases like:
+            //   DOM renders: "Переведите сайт на<br>\n\t\t<span class="highlight">любой язык</span>"
+            //   DB stores:   "Переведите сайт на<br /> <span class="highlight">любой язык</span>"
+            //   Both strip to: "переведите сайт на любой язык"
+            // When plaintext matches, we use translate_page_recursive() to translate the HTML
+            // preserving the original DOM structure.
+            $node_has_html_check = preg_match('/<[a-z]/i', $node_innertext);
+            if ($node_has_html_check) {
+                $node_plaintext_key = $this->strip_tags_for_matching($node_innertext);
+
+                if (!empty($node_plaintext_key) && isset($plaintext_map[$node_plaintext_key])) {
+                    $pt_data = $plaintext_map[$node_plaintext_key];
+
+                    $this->debug_file_log('plaintext-match.txt', "PLAINTEXT MATCH for <{$tag}>:");
+                    $this->debug_file_log('plaintext-match.txt', "  DOM HTML: " . substr($node_innertext, 0, 200));
+                    $this->debug_file_log('plaintext-match.txt', "  DB original: " . substr($pt_data['original_raw'], 0, 200));
+                    $this->debug_file_log('plaintext-match.txt', "  Plaintext key: " . substr($node_plaintext_key, 0, 100));
+
+                    // Use recursive translation to apply individual piece translations
+                    // while preserving the DOM's HTML structure
+                    $translated_html = $this->translate_page_recursive($node_innertext, $translation_map);
+
+                    if ($translated_html !== false && $translated_html !== $node_innertext) {
+                        $node->innertext = $translated_html;
+                        $applied_count++;
+                        $exact_matches++;
+                        $this->debug_file_log('plaintext-match.txt', "  ✓ Applied via recursive translation");
+                        continue; // Skip to next node
+                    }
+
+                    // v5.6.0: If recursive translation didn't change anything (individual pieces not in map),
+                    // try direct replacement with the full translation from DB
+                    // This handles the case where DB has the complete translated HTML block
+                    $full_translation = $pt_data['translated'];
+                    if (!empty($full_translation)) {
+                        // Preserve leading/trailing whitespace from original node
+                        $leading_ws = '';
+                        $trailing_ws = '';
+                        if (preg_match('/^(\s+)/i', $node_innertext, $m)) {
+                            $leading_ws = $m[1];
+                        }
+                        if (preg_match('/(\s+)$/i', $node_innertext, $m)) {
+                            $trailing_ws = $m[1];
+                        }
+                        $node->innertext = $leading_ws . $full_translation . $trailing_ws;
+                        $applied_count++;
+                        $exact_matches++;
+                        $this->debug_file_log('plaintext-match.txt', "  ✓ Applied via full translation replacement");
+                        continue;
+                    }
                 }
             }
 
