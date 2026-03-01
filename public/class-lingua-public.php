@@ -1654,6 +1654,8 @@ class Lingua_Public {
             wp_send_json_error('Invalid strings format');
             return;
         }
+        // Sanitize decoded values (WP review requirement)
+        $strings = array_map('sanitize_text_field', $strings);
 
         lingua_debug_log("[Lingua Dynamic v1.2.8] Getting translations for " . count($strings) . " strings, language: {$language}");
 

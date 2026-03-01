@@ -956,6 +956,25 @@ class Lingua_Admin {
             $translation_strings = json_decode(stripslashes($translations['translation_strings']), true);
 
             if (is_array($translation_strings)) {
+                // Sanitize decoded values (WP review requirement)
+                foreach ($translation_strings as &$str_data) {
+                    if (isset($str_data['original'])) {
+                        $str_data['original'] = wp_kses_post($str_data['original']);
+                    }
+                    if (isset($str_data['translated'])) {
+                        $str_data['translated'] = wp_kses_post($str_data['translated']);
+                    }
+                    if (isset($str_data['field_group'])) {
+                        $str_data['field_group'] = sanitize_text_field($str_data['field_group']);
+                    }
+                    if (isset($str_data['type'])) {
+                        $str_data['type'] = sanitize_text_field($str_data['type']);
+                    }
+                    if (isset($str_data['context'])) {
+                        $str_data['context'] = sanitize_text_field($str_data['context']);
+                    }
+                }
+                unset($str_data);
                 lingua_debug_log("[LINGUA SAVE v2.1.3] Successfully decoded " . count($translation_strings) . " translation strings");
                 lingua_debug_log("[LINGUA SAVE v2.1.3] Sample strings: " . print_r(array_slice($translation_strings, 0, 3), true));
 
