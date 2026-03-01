@@ -2538,11 +2538,25 @@ class Lingua_Output_Buffer {
             );
 
             // v5.6.0: Store in plaintext map for HTML-agnostic lookup
-            // Only store if the original contains HTML (plaintext originals are already matched by $translation_map)
-            // If multiple DB entries have same plaintext, prefer the longest (most specific) one
+            // Store ALL translations (with or without HTML) for plaintext matching.
+            // This enables matching DOM nodes (which always contain rendered HTML)
+            // against DB entries regardless of HTML format differences.
+            // If multiple DB entries have same plaintext, prefer the one WITH HTML
+            // (it's the full block), then by longest key (most specific).
             $original_has_html = preg_match('/<[a-z]/i', $t['original_text']);
-            if ($original_has_html && !empty($plaintext_key)) {
-                if (!isset($plaintext_map[$plaintext_key]) || strlen($key) > strlen($plaintext_map[$plaintext_key]['key'])) {
+            if (!empty($plaintext_key)) {
+                $should_store = false;
+                if (!isset($plaintext_map[$plaintext_key])) {
+                    $should_store = true;
+                } elseif ($original_has_html && !preg_match('/<[a-z]/i', $plaintext_map[$plaintext_key]['original_raw'])) {
+                    // Prefer HTML version over plaintext version
+                    $should_store = true;
+                } elseif ($original_has_html === (bool)preg_match('/<[a-z]/i', $plaintext_map[$plaintext_key]['original_raw']) && strlen($key) > strlen($plaintext_map[$plaintext_key]['key'])) {
+                    // Same HTML status — prefer longer (more specific)
+                    $should_store = true;
+                }
+
+                if ($should_store) {
                     $plaintext_map[$plaintext_key] = array(
                         'key' => $key,
                         'translated' => $t['translated_text'],
@@ -2694,14 +2708,6 @@ class Lingua_Output_Buffer {
                 // v5.3.45: Check if node contains HTML tags - if so, use recursive translation
                 $node_has_html = preg_match('/<[a-z]/i', $node_innertext);
 
-                // Debug log for problematic phrases
-                if (strlen($node_lookup_key) < 150 && (stripos($node_lookup_key, 'will be used') !== false || stripos($node_lookup_key, 'rattan') !== false)) {
-                    $this->debug_file_log('exact-match-debug.txt', "EXACT MATCH FOUND for: " . substr($node_lookup_key, 0, 100));
-                    $this->debug_file_log('exact-match-debug.txt', "  node_has_html: " . ($node_has_html ? 'YES' : 'NO'));
-                    $this->debug_file_log('exact-match-debug.txt', "  is_substring: " . (isset($substring_of_longer[$node_lookup_key]) ? 'YES' : 'NO'));
-                    $this->debug_file_log('exact-match-debug.txt', "  node_innertext: " . substr($node_innertext, 0, 200));
-                }
-
                 // v5.3.45: For nodes with HTML, always use recursive translation
                 // Don't skip based on substring_of_longer - HTML structure variations are different strings, not duplicates
                 if ($node_has_html) {
@@ -2752,41 +2758,24 @@ class Lingua_Output_Buffer {
                 if (!empty($node_plaintext_key) && isset($plaintext_map[$node_plaintext_key])) {
                     $pt_data = $plaintext_map[$node_plaintext_key];
 
-                    $this->debug_file_log('plaintext-match.txt', "PLAINTEXT MATCH for <{$tag}>:");
-                    $this->debug_file_log('plaintext-match.txt', "  DOM HTML: " . substr($node_innertext, 0, 200));
-                    $this->debug_file_log('plaintext-match.txt', "  DB original: " . substr($pt_data['original_raw'], 0, 200));
-                    $this->debug_file_log('plaintext-match.txt', "  Plaintext key: " . substr($node_plaintext_key, 0, 100));
-
-                    // Use recursive translation to apply individual piece translations
-                    // while preserving the DOM's HTML structure
-                    $translated_html = $this->translate_page_recursive($node_innertext, $translation_map);
-
-                    if ($translated_html !== false && $translated_html !== $node_innertext) {
-                        $node->innertext = $translated_html;
-                        $applied_count++;
-                        $exact_matches++;
-                        $this->debug_file_log('plaintext-match.txt', "  ✓ Applied via recursive translation");
-                        continue; // Skip to next node
-                    }
-
-                    // v5.6.0: If recursive translation didn't change anything (individual pieces not in map),
-                    // try direct replacement with the full translation from DB
-                    // This handles the case where DB has the complete translated HTML block
+                    // v5.6.0: Direct replacement with full translation from DB
+                    // Since plaintext matches, the DB has the correct translated HTML block.
+                    // Use it directly — this is the most reliable approach.
                     $full_translation = $pt_data['translated'];
                     if (!empty($full_translation)) {
                         // Preserve leading/trailing whitespace from original node
                         $leading_ws = '';
                         $trailing_ws = '';
-                        if (preg_match('/^(\s+)/i', $node_innertext, $m)) {
+                        if (preg_match('/^(\s+)/', $node_innertext, $m)) {
                             $leading_ws = $m[1];
                         }
-                        if (preg_match('/(\s+)$/i', $node_innertext, $m)) {
+                        if (preg_match('/(\s+)$/', $node_innertext, $m)) {
                             $trailing_ws = $m[1];
                         }
                         $node->innertext = $leading_ws . $full_translation . $trailing_ws;
                         $applied_count++;
                         $exact_matches++;
-                        $this->debug_file_log('plaintext-match.txt', "  ✓ Applied via full translation replacement");
+                        lingua_debug_log("[Lingua v5.6.0] ✓ Applied full translation for <{$tag}>: '" . substr($node_plaintext_key, 0, 60) . "'");
                         continue;
                     }
                 }
