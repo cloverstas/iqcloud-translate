@@ -58,6 +58,17 @@ function lingua_debug_log($message) {
 }
 
 // Define default capabilities with filters
+/**
+ * Get the site's default language code (2-letter ISO 639-1) from WordPress locale.
+ * Used as fallback when lingua_default_language option is not set.
+ *
+ * @return string Language code (e.g. 'en', 'ru', 'de')
+ */
+function lingua_get_site_language() {
+    $locale = get_locale();
+    return substr($locale, 0, 2);
+}
+
 function lingua_settings_capability()
 {
     return apply_filters('lingua_settings_capability', 'manage_options');

@@ -250,7 +250,7 @@ class Lingua_Gettext_Scan {
 
         $table = $wpdb->prefix . 'lingua_string_translations';
         $languages = get_option('lingua_languages', array());
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
 
         // Get plural forms handler
         $plural_handler = class_exists('Lingua_Plural_Forms') ? Lingua_Plural_Forms::get_instance() : null;

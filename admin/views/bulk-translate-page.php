@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 }
 
 $languages = get_option('lingua_languages', array());
-$default_language = get_option('lingua_default_language', 'ru');
+$default_language = get_option('lingua_default_language', lingua_get_site_language());
 
 // Remove default language from target options
 $target_languages = $languages;

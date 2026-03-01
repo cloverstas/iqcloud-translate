@@ -33,7 +33,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
                         <span class="lingua-source-lang-name">
                             <?php 
                             $languages = get_option('lingua_languages', array());
-                            $default_lang = get_option('lingua_default_language', 'ru');
+                            $default_lang = get_option('lingua_default_language', lingua_get_site_language());
                             $default_lang_data = isset($languages[$default_lang]) ? $languages[$default_lang] : array('name' => ucfirst($default_lang), 'flag' => '');
                             ?>
                             <span class="lingua-flag"><?php echo esc_html($default_lang_data['flag'] ?? '🌐'); ?></span>

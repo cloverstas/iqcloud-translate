@@ -33,7 +33,7 @@ class Lingua_Media_Replacer {
      */
     public function replace_media_in_html($html) {
         // v5.2.158: Skip if default language (use 'en' as fallback to match other classes)
-        $default_language = get_option('lingua_default_language', 'en');
+        $default_language = get_option('lingua_default_language', lingua_get_site_language());
 
         lingua_debug_log("[Lingua Media Replacer v5.2.158] Current language: {$this->current_language}, Default: {$default_language}");
 

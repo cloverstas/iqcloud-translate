@@ -42,7 +42,7 @@ class Lingua_Search {
      * Constructor
      */
     private function __construct() {
-        $this->default_language = get_option('lingua_default_language', 'en');
+        $this->default_language = get_option('lingua_default_language', lingua_get_site_language());
 
         // Hook into WordPress search
         add_action('pre_get_posts', array($this, 'filter_search_query'), 10);

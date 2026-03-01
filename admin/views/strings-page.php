@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 }
 
 $languages = get_option('lingua_languages', array());
-$default_lang = get_option('lingua_default_language', 'ru');
+$default_lang = get_option('lingua_default_language', lingua_get_site_language());
 
 // Get all domains for filter
 $domains = Lingua_Gettext_Scan::get_all_domains();

@@ -159,7 +159,7 @@ class Lingua_Public {
             wp_localize_script('lingua-admin', 'lingua_admin', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce' => $fresh_nonce,
-                'default_language' => get_option('lingua_default_language', 'ru'), // v5.2.63: Fix iframe issue - default_language was undefined
+                'default_language' => get_option('lingua_default_language', lingua_get_site_language()), // v5.2.63: Fix iframe issue - default_language was undefined
                 'debug_mode' => lingua_is_debug_enabled(),
                 'strings' => array(
                     'testing_connection' => __('Testing connection...', 'iqcloud-translate'),
@@ -224,7 +224,7 @@ class Lingua_Public {
         // v4.0.1: Use global $LINGUA_LANGUAGE - it's ALWAYS set in Lingua constructor now!
         global $LINGUA_LANGUAGE;
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         $current_lang = $LINGUA_LANGUAGE; // No fallback needed - always set in constructor!
 
         $languages = get_option('lingua_languages', array());
@@ -1769,7 +1769,7 @@ class Lingua_Public {
 
         // Apply translations using existing process_translation_mode logic
         // We need to pass the HTML through the same translation pipeline
-        $default_language = get_option('lingua_default_language', 'ru');
+        $default_language = get_option('lingua_default_language', lingua_get_site_language());
 
         // Only translate if not default language
         if ($language !== $default_language) {

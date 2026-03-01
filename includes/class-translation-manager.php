@@ -247,7 +247,7 @@ class Lingua_Translation_Manager {
             }
 
             // Check if default language is trying to be saved (should not happen)
-            $default_language = get_option('lingua_default_language', 'en');
+            $default_language = get_option('lingua_default_language', lingua_get_site_language());
             if ($language === $default_language) {
                 lingua_debug_log("[LINGUA SAVE WARNING] Attempting to save default language '{$language}' as translation!");
             }
@@ -942,7 +942,7 @@ class Lingua_Translation_Manager {
             return $title;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             lingua_debug_log("[Lingua v5.0.14] ⛔ Skipped: default language");
             return $title;
@@ -978,7 +978,7 @@ class Lingua_Translation_Manager {
             return $title;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $title;
         }
@@ -1038,7 +1038,7 @@ class Lingua_Translation_Manager {
             return $content;
         }
         
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $content;
         }
@@ -1085,7 +1085,7 @@ class Lingua_Translation_Manager {
             return $excerpt;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $excerpt;
         }
@@ -1119,7 +1119,7 @@ class Lingua_Translation_Manager {
             return $title;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $title;
         }
@@ -1146,7 +1146,7 @@ class Lingua_Translation_Manager {
             return $description;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $description;
         }
@@ -1173,7 +1173,7 @@ class Lingua_Translation_Manager {
             return $title;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $title;
         }
@@ -1199,7 +1199,7 @@ class Lingua_Translation_Manager {
             return $description;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $description;
         }
@@ -1223,7 +1223,7 @@ class Lingua_Translation_Manager {
             return $title;
         }
         
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $title;
         }
@@ -1245,7 +1245,7 @@ class Lingua_Translation_Manager {
             return $value;
         }
         
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $value;
         }
@@ -1340,7 +1340,7 @@ class Lingua_Translation_Manager {
             return $title;
         }
         
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $title;
         }
@@ -1368,7 +1368,7 @@ class Lingua_Translation_Manager {
             return $title_parts;
         }
         
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $title_parts;
         }
@@ -1406,7 +1406,7 @@ class Lingua_Translation_Manager {
             return $option;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $option;
         }
@@ -1447,7 +1447,7 @@ class Lingua_Translation_Manager {
             return $title;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $title;
         }
@@ -1477,7 +1477,7 @@ class Lingua_Translation_Manager {
             return $title;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $title;
         }
@@ -1507,7 +1507,7 @@ class Lingua_Translation_Manager {
             return;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return;
         }
@@ -1549,7 +1549,7 @@ class Lingua_Translation_Manager {
             return;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return;
         }
@@ -1997,7 +1997,7 @@ class Lingua_Translation_Manager {
 
         // 4. CRITICAL: Unload and reload gettext domain to clear PHP memory cache
         // This fixes the issue where admin shows old translations but incognito shows new ones
-        $default_language = get_option('lingua_default_language', 'ru');
+        $default_language = get_option('lingua_default_language', lingua_get_site_language());
         if ($language !== $default_language) {
             // Unload domain
             unload_textdomain('lingua-' . $language);
@@ -2193,7 +2193,7 @@ class Lingua_Translation_Manager {
             return $term;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $term;
         }
@@ -2226,7 +2226,7 @@ class Lingua_Translation_Manager {
             return $terms;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $terms;
         }
@@ -2250,7 +2250,7 @@ class Lingua_Translation_Manager {
             return $term_name;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $term_name;
         }
@@ -2270,7 +2270,7 @@ class Lingua_Translation_Manager {
             return $title;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $title;
         }
@@ -2315,7 +2315,7 @@ class Lingua_Translation_Manager {
             return $name;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $name;
         }
@@ -2335,7 +2335,7 @@ class Lingua_Translation_Manager {
             return $title;
         }
 
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if ($LINGUA_LANGUAGE === $default_lang) {
             return $title;
         }

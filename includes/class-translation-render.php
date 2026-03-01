@@ -740,7 +740,7 @@ class Lingua_Translation_Render {
         ));
         
         if (!$exists) {
-            $default_lang = get_option('lingua_default_language', 'ru');
+            $default_lang = get_option('lingua_default_language', lingua_get_site_language());
             $registered_count = 0;
             
             // Insert for each non-default language

@@ -17,7 +17,7 @@ class Lingua_SEO_Integration {
     
     public function __construct() {
         // v5.2.137: Fixed hardcoded 'ru' default
-        $this->default_language = get_option('lingua_default_language', 'en');
+        $this->default_language = get_option('lingua_default_language', lingua_get_site_language());
         $this->languages = get_option('lingua_languages', array());
     }
     
@@ -81,7 +81,7 @@ class Lingua_SEO_Integration {
 
         $base_url = rtrim(site_url(), '/');
         $languages = get_option('lingua_languages', array());
-        $default_lang = get_option('lingua_default_language', 'en');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
 
         if (empty($languages)) {
             return '';
@@ -308,8 +308,8 @@ class Lingua_SEO_Integration {
     private function translate_schema_array($data, $translation_map) {
         global $LINGUA_LANGUAGE;
 
-        $current_language = !empty($LINGUA_LANGUAGE) ? $LINGUA_LANGUAGE : get_option('lingua_default_language', 'en');
-        $default_lang = get_option('lingua_default_language', 'en');
+        $current_language = !empty($LINGUA_LANGUAGE) ? $LINGUA_LANGUAGE : get_option('lingua_default_language', lingua_get_site_language());
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         $site_url = rtrim(site_url(), '/');
 
         if (is_array($data)) {

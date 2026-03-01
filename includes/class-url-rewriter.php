@@ -17,7 +17,7 @@ class Lingua_URL_Rewriter {
     
     public function __construct($settings = array()) {
         $this->settings = $settings;
-        $this->default_language = get_option('lingua_default_language', 'ru');
+        $this->default_language = get_option('lingua_default_language', lingua_get_site_language());
         $this->languages = get_option('lingua_languages', array());
         $this->apply_fallback_languages();
     }
@@ -26,7 +26,7 @@ class Lingua_URL_Rewriter {
      * Refresh language data - called early in init
      */
     public function refresh_languages() {
-        $this->default_language = get_option('lingua_default_language', 'ru');
+        $this->default_language = get_option('lingua_default_language', lingua_get_site_language());
         $this->languages = get_option('lingua_languages', array());
         $this->apply_fallback_languages();
         

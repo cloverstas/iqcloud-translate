@@ -278,7 +278,7 @@ class Lingua_Auto_Translator {
         // v5.3.2: Split into batches by character length (API limit: 10000 chars)
         // Also limit by count to avoid memory issues
         $api = new Lingua_Middleware_API();
-        $source_lang = get_option('lingua_default_language', 'en');
+        $source_lang = get_option('lingua_default_language', lingua_get_site_language());
         $saved = 0;
         $batch = array();
         $batch_length = 0;
@@ -389,7 +389,7 @@ class Lingua_Auto_Translator {
 
         // Translate via API
         $api = new Lingua_Middleware_API();
-        $source_lang = get_option('lingua_default_language', 'en');
+        $source_lang = get_option('lingua_default_language', lingua_get_site_language());
 
         lingua_debug_log("[Lingua Auto v5.3.16] Translating term {$term_id} ({$term->name}): " . count($to_translate) . " strings");
 

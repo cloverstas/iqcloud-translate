@@ -89,7 +89,7 @@ class Lingua_String_Capture {
         add_action('plugins_loaded', array($this, 'init_dependencies'), 15);
 
         // Get language settings
-        $this->default_language = get_option('lingua_default_language', 'ru');
+        $this->default_language = get_option('lingua_default_language', lingua_get_site_language());
 
         // Initialize capture on appropriate hook
         add_action('template_redirect', array($this, 'start_capture'), 1);

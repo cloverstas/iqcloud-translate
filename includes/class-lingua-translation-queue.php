@@ -79,7 +79,7 @@ class Lingua_Translation_Queue {
         }
 
         $languages = get_option('lingua_languages', array());
-        $default_language = get_option('lingua_default_language', 'ru');
+        $default_language = get_option('lingua_default_language', lingua_get_site_language());
 
         // Remove default language from targets
         unset($languages[$default_language]);
@@ -364,7 +364,7 @@ class Lingua_Translation_Queue {
         global $wpdb;
 
         $languages = get_option('lingua_languages', array());
-        $default_language = get_option('lingua_default_language', 'ru');
+        $default_language = get_option('lingua_default_language', lingua_get_site_language());
         unset($languages[$default_language]);
 
         if (empty($languages)) {
@@ -497,7 +497,7 @@ class Lingua_Translation_Queue {
         global $wpdb;
 
         $languages = get_option('lingua_languages', array());
-        $default_language = get_option('lingua_default_language', 'ru');
+        $default_language = get_option('lingua_default_language', lingua_get_site_language());
         unset($languages[$default_language]);
 
         if (empty($languages)) {
@@ -570,7 +570,7 @@ class Lingua_Translation_Queue {
         global $wpdb;
 
         $languages = get_option('lingua_languages', array());
-        $default_language = get_option('lingua_default_language', 'ru');
+        $default_language = get_option('lingua_default_language', lingua_get_site_language());
         unset($languages[$default_language]);
 
         if (empty($languages)) {

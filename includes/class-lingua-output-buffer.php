@@ -1211,7 +1211,7 @@ class Lingua_Output_Buffer {
      */
     private function get_default_language() {
         // v5.2.137: Read from options instead of hardcoded value
-        return get_option('lingua_default_language', 'en');
+        return get_option('lingua_default_language', lingua_get_site_language());
     }
 
     /**

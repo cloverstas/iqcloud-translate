@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 // Get current settings
 $middleware_api_key = get_option('lingua_middleware_api_key', '');
-$default_language = get_option('lingua_default_language', 'ru');
+$default_language = get_option('lingua_default_language', lingua_get_site_language());
 $languages = get_option('lingua_languages', array());
 $auto_translate_website = get_option('lingua_auto_translate_website', false);
 
@@ -241,7 +241,7 @@ $available_languages = Lingua_Languages::get_all();
                                 <?php endforeach; ?>
                             </select>
                             <p class="description"><?php esc_html_e('Select the original language of your content.', 'iqcloud-translate'); ?></p>
-                            <?php if ($default_language != get_option('lingua_default_language', 'ru')): ?>
+                            <?php if ($default_language != get_option('lingua_default_language', lingua_get_site_language())): ?>
                             <p class="lingua-warning" style="color: #d63638; font-weight: bold;">
                                 <?php esc_html_e('WARNING: Changing the default language will invalidate existing translations.', 'iqcloud-translate'); ?>
                             </p>
@@ -738,7 +738,7 @@ $lingua_settings_data = array(
     'availableLanguages'     => $langs_with_cc,
     'languageLimit'          => $is_unlimited ? 0 : $language_limit,
     'isUnlimited'            => (bool) $is_unlimited,
-    'currentDefault'         => esc_js(get_option('lingua_default_language', 'ru')),
+    'currentDefault'         => esc_js(get_option('lingua_default_language', lingua_get_site_language())),
     'i18n' => array(
         'licenseExpired'        => __('License Expired or Invalid', 'iqcloud-translate'),
         'reactivateLicense'     => __('Please re-activate your license.', 'iqcloud-translate'),

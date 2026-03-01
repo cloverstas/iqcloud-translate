@@ -333,7 +333,7 @@ class Lingua_Admin {
         ];
         
         $languages = get_option('lingua_languages', []);
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         
         foreach ($test_strings as $string) {
             foreach (array_keys($languages) as $lang_code) {
@@ -437,7 +437,7 @@ class Lingua_Admin {
         }
         
         // Always include default language in translation languages
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         if (isset($available_languages[$default_lang]) && !isset($translation_languages[$default_lang])) {
             $translation_languages[$default_lang] = $available_languages[$default_lang];
         }
@@ -645,7 +645,7 @@ class Lingua_Admin {
             'nonce' => $nonce, // v5.2.1: Generate nonce directly
             'is_pro' => $is_pro, // v5.2.137: Pro status from Middleware API
             'middleware_url' => get_option('lingua_middleware_url', 'http://77.95.201.43:4002'), // v5.2: Middleware portal URL
-            'default_language' => get_option('lingua_default_language', 'en'), // v5.2.72: Pass default language to JS
+            'default_language' => get_option('lingua_default_language', lingua_get_site_language()), // v5.2.72: Pass default language to JS
             'debug_mode' => lingua_is_debug_enabled(),
             'strings' => array(
                 // API тестирование
@@ -1363,7 +1363,7 @@ class Lingua_Admin {
         
         // Get enabled languages
         $languages = get_option('lingua_languages', array());
-        $default_lang = get_option('lingua_default_language', 'ru');
+        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
         
         // Auto-translate to all enabled languages
         foreach ($languages as $lang_code => $lang_data) {

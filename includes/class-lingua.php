@@ -106,7 +106,7 @@ class Lingua {
         global $LINGUA_LANGUAGE, $wpdb;
 
         // Skip if default language or no language set
-        $default_language = get_option('lingua_default_language', 'ru');
+        $default_language = get_option('lingua_default_language', lingua_get_site_language());
         if (empty($LINGUA_LANGUAGE) || $LINGUA_LANGUAGE === $default_language) {
             return $value;
         }
@@ -181,7 +181,7 @@ class Lingua {
         }
 
         global $LINGUA_LANGUAGE;
-        $default_language = get_option('lingua_default_language', 'ru');
+        $default_language = get_option('lingua_default_language', lingua_get_site_language());
 
         // Only change locale if we're NOT on default language
         if (!empty($LINGUA_LANGUAGE) && $LINGUA_LANGUAGE !== $default_language) {

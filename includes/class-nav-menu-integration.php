@@ -69,7 +69,7 @@ class Lingua_Nav_Menu_Integration {
      */
     public function update_lingua_menu_items() {
         $languages = get_option('lingua_languages', array());
-        $default_language = get_option('lingua_default_language', 'ru');
+        $default_language = get_option('lingua_default_language', lingua_get_site_language());
 
         // v5.4.0: Only add the default language as fallback (not ALL languages)
         // Previously this added 100+ languages which cluttered the menu switcher
@@ -288,7 +288,7 @@ class Lingua_Nav_Menu_Integration {
      */
     private function get_language_name( $language_code ) {
         $languages = get_option('lingua_languages', array());
-        $default_language = get_option('lingua_default_language', 'ru');
+        $default_language = get_option('lingua_default_language', lingua_get_site_language());
         $use_native_names = get_option('lingua_native_names', false);
 
         // v5.2.64: Use centralized language list (single source of truth)
