@@ -145,16 +145,23 @@ Initial release of IQCloud Translate - make your WordPress site multilingual!
 
 == Third Party Services ==
 
-This plugin connects to external services in the following cases:
+This plugin connects to the IQCloud Translation API in the following cases (Pro feature only):
 
-= YourNewSite Translation API (Pro Feature) =
+= IQCloud Translation API =
 
-When using the Pro version's automatic translation feature, text is sent to the YourNewSite API for translation.
+The Pro version of this plugin connects to the IQCloud Translation API to provide automatic translation and license management.
 
 * **Service URL:** https://translate.yournewsite.ru
-* **When used:** Only when you explicitly click "Auto-translate" button (Pro feature)
-* **Data sent:** Text content for translation, target language code
-* **Data NOT sent:** Personal user data, passwords, or sensitive information
+* **Service provider:** IQCloud
+
+**When the connection is made and what data is sent:**
+
+1. **License activation and status check** — When you enter your API key and click "Activate", or when the plugin checks your license status on the settings page. Data sent: API key, site URL.
+2. **Automatic translation** — When you click "Auto-translate", use "Translate All Posts", or when background translation queue processes. Data sent: text content for translation, target language code, source language code.
+3. **API status display** — When loading the settings page to show token usage, active languages, and subscription status. Data sent: API key.
+
+**Data NOT sent:** passwords, email addresses, personal user data, database credentials, or any sensitive information beyond the text content being translated.
+
 * **Privacy Policy:** [https://translate.yournewsite.ru/privacy](https://translate.yournewsite.ru/privacy)
 * **Terms of Service:** [https://translate.yournewsite.ru/terms](https://translate.yournewsite.ru/terms)
 
