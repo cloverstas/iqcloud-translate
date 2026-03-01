@@ -948,7 +948,7 @@ class Lingua_Translation_Render {
             echo '</p>';
             echo '</div>';
 
-            // v5.5: Use wp_add_inline_script() instead of inline <script> tag (WP review compliance)
+            // v5.5: Use wp_print_inline_script_tag() for inline JS in admin_notices context (WP review compliance)
             $dismiss_nonce = wp_create_nonce('lingua_dismiss_notice');
             $dismiss_js = 'jQuery(document).ready(function($) {'
                 . '$(document).on("click", "[data-notice=\"lingua-v2-upgrade\"] .notice-dismiss", function() {'
@@ -958,7 +958,7 @@ class Lingua_Translation_Render {
                 . '});'
                 . '});'
                 . '});';
-            wp_add_inline_script('jquery', $dismiss_js);
+            wp_print_inline_script_tag($dismiss_js);
         }
     }
 

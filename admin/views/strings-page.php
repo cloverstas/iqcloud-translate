@@ -592,7 +592,7 @@ wp_add_inline_style('lingua-admin', '
 
 <?php
 // Localize data for strings page JavaScript
-wp_localize_script('jquery', 'linguaStringsData', array(
+$lingua_strings_data = array(
     'nonce' => wp_create_nonce('lingua_admin_nonce'),
     'i18n' => array(
         'rescanConfirm'      => __('This will clear all existing gettext strings and rescan from scratch. Continue?', 'iqcloud-translate'),
@@ -611,7 +611,10 @@ wp_localize_script('jquery', 'linguaStringsData', array(
         'connectionError'    => __('Connection error', 'iqcloud-translate'),
         'translated'         => __('Translated', 'iqcloud-translate'),
     ),
-));
+);
+wp_print_inline_script_tag(
+    'var linguaStringsData = ' . wp_json_encode($lingua_strings_data) . ';'
+);
 
 $strings_js = <<<'JSEOF'
 jQuery(document).ready(function($) {
@@ -915,5 +918,5 @@ jQuery(document).ready(function($) {
     });
 });
 JSEOF;
-wp_add_inline_script('jquery', $strings_js);
+wp_print_inline_script_tag($strings_js);
 ?>

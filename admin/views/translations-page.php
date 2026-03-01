@@ -293,7 +293,7 @@ wp_add_inline_style('lingua-admin', '
 ?>
 
 <?php
-wp_add_inline_script('jquery', '
+wp_print_inline_script_tag('
 jQuery(document).ready(function($) {
     // Handle filter button
     $("#filter-posts").on("click", function() {

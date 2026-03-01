@@ -419,7 +419,7 @@ $available_languages = Lingua_Languages::get_all();
                         </div>
 
                         <?php
-                        wp_add_inline_script('jquery', '
+                        wp_print_inline_script_tag('
                             jQuery(document).ready(function($) {
                                 $("#lingua-select-all-types").on("click", function() {
                                     $(".lingua-post-types-list input[type=\\"checkbox\\"]").prop("checked", true);
@@ -487,7 +487,7 @@ $available_languages = Lingua_Languages::get_all();
                         </div>
 
                         <?php
-                        wp_add_inline_script('jquery', '
+                        wp_print_inline_script_tag('
                             jQuery(document).ready(function($) {
                                 $("#lingua-select-all-domains").on("click", function() {
                                     $(".lingua-domains-list input[type=\\"checkbox\\"]").prop("checked", true);
@@ -502,7 +502,6 @@ $available_languages = Lingua_Languages::get_all();
                                             $(this).find("input").prop("checked", true);
                                         }
                                     });
-                                    // Re-check items that don\'t have the .mo indicator
                                     $(".lingua-domain-item:not(:has(span[title]))").find("input").prop("checked", true);
                                 });
                             });
@@ -732,7 +731,7 @@ foreach ($langs_with_cc as $code => &$lang_data) {
 }
 unset($lang_data);
 
-wp_localize_script('jquery', 'linguaSettingsData', array(
+$lingua_settings_data = array(
     'nonce'                  => wp_create_nonce('lingua_admin_nonce'),
     'middlewareUrl'          => defined('LINGUA_MIDDLEWARE_URL') ? esc_js(LINGUA_MIDDLEWARE_URL) : '',
     'credentialsConfigured'  => !empty($credentials_configured),
@@ -778,7 +777,10 @@ wp_localize_script('jquery', 'linguaSettingsData', array(
         'queueEmpty'            => __('Queue is empty', 'iqcloud-translate'),
         'unknownError'          => __('Unknown error', 'iqcloud-translate'),
     ),
-));
+);
+wp_print_inline_script_tag(
+    'var linguaSettingsData = ' . wp_json_encode($lingua_settings_data) . ';'
+);
 
 $settings_js = <<<'JSEOF'
 jQuery(document).ready(function($) {
@@ -1641,5 +1643,5 @@ jQuery(document).ready(function($) {
     }
 });
 JSEOF;
-wp_add_inline_script('jquery', $settings_js);
+wp_print_inline_script_tag($settings_js);
 ?>
