@@ -19,8 +19,9 @@ class Lingua_Admin {
         lingua_debug_log('[Lingua Admin] Class loaded - version with debug logs v5.1');
 
         // v5.2.44: Re-enabled nonce injection for frontend pages (fixes /de language nonce issue)
-        add_action('wp_footer', array($this, 'inject_fresh_nonce'), 999);
-        add_action('admin_footer', array($this, 'inject_fresh_nonce'), 999);
+        // v5.5: Changed from footer hooks to enqueue hooks for wp_add_inline_script() compatibility (WP review)
+        add_action('wp_enqueue_scripts', array($this, 'inject_fresh_nonce'), 999);
+        add_action('admin_enqueue_scripts', array($this, 'inject_fresh_nonce'), 999);
     }
 
     /**
@@ -38,53 +39,51 @@ class Lingua_Admin {
         $is_pro = $middleware_api->is_pro_active();
 
         lingua_debug_log('[Lingua v5.2.155] inject_fresh_nonce: Generated nonce = ' . substr($nonce, 0, 10) . '..., is_pro = ' . ($is_pro ? 'true' : 'false'));
-        ?>
-        <script type="text/javascript">
-        // v5.2.155: CRITICAL FIX - Create lingua_admin object inline if it doesn't exist
-        (function() {
-            var freshNonce = '<?php echo $nonce; ?>';
-            var noncePrefix = '<?php echo substr($nonce, 0, 10); ?>';
 
-            // Create lingua_admin object if it doesn't exist (enqueue may not have fired)
-            if (typeof window.lingua_admin === 'undefined') {
-                window.lingua_admin = {
-                    ajax_url: '<?php echo esc_url(admin_url('admin-ajax.php')); ?>',
-                    nonce: freshNonce,
-                    is_pro: <?php echo $is_pro ? 'true' : 'false'; ?>,
-                    strings: {
-                        confirm_delete: '<?php echo esc_js(__('Are you sure?', 'iqcloud-translate')); ?>',
-                        loading: '<?php echo esc_js(__('Loading...', 'iqcloud-translate')); ?>',
-                        error: '<?php echo esc_js(__('Error', 'iqcloud-translate')); ?>'
-                    }
-                };
-                console.log('[Lingua v5.2.155 INLINE CREATE] Created lingua_admin object with nonce: ' + noncePrefix + '..., is_pro: <?php echo $is_pro ? 'true' : 'false'; ?>');
-            } else {
-                // Update existing object
-                window.lingua_admin.nonce = freshNonce;
-                window.lingua_admin.is_pro = <?php echo $is_pro ? 'true' : 'false'; ?>;
-                console.log('[Lingua v5.2.155 UPDATE] Updated lingua_admin.nonce = ' + noncePrefix + '..., is_pro: <?php echo $is_pro ? 'true' : 'false'; ?>');
-            }
+        // v5.5: Use wp_add_inline_script() instead of inline <script> tag (WP review compliance)
+        $nonce_prefix = substr($nonce, 0, 10);
+        $ajax_url = esc_url(admin_url('admin-ajax.php'));
+        $is_pro_js = $is_pro ? 'true' : 'false';
+        $str_confirm = esc_js(__('Are you sure?', 'iqcloud-translate'));
+        $str_loading = esc_js(__('Loading...', 'iqcloud-translate'));
+        $str_error = esc_js(__('Error', 'iqcloud-translate'));
 
-            // v5.2.156: CRITICAL FIX - Iframe should NOT overwrite parent nonce
-            // Each page load creates a different nonce, so iframe's nonce won't work for parent's AJAX calls
-            // Instead, iframe should inherit parent's nonce
-            if (window.self !== window.top) {
-                try {
-                    // Get parent's nonce and use it in iframe
-                    if (window.parent.lingua_admin && window.parent.lingua_admin.nonce) {
-                        var parentNonce = window.parent.lingua_admin.nonce;
-                        window.lingua_admin.nonce = parentNonce;
-                        console.log('[Lingua v5.2.156 IFRAME] ✅ Inherited parent nonce: ' + parentNonce.substring(0, 10) + '... (NOT overwriting parent)');
-                    } else {
-                        console.warn('[Lingua v5.2.156 IFRAME] ⚠️ Parent lingua_admin not found, using iframe nonce: ' + noncePrefix + '...');
-                    }
-                } catch (e) {
-                    console.error('[Lingua v5.2.156 IFRAME] ❌ Failed to access parent:', e);
-                }
-            }
-        })();
-        </script>
-        <?php
+        $inline_js = "(function() {\n"
+            . "var freshNonce = '{$nonce}';\n"
+            . "var noncePrefix = '{$nonce_prefix}';\n"
+            . "if (typeof window.lingua_admin === 'undefined') {\n"
+            . "    window.lingua_admin = {\n"
+            . "        ajax_url: '{$ajax_url}',\n"
+            . "        nonce: freshNonce,\n"
+            . "        is_pro: {$is_pro_js},\n"
+            . "        strings: {\n"
+            . "            confirm_delete: '{$str_confirm}',\n"
+            . "            loading: '{$str_loading}',\n"
+            . "            error: '{$str_error}'\n"
+            . "        }\n"
+            . "    };\n"
+            . "    console.log('[Lingua v5.2.155 INLINE CREATE] Created lingua_admin object with nonce: ' + noncePrefix + '..., is_pro: {$is_pro_js}');\n"
+            . "} else {\n"
+            . "    window.lingua_admin.nonce = freshNonce;\n"
+            . "    window.lingua_admin.is_pro = {$is_pro_js};\n"
+            . "    console.log('[Lingua v5.2.155 UPDATE] Updated lingua_admin.nonce = ' + noncePrefix + '..., is_pro: {$is_pro_js}');\n"
+            . "}\n"
+            . "if (window.self !== window.top) {\n"
+            . "    try {\n"
+            . "        if (window.parent.lingua_admin && window.parent.lingua_admin.nonce) {\n"
+            . "            var parentNonce = window.parent.lingua_admin.nonce;\n"
+            . "            window.lingua_admin.nonce = parentNonce;\n"
+            . "            console.log('[Lingua v5.2.156 IFRAME] Inherited parent nonce: ' + parentNonce.substring(0, 10) + '... (NOT overwriting parent)');\n"
+            . "        } else {\n"
+            . "            console.warn('[Lingua v5.2.156 IFRAME] Parent lingua_admin not found, using iframe nonce: ' + noncePrefix + '...');\n"
+            . "        }\n"
+            . "    } catch (e) {\n"
+            . "        console.error('[Lingua v5.2.156 IFRAME] Failed to access parent:', e);\n"
+            . "    }\n"
+            . "}\n"
+            . "})();";
+
+        wp_add_inline_script('lingua-admin', $inline_js, 'after');
     }
 
     /**
@@ -144,7 +143,7 @@ class Lingua_Admin {
         }
 
         lingua_debug_log('[Lingua Settings] handle_settings_save called');
-        lingua_debug_log('[Lingua Settings] REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+        lingua_debug_log('[Lingua Settings] REQUEST_METHOD: ' . sanitize_text_field(wp_unslash($_SERVER['REQUEST_METHOD'] ?? '')));
         lingua_debug_log('[Lingua Settings] POST isset: ' . (isset($_POST['lingua_settings_nonce']) ? 'YES' : 'NO'));
 
         // Handle form submission
@@ -152,7 +151,7 @@ class Lingua_Admin {
             lingua_debug_log('[Lingua Settings] Nonce found in POST');
             lingua_debug_log('[Lingua Settings] Nonce value: ' . $_POST['lingua_settings_nonce']);
 
-            if (wp_verify_nonce($_POST['lingua_settings_nonce'], 'lingua_save_settings')) {
+            if (wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['lingua_settings_nonce'])), 'lingua_save_settings')) {
                 lingua_debug_log('[Lingua Settings] Nonce verified successfully, calling save_settings()');
                 $this->save_settings();
 
@@ -192,7 +191,7 @@ class Lingua_Admin {
      */
     public function display_bulk_translate_page() {
         // Handle bulk translation request
-        if (isset($_POST['bulk_translate']) && wp_verify_nonce($_POST['lingua_bulk_nonce'], 'lingua_bulk_translate')) {
+        if (isset($_POST['bulk_translate']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['lingua_bulk_nonce'])), 'lingua_bulk_translate')) {
             $this->handle_bulk_translation();
         }
         
@@ -573,7 +572,7 @@ class Lingua_Admin {
         if (isset($_GET['page']) && $_GET['page'] === 'lingua-settings') {
             wp_enqueue_style(
                 'select2',
-                'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css',
+                plugin_dir_url(__FILE__) . 'lib/select2/select2.min.css',
                 array(),
                 '4.1.0'
             );
@@ -593,7 +592,7 @@ class Lingua_Admin {
         if (isset($_GET['page']) && $_GET['page'] === 'lingua-settings') {
             wp_enqueue_script(
                 'select2',
-                'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js',
+                plugin_dir_url(__FILE__) . 'lib/select2/select2.min.js',
                 array('jquery'),
                 '4.1.0',
                 true
@@ -822,10 +821,10 @@ class Lingua_Admin {
         // Add debugging
         
         // Проверяем nonce
-        if (!wp_verify_nonce($_POST['nonce'], 'lingua_admin_nonce')) {
+        if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'lingua_admin_nonce')) {
             wp_send_json_error('Nonce verification failed');
         }
-        
+
         if (!current_user_can(lingua_translating_capability())) {
             wp_die();
         }
@@ -1393,21 +1392,17 @@ class Lingua_Admin {
         if (!current_user_can(lingua_translating_capability())) {
             return;
         }
-        
+
         global $post;
         $post_id = $post ? $post->ID : 0;
-        
-        ?>
-        <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            // Добавляем data-post-id к кнопке в admin bar
-            $('#wp-admin-bar-lingua-translate-page .lingua-admin-bar-translate-btn').attr('data-post-id', '<?php echo $post_id; ?>');
-            
-            // Debug информация
-            console.log('Lingua: Button script loaded, post ID: <?php echo $post_id; ?>');
-        });
-        </script>
-        <?php
+
+        // v5.5: Use wp_add_inline_script() instead of inline <script> tag (WP review compliance)
+        $inline_js = "jQuery(document).ready(function($) {\n"
+            . "$('#wp-admin-bar-lingua-translate-page .lingua-admin-bar-translate-btn').attr('data-post-id', '" . intval($post_id) . "');\n"
+            . "console.log('Lingua: Button script loaded, post ID: " . intval($post_id) . "');\n"
+            . "});";
+
+        wp_add_inline_script('lingua-admin', $inline_js, 'after');
     }
 
     /**
@@ -2435,7 +2430,7 @@ class Lingua_Admin {
      * v5.2.187
      */
     public function ajax_save_string_translation() {
-        if (!wp_verify_nonce($_POST['nonce'], 'lingua_admin_nonce')) {
+        if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'lingua_admin_nonce')) {
             wp_send_json_error(__('Security check failed', 'iqcloud-translate'));
             return;
         }
@@ -2480,7 +2475,7 @@ class Lingua_Admin {
      * v5.2.191: Simplified - find all forms by original_text + language_code
      */
     public function ajax_get_plural_forms() {
-        if (!wp_verify_nonce($_POST['nonce'], 'lingua_admin_nonce')) {
+        if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'lingua_admin_nonce')) {
             wp_send_json_error(__('Security check failed', 'iqcloud-translate'));
             return;
         }
@@ -2601,7 +2596,7 @@ class Lingua_Admin {
      * v5.2.188
      */
     public function ajax_save_plural_translations() {
-        if (!wp_verify_nonce($_POST['nonce'], 'lingua_admin_nonce')) {
+        if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'lingua_admin_nonce')) {
             wp_send_json_error(__('Security check failed', 'iqcloud-translate'));
             return;
         }

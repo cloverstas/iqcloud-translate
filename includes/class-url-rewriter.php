@@ -324,7 +324,7 @@ class Lingua_URL_Rewriter {
     public function get_lang_from_url_string($url = null) {
         if (!$url) {
             // CRITICAL FIX v2.0.4: Better URL detection
-            $url = $_SERVER['REQUEST_URI'] ?? '/';
+            $url = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '/'));
 
             // Fallback: try current page URL
             if (empty($url) || $url === '/') {
@@ -333,7 +333,7 @@ class Lingua_URL_Rewriter {
                     $url = '/' . $wp->request;
                 } else {
                     // Last resort: parse current URL
-                    $current_url = home_url($_SERVER['REQUEST_URI'] ?? '/');
+                    $current_url = home_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '/')));
                     $parsed = wp_parse_url($current_url);
                     $url = $parsed['path'] ?? '/';
                 }
@@ -342,7 +342,7 @@ class Lingua_URL_Rewriter {
 
         lingua_debug_log('[LINGUA v5.2.12 DEBUG] ========== get_lang_from_url_string START ==========');
         lingua_debug_log('[LINGUA v5.2.12 DEBUG] Input URL: ' . $url);
-        lingua_debug_log('[LINGUA v5.2.12 DEBUG] $_SERVER[REQUEST_URI]: ' . ($_SERVER['REQUEST_URI'] ?? 'not set'));
+        lingua_debug_log('[LINGUA v5.2.12 DEBUG] $_SERVER[REQUEST_URI]: ' . sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '')));
 
         // Parse URL path
         $path = wp_parse_url($url, PHP_URL_PATH);
@@ -362,9 +362,9 @@ class Lingua_URL_Rewriter {
         $first_segment = $segments[0] ?? '';
 
         lingua_debug_log('[LINGUA v5.2.12 DEBUG] Cleaned path: ' . $path);
-        lingua_debug_log('[LINGUA v5.2.12 DEBUG] Segments array: ' . json_encode($segments));
+        lingua_debug_log('[LINGUA v5.2.12 DEBUG] Segments array: ' . wp_json_encode($segments));
         lingua_debug_log('[LINGUA v5.2.12 DEBUG] First segment: "' . $first_segment . '"');
-        lingua_debug_log('[LINGUA v5.2.12 DEBUG] Available languages: ' . json_encode(array_keys($this->languages)));
+        lingua_debug_log('[LINGUA v5.2.12 DEBUG] Available languages: ' . wp_json_encode(array_keys($this->languages)));
         lingua_debug_log('[LINGUA v5.2.12 DEBUG] Default language: ' . $this->default_language);
         lingua_debug_log('[LINGUA v5.2.12 DEBUG] Check isset($this->languages["' . $first_segment . '"]): ' . (isset($this->languages[$first_segment]) ? 'TRUE' : 'FALSE'));
 
@@ -456,7 +456,7 @@ class Lingua_URL_Rewriter {
         lingua_debug_log('Lingua: detect_language() called');
         lingua_debug_log('Lingua: query_var lang = ' . var_export($lang, true));
         lingua_debug_log('Lingua: available languages = ' . var_export(array_keys($this->languages), true));
-        lingua_debug_log('Lingua: REQUEST_URI = ' . ($_SERVER['REQUEST_URI'] ?? 'empty'));
+        lingua_debug_log('Lingua: REQUEST_URI = ' . sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '')));
         
         // КРИТИЧНО: также проверим глобальный wp_query
         global $wp_query;
@@ -467,8 +467,8 @@ class Lingua_URL_Rewriter {
         
         // Enhanced fallback: parse URL directly 
         if (empty($lang)) {
-            $request_uri = $_SERVER['REQUEST_URI'] ?? '';
-            
+            $request_uri = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
+
             // Remove any home path from the URI
             $parsed_home = wp_parse_url(home_url());
             $home_path = isset($parsed_home['path']) ? trim($parsed_home['path'], '/') : '';
@@ -593,7 +593,7 @@ class Lingua_URL_Rewriter {
         // STEP 2: Парсим URL на компоненты  
         $parsed = wp_parse_url($url);
         $scheme = $parsed['scheme'] ?? 'https';
-        $host = $parsed['host'] ?? $_SERVER['HTTP_HOST'];
+        $host = $parsed['host'] ?? sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST'] ?? ''));
         $path = $parsed['path'] ?? '/';
         $query = $parsed['query'] ?? '';
         $fragment = $parsed['fragment'] ?? '';
@@ -652,8 +652,8 @@ class Lingua_URL_Rewriter {
      */
     private function get_current_full_url() {
         $scheme = is_ssl() ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $uri = $_SERVER['REQUEST_URI'] ?? '/';
+        $host = sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST'] ?? 'localhost'));
+        $uri = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '/'));
         
         $full_url = $scheme . '://' . $host . $uri;
         
@@ -738,7 +738,7 @@ class Lingua_URL_Rewriter {
         global $wp;
         
         // Use REQUEST_URI for more reliable URL detection
-        $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+        $request_uri = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
         $home_path = wp_parse_url(home_url(), PHP_URL_PATH) ?: '';
         
         // Remove home path if exists

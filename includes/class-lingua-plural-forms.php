@@ -322,7 +322,10 @@ class Lingua_Plural_Forms {
         // Use WordPress built-in Plural_Forms class
         // Located in wp-includes/pomo/plural-forms.php
         if (!class_exists('Plural_Forms')) {
-            require_once ABSPATH . WPINC . '/pomo/plural-forms.php';
+            $plural_forms_path = ABSPATH . WPINC . '/pomo/plural-forms.php';
+            if (file_exists($plural_forms_path)) {
+                require_once $plural_forms_path;
+            }
         }
 
         try {

@@ -19,20 +19,20 @@ $post_types = get_post_types(array('public' => true), 'objects');
 ?>
 
 <div class="wrap">
-    <h1><?php _e('Bulk Translation', 'iqcloud-translate'); ?></h1>
+    <h1><?php esc_html_e('Bulk Translation', 'iqcloud-translate'); ?></h1>
     
     <?php settings_errors('lingua_bulk'); ?>
     
     <div class="card">
-        <h2><?php _e('Auto-translate Multiple Posts', 'iqcloud-translate'); ?></h2>
-        <p><?php _e('Select posts and languages for bulk auto-translation. Translations will be processed in the background.', 'iqcloud-translate'); ?></p>
+        <h2><?php esc_html_e('Auto-translate Multiple Posts', 'iqcloud-translate'); ?></h2>
+        <p><?php esc_html_e('Select posts and languages for bulk auto-translation. Translations will be processed in the background.', 'iqcloud-translate'); ?></p>
         
         <form method="post" action="">
             <?php wp_nonce_field('lingua_bulk_translate', 'lingua_bulk_nonce'); ?>
             
             <table class="form-table">
                 <tr>
-                    <th scope="row"><?php _e('Post Types', 'iqcloud-translate'); ?></th>
+                    <th scope="row"><?php esc_html_e('Post Types', 'iqcloud-translate'); ?></th>
                     <td>
                         <?php foreach ($post_types as $post_type): ?>
                             <label>
@@ -44,10 +44,10 @@ $post_types = get_post_types(array('public' => true), 'objects');
                 </tr>
                 
                 <tr>
-                    <th scope="row"><?php _e('Target Languages', 'iqcloud-translate'); ?></th>
+                    <th scope="row"><?php esc_html_e('Target Languages', 'iqcloud-translate'); ?></th>
                     <td>
                         <?php if (empty($target_languages)): ?>
-                            <p><?php _e('No target languages available. Please configure languages in Settings first.', 'iqcloud-translate'); ?></p>
+                            <p><?php esc_html_e('No target languages available. Please configure languages in Settings first.', 'iqcloud-translate'); ?></p>
                         <?php else: ?>
                             <?php foreach ($target_languages as $code => $lang_data): ?>
                                 <label>
@@ -60,35 +60,35 @@ $post_types = get_post_types(array('public' => true), 'objects');
                 </tr>
                 
                 <tr>
-                    <th scope="row"><?php _e('Post Status', 'iqcloud-translate'); ?></th>
+                    <th scope="row"><?php esc_html_e('Post Status', 'iqcloud-translate'); ?></th>
                     <td>
                         <select name="post_status">
-                            <option value="publish"><?php _e('Published', 'iqcloud-translate'); ?></option>
-                            <option value="draft"><?php _e('Draft', 'iqcloud-translate'); ?></option>
-                            <option value="any"><?php _e('Any Status', 'iqcloud-translate'); ?></option>
+                            <option value="publish"><?php esc_html_e('Published', 'iqcloud-translate'); ?></option>
+                            <option value="draft"><?php esc_html_e('Draft', 'iqcloud-translate'); ?></option>
+                            <option value="any"><?php esc_html_e('Any Status', 'iqcloud-translate'); ?></option>
                         </select>
                     </td>
                 </tr>
                 
                 <tr>
-                    <th scope="row"><?php _e('Limit', 'iqcloud-translate'); ?></th>
+                    <th scope="row"><?php esc_html_e('Limit', 'iqcloud-translate'); ?></th>
                     <td>
                         <input type="number" name="limit" value="10" min="1" max="100" />
-                        <p class="description"><?php _e('Maximum number of posts to translate (1-100)', 'iqcloud-translate'); ?></p>
+                        <p class="description"><?php esc_html_e('Maximum number of posts to translate (1-100)', 'iqcloud-translate'); ?></p>
                     </td>
                 </tr>
             </table>
             
             <?php if (!empty($target_languages)): ?>
                 <p class="submit">
-                    <input type="submit" name="bulk_translate" class="button-primary" value="<?php _e('Start Bulk Translation', 'iqcloud-translate'); ?>" />
+                    <input type="submit" name="bulk_translate" class="button-primary" value="<?php esc_html_e('Start Bulk Translation', 'iqcloud-translate'); ?>" />
                 </p>
             <?php endif; ?>
         </form>
     </div>
     
     <div class="card">
-        <h2><?php _e('Translation Status', 'iqcloud-translate'); ?></h2>
+        <h2><?php esc_html_e('Translation Status', 'iqcloud-translate'); ?></h2>
         <?php
         // Show translation statistics
         $translation_manager = new Lingua_Translation_Manager();
@@ -98,19 +98,19 @@ $post_types = get_post_types(array('public' => true), 'objects');
         <table class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
-                    <th><?php _e('Metric', 'iqcloud-translate'); ?></th>
-                    <th><?php _e('Count', 'iqcloud-translate'); ?></th>
+                    <th><?php esc_html_e('Metric', 'iqcloud-translate'); ?></th>
+                    <th><?php esc_html_e('Count', 'iqcloud-translate'); ?></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><?php _e('Total Translations', 'iqcloud-translate'); ?></td>
+                    <td><?php esc_html_e('Total Translations', 'iqcloud-translate'); ?></td>
                     <td><?php echo intval($stats['total']); ?></td>
                 </tr>
                 <?php if (!empty($stats['by_language'])): ?>
                     <?php foreach ($stats['by_language'] as $lang => $count): ?>
                         <tr>
-                            <td><?php echo sprintf(__('Translations to %s', 'iqcloud-translate'), $lang); ?></td>
+                            <td><?php echo esc_html(sprintf(__('Translations to %s', 'iqcloud-translate'), $lang)); ?></td>
                             <td><?php echo intval($count); ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -118,7 +118,7 @@ $post_types = get_post_types(array('public' => true), 'objects');
                 <?php if (!empty($stats['by_status'])): ?>
                     <?php foreach ($stats['by_status'] as $status => $count): ?>
                         <tr>
-                            <td><?php echo sprintf(__('Status: %s', 'iqcloud-translate'), ucfirst($status)); ?></td>
+                            <td><?php echo esc_html(sprintf(__('Status: %s', 'iqcloud-translate'), ucfirst($status))); ?></td>
                             <td><?php echo intval($count); ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -126,7 +126,7 @@ $post_types = get_post_types(array('public' => true), 'objects');
             </tbody>
         </table>
         
-        <h3><?php _e('Recent Translation Jobs', 'iqcloud-translate'); ?></h3>
+        <h3><?php esc_html_e('Recent Translation Jobs', 'iqcloud-translate'); ?></h3>
         <?php
         // Show scheduled cron jobs
         $cron_jobs = _get_cron_array();
@@ -146,14 +146,14 @@ $post_types = get_post_types(array('public' => true), 'objects');
         ?>
         
         <?php if (empty($lingua_jobs)): ?>
-            <p><?php _e('No translation jobs scheduled.', 'iqcloud-translate'); ?></p>
+            <p><?php esc_html_e('No translation jobs scheduled.', 'iqcloud-translate'); ?></p>
         <?php else: ?>
             <table class="wp-list-table widefat fixed striped">
                 <thead>
                     <tr>
-                        <th><?php _e('Post ID', 'iqcloud-translate'); ?></th>
-                        <th><?php _e('Language', 'iqcloud-translate'); ?></th>
-                        <th><?php _e('Scheduled Time', 'iqcloud-translate'); ?></th>
+                        <th><?php esc_html_e('Post ID', 'iqcloud-translate'); ?></th>
+                        <th><?php esc_html_e('Language', 'iqcloud-translate'); ?></th>
+                        <th><?php esc_html_e('Scheduled Time', 'iqcloud-translate'); ?></th>
                     </tr>
                 </thead>
                 <tbody>

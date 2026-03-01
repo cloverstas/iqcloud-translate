@@ -125,7 +125,7 @@ add_action('admin_init', function() {
         function() {
             $settings = Lingua_String_Capture_Settings::get_settings();
             echo '<input type="number" name="lingua_string_capture_settings[min_string_length]" value="' . $settings['min_string_length'] . '" min="1" max="50">';
-            echo '<p class="description">' . __('Minimum number of characters for a string to be captured', 'iqcloud-translate') . '</p>';
+            echo '<p class="description">' . esc_html__('Minimum number of characters for a string to be captured', 'iqcloud-translate') . '</p>';
         },
         'lingua-settings',
         'lingua_string_capture'
@@ -137,7 +137,7 @@ add_action('admin_init', function() {
         function() {
             $settings = Lingua_String_Capture_Settings::get_settings();
             echo '<input type="number" name="lingua_string_capture_settings[max_string_length]" value="' . $settings['max_string_length'] . '" min="50" max="5000">';
-            echo '<p class="description">' . __('Maximum number of characters for a string to be captured', 'iqcloud-translate') . '</p>';
+            echo '<p class="description">' . esc_html__('Maximum number of characters for a string to be captured', 'iqcloud-translate') . '</p>';
         },
         'lingua-settings',
         'lingua_string_capture'
@@ -149,7 +149,7 @@ add_action('admin_init', function() {
         function() {
             $settings = Lingua_String_Capture_Settings::get_settings();
             echo '<input type="checkbox" name="lingua_string_capture_settings[skip_admin_bar]" value="1" ' . checked($settings['skip_admin_bar'], true, false) . '>';
-            echo '<p class="description">' . __('Do not capture strings from WordPress admin bar', 'iqcloud-translate') . '</p>';
+            echo '<p class="description">' . esc_html__('Do not capture strings from WordPress admin bar', 'iqcloud-translate') . '</p>';
         },
         'lingua-settings',
         'lingua_string_capture'

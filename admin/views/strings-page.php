@@ -24,22 +24,22 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
 ?>
 
 <div class="wrap">
-    <h1><?php _e('String Translations', 'iqcloud-translate'); ?></h1>
+    <h1><?php esc_html_e('String Translations', 'iqcloud-translate'); ?></h1>
 
     <div class="lingua-strings-header">
         <p class="description">
-            <?php _e('Scan your themes and plugins for translatable gettext strings. Translate strings used in your website content.', 'iqcloud-translate'); ?>
+            <?php esc_html_e('Scan your themes and plugins for translatable gettext strings. Translate strings used in your website content.', 'iqcloud-translate'); ?>
         </p>
 
         <!-- Scan Controls -->
         <div class="lingua-scan-controls">
             <button type="button" id="lingua-scan-btn" class="button button-primary">
                 <span class="dashicons dashicons-search" style="line-height: 1.3;"></span>
-                <?php _e('Scan for Strings', 'iqcloud-translate'); ?>
+                <?php esc_html_e('Scan for Strings', 'iqcloud-translate'); ?>
             </button>
             <button type="button" id="lingua-rescan-btn" class="button button-secondary">
                 <span class="dashicons dashicons-update" style="line-height: 1.3;"></span>
-                <?php _e('Full Rescan', 'iqcloud-translate'); ?>
+                <?php esc_html_e('Full Rescan', 'iqcloud-translate'); ?>
             </button>
             <span id="lingua-scan-status" style="margin-left: 15px;"></span>
         </div>
@@ -61,21 +61,21 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
             <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
                 <!-- Source Filter -->
                 <div>
-                    <label><strong><?php _e('Source:', 'iqcloud-translate'); ?></strong></label><br>
+                    <label><strong><?php esc_html_e('Source:', 'iqcloud-translate'); ?></strong></label><br>
                     <select name="filter" onchange="this.form.submit()">
-                        <option value="all" <?php selected($current_filter, 'all'); ?>><?php _e('All Strings', 'iqcloud-translate'); ?></option>
-                        <option value="gettext" <?php selected($current_filter, 'gettext'); ?>><?php _e('Gettext (Themes/Plugins)', 'iqcloud-translate'); ?></option>
-                        <option value="custom" <?php selected($current_filter, 'custom'); ?>><?php _e('Custom (Page Content)', 'iqcloud-translate'); ?></option>
-                        <option value="email" <?php selected($current_filter, 'email'); ?>><?php _e('Email Templates', 'iqcloud-translate'); ?></option>
+                        <option value="all" <?php selected($current_filter, 'all'); ?>><?php esc_html_e('All Strings', 'iqcloud-translate'); ?></option>
+                        <option value="gettext" <?php selected($current_filter, 'gettext'); ?>><?php esc_html_e('Gettext (Themes/Plugins)', 'iqcloud-translate'); ?></option>
+                        <option value="custom" <?php selected($current_filter, 'custom'); ?>><?php esc_html_e('Custom (Page Content)', 'iqcloud-translate'); ?></option>
+                        <option value="email" <?php selected($current_filter, 'email'); ?>><?php esc_html_e('Email Templates', 'iqcloud-translate'); ?></option>
                     </select>
                 </div>
 
                 <!-- Domain Filter -->
                 <?php if (!empty($domains)): ?>
                 <div>
-                    <label><strong><?php _e('Text Domain:', 'iqcloud-translate'); ?></strong></label><br>
+                    <label><strong><?php esc_html_e('Text Domain:', 'iqcloud-translate'); ?></strong></label><br>
                     <select name="domain" onchange="this.form.submit()">
-                        <option value=""><?php _e('All Domains', 'iqcloud-translate'); ?></option>
+                        <option value=""><?php esc_html_e('All Domains', 'iqcloud-translate'); ?></option>
                         <?php foreach ($domains as $domain): ?>
                             <option value="<?php echo esc_attr($domain); ?>" <?php selected($current_domain, $domain); ?>>
                                 <?php echo esc_html($domain); ?>
@@ -87,9 +87,9 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
 
                 <!-- Language Filter -->
                 <div>
-                    <label><strong><?php _e('Language:', 'iqcloud-translate'); ?></strong></label><br>
+                    <label><strong><?php esc_html_e('Language:', 'iqcloud-translate'); ?></strong></label><br>
                     <select name="lang" onchange="this.form.submit()">
-                        <option value=""><?php _e('All Languages', 'iqcloud-translate'); ?></option>
+                        <option value=""><?php esc_html_e('All Languages', 'iqcloud-translate'); ?></option>
                         <?php foreach ($languages as $code => $lang_data): ?>
                             <?php if ($code !== $default_lang): ?>
                             <?php $lang_name = is_array($lang_data) ? ($lang_data['native'] ?? $lang_data['name'] ?? $code) : $lang_data; ?>
@@ -103,14 +103,14 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
 
                 <!-- Search -->
                 <div style="flex-grow: 1;">
-                    <label><strong><?php _e('Search:', 'iqcloud-translate'); ?></strong></label><br>
+                    <label><strong><?php esc_html_e('Search:', 'iqcloud-translate'); ?></strong></label><br>
                     <input type="text" name="search" value="<?php echo esc_attr($current_search); ?>"
-                           placeholder="<?php _e('Search strings...', 'iqcloud-translate'); ?>" style="width: 100%;">
+                           placeholder="<?php esc_html_e('Search strings...', 'iqcloud-translate'); ?>" style="width: 100%;">
                 </div>
 
                 <div style="align-self: flex-end;">
-                    <button type="submit" class="button"><?php _e('Filter', 'iqcloud-translate'); ?></button>
-                    <a href="<?php echo admin_url('admin.php?page=lingua-strings'); ?>" class="button"><?php _e('Reset', 'iqcloud-translate'); ?></a>
+                    <button type="submit" class="button"><?php esc_html_e('Filter', 'iqcloud-translate'); ?></button>
+                    <a href="<?php echo admin_url('admin.php?page=lingua-strings'); ?>" class="button"><?php esc_html_e('Reset', 'iqcloud-translate'); ?></a>
                 </div>
             </div>
         </form>
@@ -119,7 +119,7 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
     <!-- Domain Statistics -->
     <?php if (!empty($domains_with_counts)): ?>
     <div class="lingua-domain-stats" style="margin-bottom: 20px;">
-        <h3><?php _e('Text Domains', 'iqcloud-translate'); ?></h3>
+        <h3><?php esc_html_e('Text Domains', 'iqcloud-translate'); ?></h3>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
             <?php foreach ($domains_with_counts as $domain_stat): ?>
                 <?php
@@ -145,27 +145,27 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
         <div class="notice notice-info">
             <p>
                 <?php if ($current_filter === 'gettext'): ?>
-                    <?php _e('No gettext strings found. Click "Scan for Strings" to scan your themes and plugins.', 'iqcloud-translate'); ?>
+                    <?php esc_html_e('No gettext strings found. Click "Scan for Strings" to scan your themes and plugins.', 'iqcloud-translate'); ?>
                 <?php else: ?>
-                    <?php _e('No strings found matching your filters.', 'iqcloud-translate'); ?>
+                    <?php esc_html_e('No strings found matching your filters.', 'iqcloud-translate'); ?>
                 <?php endif; ?>
             </p>
         </div>
     <?php else: ?>
 
         <p class="description">
-            <?php printf(__('Showing %d strings', 'iqcloud-translate'), count($strings)); ?>
+            <?php printf(esc_html__('Showing %d strings', 'iqcloud-translate'), count($strings)); ?>
         </p>
 
         <table class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
                     <th style="width: 5%">#</th>
-                    <th style="width: 35%"><?php _e('Original String', 'iqcloud-translate'); ?></th>
-                    <th style="width: 20%"><?php _e('Domain / Context', 'iqcloud-translate'); ?></th>
-                    <th style="width: 15%"><?php _e('Language', 'iqcloud-translate'); ?></th>
-                    <th style="width: 15%"><?php _e('Status', 'iqcloud-translate'); ?></th>
-                    <th style="width: 10%"><?php _e('Actions', 'iqcloud-translate'); ?></th>
+                    <th style="width: 35%"><?php esc_html_e('Original String', 'iqcloud-translate'); ?></th>
+                    <th style="width: 20%"><?php esc_html_e('Domain / Context', 'iqcloud-translate'); ?></th>
+                    <th style="width: 15%"><?php esc_html_e('Language', 'iqcloud-translate'); ?></th>
+                    <th style="width: 15%"><?php esc_html_e('Status', 'iqcloud-translate'); ?></th>
+                    <th style="width: 10%"><?php esc_html_e('Actions', 'iqcloud-translate'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -188,15 +188,15 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
                             <?php if ($string->source === 'gettext'): ?>
                                 <span class="lingua-badge gettext"><?php echo esc_html($string->gettext_domain ?: 'default'); ?></span>
                             <?php else: ?>
-                                <span class="lingua-badge custom"><?php _e('custom', 'iqcloud-translate'); ?></span>
+                                <span class="lingua-badge custom"><?php esc_html_e('custom', 'iqcloud-translate'); ?></span>
                             <?php endif; ?>
                             <?php if (!empty($string->is_plural_group)): ?>
                                 <span class="lingua-badge plural" title="<?php echo esc_attr($string->original_plural); ?>">
-                                    <?php printf(__('plural (%d forms)', 'iqcloud-translate'), $string->plural_forms_count); ?>
+                                    <?php printf(esc_html__('plural (%d forms)', 'iqcloud-translate'), $string->plural_forms_count); ?>
                                 </span>
                             <?php endif; ?>
                             <?php if (strpos($string->context, '.email') !== false): ?>
-                                <span class="lingua-badge email"><?php _e('email', 'iqcloud-translate'); ?></span>
+                                <span class="lingua-badge email"><?php esc_html_e('email', 'iqcloud-translate'); ?></span>
                             <?php endif; ?>
                         </td>
                         <td>
@@ -206,21 +206,21 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
                             <?php if (!empty($string->is_plural_group)): ?>
                                 <?php if ($string->plural_forms_translated === $string->plural_forms_count): ?>
                                     <span class="lingua-status translated">
-                                        <?php printf(__('%d/%d translated', 'iqcloud-translate'), $string->plural_forms_translated, $string->plural_forms_count); ?>
+                                        <?php printf(esc_html__('%d/%d translated', 'iqcloud-translate'), $string->plural_forms_translated, $string->plural_forms_count); ?>
                                     </span>
                                 <?php elseif ($string->plural_forms_translated > 0): ?>
                                     <span class="lingua-status partial">
-                                        <?php printf(__('%d/%d translated', 'iqcloud-translate'), $string->plural_forms_translated, $string->plural_forms_count); ?>
+                                        <?php printf(esc_html__('%d/%d translated', 'iqcloud-translate'), $string->plural_forms_translated, $string->plural_forms_count); ?>
                                     </span>
                                 <?php else: ?>
                                     <span class="lingua-status untranslated">
-                                        <?php printf(__('%d/%d translated', 'iqcloud-translate'), 0, $string->plural_forms_count); ?>
+                                        <?php printf(esc_html__('%d/%d translated', 'iqcloud-translate'), 0, $string->plural_forms_count); ?>
                                     </span>
                                 <?php endif; ?>
                             <?php elseif (!empty($string->translated_text)): ?>
-                                <span class="lingua-status translated"><?php _e('Translated', 'iqcloud-translate'); ?></span>
+                                <span class="lingua-status translated"><?php esc_html_e('Translated', 'iqcloud-translate'); ?></span>
                             <?php else: ?>
-                                <span class="lingua-status untranslated"><?php _e('Untranslated', 'iqcloud-translate'); ?></span>
+                                <span class="lingua-status untranslated"><?php esc_html_e('Untranslated', 'iqcloud-translate'); ?></span>
                             <?php endif; ?>
                         </td>
                         <td>
@@ -234,7 +234,7 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
                                     data-original-plural="<?php echo esc_attr($string->original_plural ?? ''); ?>"
                                     data-context="<?php echo esc_attr($string->context); ?>"
                                     data-gettext-domain="<?php echo esc_attr($string->gettext_domain ?? ''); ?>">
-                                <?php _e('Edit', 'iqcloud-translate'); ?>
+                                <?php esc_html_e('Edit', 'iqcloud-translate'); ?>
                             </button>
                         </td>
                     </tr>
@@ -260,7 +260,7 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
                 ));
 
                 if ($page_links) {
-                    echo '<span class="displaying-num">' . sprintf(__('%d items', 'iqcloud-translate'), $total_strings) . '</span>';
+                    echo '<span class="displaying-num">' . sprintf(esc_html__('%d items', 'iqcloud-translate'), $total_strings) . '</span>';
                     echo '<span class="pagination-links">' . $page_links . '</span>';
                 }
                 ?>
@@ -276,19 +276,19 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
     <div class="lingua-modal-overlay"></div>
     <div class="lingua-modal-content">
         <div class="lingua-modal-header">
-            <h2><?php _e('Edit Translation', 'iqcloud-translate'); ?></h2>
+            <h2><?php esc_html_e('Edit Translation', 'iqcloud-translate'); ?></h2>
             <button type="button" class="lingua-modal-close">&times;</button>
         </div>
         <div class="lingua-modal-body">
             <!-- Regular string editing -->
             <div id="edit-regular-string">
                 <div class="lingua-form-group">
-                    <label><?php _e('Original String:', 'iqcloud-translate'); ?></label>
+                    <label><?php esc_html_e('Original String:', 'iqcloud-translate'); ?></label>
                     <div id="edit-original-text" class="lingua-original-display"></div>
                 </div>
                 <div class="lingua-form-group">
-                    <label for="edit-translation-text"><?php _e('Translation:', 'iqcloud-translate'); ?></label>
-                    <textarea id="edit-translation-text" rows="4" style="width: 100%;" placeholder="<?php _e('Enter translation...', 'iqcloud-translate'); ?>"></textarea>
+                    <label for="edit-translation-text"><?php esc_html_e('Translation:', 'iqcloud-translate'); ?></label>
+                    <textarea id="edit-translation-text" rows="4" style="width: 100%;" placeholder="<?php esc_html_e('Enter translation...', 'iqcloud-translate'); ?>"></textarea>
                 </div>
             </div>
 
@@ -296,7 +296,7 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
             <div id="edit-plural-forms" style="display: none;">
                 <div class="lingua-plural-info">
                     <span class="dashicons dashicons-info"></span>
-                    <?php _e('This string has plural forms. Enter translation for each form.', 'iqcloud-translate'); ?>
+                    <?php esc_html_e('This string has plural forms. Enter translation for each form.', 'iqcloud-translate'); ?>
                 </div>
                 <div id="plural-forms-container"></div>
             </div>
@@ -306,13 +306,14 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
             <input type="hidden" id="edit-is-plural" value="0">
         </div>
         <div class="lingua-modal-footer">
-            <button type="button" class="button lingua-modal-close"><?php _e('Cancel', 'iqcloud-translate'); ?></button>
-            <button type="button" id="lingua-save-string-btn" class="button button-primary"><?php _e('Save Translation', 'iqcloud-translate'); ?></button>
+            <button type="button" class="button lingua-modal-close"><?php esc_html_e('Cancel', 'iqcloud-translate'); ?></button>
+            <button type="button" id="lingua-save-string-btn" class="button button-primary"><?php esc_html_e('Save Translation', 'iqcloud-translate'); ?></button>
         </div>
     </div>
 </div>
 
-<style>
+<?php
+wp_add_inline_style('lingua-admin', '
 .lingua-strings-header {
     background: #fff;
     padding: 20px;
@@ -586,10 +587,36 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
 .lingua-plural-originals div:last-child {
     margin-bottom: 0;
 }
-</style>
+');
+?>
 
-<script>
+<?php
+// Localize data for strings page JavaScript
+wp_localize_script('jquery', 'linguaStringsData', array(
+    'nonce' => wp_create_nonce('lingua_admin_nonce'),
+    'i18n' => array(
+        'rescanConfirm'      => __('This will clear all existing gettext strings and rescan from scratch. Continue?', 'iqcloud-translate'),
+        'preparingScan'      => __('Preparing scan...', 'iqcloud-translate'),
+        'stringsFound'       => __('strings found', 'iqcloud-translate'),
+        'scanCompleted'      => __('Scan completed!', 'iqcloud-translate'),
+        'scanFailed'         => __('Scan failed:', 'iqcloud-translate'),
+        'errorLabel'         => __('Error:', 'iqcloud-translate'),
+        'loadingPlural'      => __('Loading plural forms...', 'iqcloud-translate'),
+        'singular'           => __('Singular:', 'iqcloud-translate'),
+        'plural'             => __('Plural:', 'iqcloud-translate'),
+        'enterTranslation'   => __('Enter translation...', 'iqcloud-translate'),
+        'saving'             => __('Saving...', 'iqcloud-translate'),
+        'saveTranslation'    => __('Save Translation', 'iqcloud-translate'),
+        'errorSaving'        => __('Error saving translation:', 'iqcloud-translate'),
+        'connectionError'    => __('Connection error', 'iqcloud-translate'),
+        'translated'         => __('Translated', 'iqcloud-translate'),
+    ),
+));
+
+$strings_js = <<<'JSEOF'
 jQuery(document).ready(function($) {
+    var _sd = window.linguaStringsData || {};
+    var _i18n = _sd.i18n || {};
     var scanInProgress = false;
 
     // Scan button click
@@ -601,7 +628,7 @@ jQuery(document).ready(function($) {
     // Rescan button click
     $('#lingua-rescan-btn').on('click', function() {
         if (scanInProgress) return;
-        if (!confirm('<?php _e('This will clear all existing gettext strings and rescan from scratch. Continue?', 'iqcloud-translate'); ?>')) {
+        if (!confirm(_i18n.rescanConfirm)) {
             return;
         }
         startScan(true);
@@ -611,7 +638,7 @@ jQuery(document).ready(function($) {
         scanInProgress = true;
         $('#lingua-scan-progress').show();
         $('#lingua-scan-btn, #lingua-rescan-btn').prop('disabled', true);
-        $('#lingua-scan-status').text('<?php _e('Preparing scan...', 'iqcloud-translate'); ?>');
+        $('#lingua-scan-status').text(_i18n.preparingScan);
 
         doScan(rescan);
     }
@@ -624,7 +651,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: action,
-                nonce: '<?php echo wp_create_nonce('lingua_admin_nonce'); ?>'
+                nonce: _sd.nonce
             },
             success: function(response) {
                 if (response.success) {
@@ -633,12 +660,12 @@ jQuery(document).ready(function($) {
                     // Update progress bar
                     $('.lingua-progress-fill').css('width', data.progress + '%');
                     $('#lingua-progress-text').text(data.progress_message);
-                    $('#lingua-scan-status').text(data.progress_message + ' (' + data.strings_found + ' <?php _e('strings found', 'iqcloud-translate'); ?>)');
+                    $('#lingua-scan-status').text(data.progress_message + ' (' + data.strings_found + ' ' + _i18n.stringsFound + ')');
 
                     if (data.completed) {
                         scanInProgress = false;
                         $('#lingua-scan-btn, #lingua-rescan-btn').prop('disabled', false);
-                        $('#lingua-scan-status').html('<span style="color: green;"><?php _e('Scan completed!', 'iqcloud-translate'); ?></span>');
+                        $('#lingua-scan-status').html('<span style="color: green;">' + _i18n.scanCompleted + '</span>');
 
                         // Reload page after 1 second
                         setTimeout(function() {
@@ -651,13 +678,13 @@ jQuery(document).ready(function($) {
                 } else {
                     scanInProgress = false;
                     $('#lingua-scan-btn, #lingua-rescan-btn').prop('disabled', false);
-                    $('#lingua-scan-status').html('<span style="color: red;"><?php _e('Scan failed:', 'iqcloud-translate'); ?> ' + (response.data || 'Unknown error') + '</span>');
+                    $('#lingua-scan-status').html('<span style="color: red;">' + _i18n.scanFailed + ' ' + (response.data || 'Unknown error') + '</span>');
                 }
             },
             error: function(xhr, status, error) {
                 scanInProgress = false;
                 $('#lingua-scan-btn, #lingua-rescan-btn').prop('disabled', false);
-                $('#lingua-scan-status').html('<span style="color: red;"><?php _e('Error:', 'iqcloud-translate'); ?> ' + error + '</span>');
+                $('#lingua-scan-status').html('<span style="color: red;">' + _i18n.errorLabel + ' ' + error + '</span>');
             }
         });
     }
@@ -737,14 +764,14 @@ jQuery(document).ready(function($) {
             $('#edit-regular-string').hide();
             $('#edit-plural-forms').show();
             $('#edit-is-plural').val('1');
-            $('#plural-forms-container').html('<p><?php _e('Loading plural forms...', 'iqcloud-translate'); ?></p>');
+            $('#plural-forms-container').html('<p>' + _i18n.loadingPlural + '</p>');
 
             $.ajax({
                 url: ajaxurl,
                 type: 'POST',
                 data: {
                     action: 'lingua_get_plural_forms',
-                    nonce: '<?php echo wp_create_nonce('lingua_admin_nonce'); ?>',
+                    nonce: _sd.nonce,
                     string_id: stringId,
                     language: lang,
                     original: original,
@@ -756,9 +783,9 @@ jQuery(document).ready(function($) {
 
                         // Show singular and plural original text at the top
                         html += '<div class="lingua-plural-originals">';
-                        html += '<div><strong><?php _e('Singular:', 'iqcloud-translate'); ?></strong> ' + original + '</div>';
+                        html += '<div><strong>' + _i18n.singular + '</strong> ' + original + '</div>';
                         if (originalPlural) {
-                            html += '<div><strong><?php _e('Plural:', 'iqcloud-translate'); ?></strong> ' + originalPlural + '</div>';
+                            html += '<div><strong>' + _i18n.plural + '</strong> ' + originalPlural + '</div>';
                         }
                         html += '</div>';
                         html += '<hr style="margin: 15px 0;">';
@@ -770,7 +797,7 @@ jQuery(document).ready(function($) {
                             html += '<div class="form-label">';
                             html += '<strong>' + formLabel + '</strong>';
                             html += '</div>';
-                            html += '<textarea class="plural-form-textarea" data-form-id="' + form.id + '" data-form-index="' + idx + '" placeholder="<?php _e('Enter translation...', 'iqcloud-translate'); ?>">' + (form.translation || '') + '</textarea>';
+                            html += '<textarea class="plural-form-textarea" data-form-id="' + form.id + '" data-form-index="' + idx + '" placeholder="' + _i18n.enterTranslation + '">' + (form.translation || '') + '</textarea>';
                             html += '</div>';
                         });
 
@@ -814,7 +841,7 @@ jQuery(document).ready(function($) {
         var $btn = $(this);
         var isPlural = $('#edit-is-plural').val() === '1';
 
-        $btn.prop('disabled', true).text('<?php _e('Saving...', 'iqcloud-translate'); ?>');
+        $btn.prop('disabled', true).text(_i18n.saving);
 
         if (isPlural) {
             // Collect all plural form translations
@@ -831,21 +858,21 @@ jQuery(document).ready(function($) {
                 type: 'POST',
                 data: {
                     action: 'lingua_save_plural_translations',
-                    nonce: '<?php echo wp_create_nonce('lingua_admin_nonce'); ?>',
+                    nonce: _sd.nonce,
                     forms: JSON.stringify(forms)
                 },
                 success: function(response) {
-                    $btn.prop('disabled', false).text('<?php _e('Save Translation', 'iqcloud-translate'); ?>');
+                    $btn.prop('disabled', false).text(_i18n.saveTranslation);
                     if (response.success) {
                         $modal.hide();
                         location.reload();
                     } else {
-                        alert('<?php _e('Error saving translation:', 'iqcloud-translate'); ?> ' + (response.data || 'Unknown error'));
+                        alert(_i18n.errorSaving + ' ' + (response.data || 'Unknown error'));
                     }
                 },
                 error: function() {
-                    $btn.prop('disabled', false).text('<?php _e('Save Translation', 'iqcloud-translate'); ?>');
-                    alert('<?php _e('Connection error', 'iqcloud-translate'); ?>');
+                    $btn.prop('disabled', false).text(_i18n.saveTranslation);
+                    alert(_i18n.connectionError);
                 }
             });
         } else {
@@ -855,12 +882,12 @@ jQuery(document).ready(function($) {
                 type: 'POST',
                 data: {
                     action: 'lingua_save_string_translation',
-                    nonce: '<?php echo wp_create_nonce('lingua_admin_nonce'); ?>',
+                    nonce: _sd.nonce,
                     string_id: $('#edit-string-id').val(),
                     translation: $('#edit-translation-text').val()
                 },
                 success: function(response) {
-                    $btn.prop('disabled', false).text('<?php _e('Save Translation', 'iqcloud-translate'); ?>');
+                    $btn.prop('disabled', false).text(_i18n.saveTranslation);
 
                     if (response.success) {
                         $modal.hide();
@@ -872,19 +899,21 @@ jQuery(document).ready(function($) {
                         if (translation) {
                             $row.find('.string-translation').remove();
                             $row.find('.string-original').after('<div class="string-translation" style="color: #0073aa; font-style: italic; margin-top: 5px;">&rarr; ' + translation.substring(0, 80) + (translation.length > 80 ? '...' : '') + '</div>');
-                            $row.find('.lingua-status').removeClass('untranslated').addClass('translated').text('<?php _e('Translated', 'iqcloud-translate'); ?>');
+                            $row.find('.lingua-status').removeClass('untranslated').addClass('translated').text(_i18n.translated);
                             $row.find('.lingua-edit-string-btn').data('translation', translation);
                         }
                     } else {
-                        alert('<?php _e('Error saving translation:', 'iqcloud-translate'); ?> ' + (response.data || 'Unknown error'));
+                        alert(_i18n.errorSaving + ' ' + (response.data || 'Unknown error'));
                     }
                 },
-            error: function() {
-                $btn.prop('disabled', false).text('<?php _e('Save Translation', 'iqcloud-translate'); ?>');
-                alert('<?php _e('Connection error', 'iqcloud-translate'); ?>');
-            }
-        });
+                error: function() {
+                    $btn.prop('disabled', false).text(_i18n.saveTranslation);
+                    alert(_i18n.connectionError);
+                }
+            });
         }
     });
 });
-</script>
+JSEOF;
+wp_add_inline_script('jquery', $strings_js);
+?>

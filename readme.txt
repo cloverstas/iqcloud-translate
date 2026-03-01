@@ -1,6 +1,6 @@
 === IQCloud Translate ===
 Contributors: iqcloud
-Tags: translation, multilingual, language, translate, localization, woocommerce, seo, rtl, multi-language
+Tags: translation, multilingual, translate, localization, i18n
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 7.4

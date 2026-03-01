@@ -21,7 +21,7 @@ class Lingua {
         $this->version = LINGUA_VERSION;
 
         // v5.0.14: DEBUG - confirm Lingua class instantiated
-        $url = $_SERVER['REQUEST_URI'] ?? 'unknown';
+        $url = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
         lingua_debug_log("[Lingua v5.0.14] 🏗️ Lingua::__construct() called for URL: {$url}");
 
         // CRITICAL v4.0: Set current language IMMEDIATELY        // This must happen BEFORE any menu hooks are registered!
@@ -154,10 +154,6 @@ class Lingua {
     public function send_language_headers() {
         if (!headers_sent()) {
             global $LINGUA_LANGUAGE;
-
-            // v5.0.14: CRITICAL TEST - write to file instead of error_log
-            $test_file = LINGUA_PLUGIN_DIR . 'send-headers-test.txt';
-            file_put_contents($test_file, date('Y-m-d H:i:s') . " - send_language_headers called, LINGUA_LANGUAGE: {$LINGUA_LANGUAGE}, URL: " . ($_SERVER['REQUEST_URI'] ?? 'unknown') . "\n", FILE_APPEND);
 
             lingua_debug_log("[Lingua v5.0.14] 📤 send_language_headers called, LINGUA_LANGUAGE: {$LINGUA_LANGUAGE}");
 
@@ -615,26 +611,33 @@ class Lingua {
             }
         }
 
-        ?>
-        <script>
-        console.group('🌐 Lingua Gettext Debug');
-        console.log('Total strings: <?php echo count($lingua_gettext_strings); ?>');
-        <?php foreach ($by_domain as $domain => $data): ?>
-        console.groupCollapsed('📦 <?php echo esc_js($domain); ?> (<?php echo $data['translated']; ?> translated, <?php echo $data['untranslated']; ?> untranslated)');
-        console.table(<?php echo json_encode(array_values($data['strings'])); ?>);
-        console.groupEnd();
-        <?php endforeach; ?>
-        console.groupEnd();
-        </script>
-        <?php
+        // v5.5: Use wp_print_inline_script_tag() instead of raw <script> tag (WP review compliance)
+        // This runs at wp_footer/admin_footer time when wp_add_inline_script() is not available
+        $debug_js = "console.group('Lingua Gettext Debug');\n"
+            . "console.log('Total strings: " . count($lingua_gettext_strings) . "');\n";
+
+        foreach ($by_domain as $domain => $data) {
+            $debug_js .= "console.groupCollapsed('" . esc_js($domain) . " (" . $data['translated'] . " translated, " . $data['untranslated'] . " untranslated)');\n";
+            $debug_js .= "console.table(" . wp_json_encode(array_values($data['strings'])) . ");\n";
+            $debug_js .= "console.groupEnd();\n";
+        }
+
+        $debug_js .= "console.groupEnd();";
+
+        if (function_exists('wp_print_inline_script_tag')) {
+            wp_print_inline_script_tag($debug_js);
+        } else {
+            // Fallback for WP < 5.7
+            echo '<script>' . $debug_js . '</script>';
+        }
     }
 
     public function init_admin_bar_hooks() {
         // Просто регистрируем хуки без создания экземпляра
         add_action('admin_bar_menu', array($this, 'add_translate_button_to_bar'), 100);
-        // v5.0.6: Use admin_footer to run AFTER admin bar is rendered
-        add_action('admin_footer', array($this, 'add_translate_button_script_to_head'));
-        add_action('wp_footer', array($this, 'add_translate_button_script_to_head'));
+        // v5.5: Changed from footer hooks to enqueue hooks for wp_add_inline_script() compatibility (WP review)
+        add_action('admin_enqueue_scripts', array($this, 'add_translate_button_script_to_head'), 20);
+        add_action('wp_enqueue_scripts', array($this, 'add_translate_button_script_to_head'), 20);
     }
     
     public function add_translate_button_to_bar($wp_admin_bar) {
@@ -726,62 +729,46 @@ class Lingua {
             $page_type = 'post';
         }
 
-        ?>
-        <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            // v5.0.6: Use MutationObserver to wait for admin bar button
-            function setButtonAttributes() {
-                // v5.0.6: Correct selector - WordPress adds class to <li>, link is <a class="ab-item">
-                var $button = $('#wp-admin-bar-lingua-translate-page a.ab-item');
-                if ($button.length) {
-                    $button.attr('data-post-id', '<?php echo $post_id; ?>');
-                    $button.attr('data-page-type', '<?php echo $page_type; ?>');
-                    $button.attr('data-term-id', '<?php echo $term_id; ?>');
-                    $button.attr('data-taxonomy', '<?php echo $taxonomy; ?>');
-                    console.log('✅ Lingua v5.0.6: Button context set successfully!');
-                    console.log('  - Post ID: <?php echo $post_id; ?>');
-                    console.log('  - Page Type: <?php echo $page_type; ?>');
-                    console.log('  - Term ID: <?php echo $term_id; ?>');
-                    console.log('  - Taxonomy: <?php echo $taxonomy; ?>');
-                    return true;
-                }
-                return false;
-            }
+        // v5.5: Use wp_add_inline_script() instead of inline <script> tag (WP review compliance)
+        $post_id_js = intval($post_id);
+        $page_type_js = esc_js($page_type);
+        $term_id_js = intval($term_id);
+        $taxonomy_js = esc_js($taxonomy);
 
-            // Try immediately
-            if (setButtonAttributes()) {
-                return;
-            }
+        $inline_js = "jQuery(document).ready(function($) {\n"
+            . "function setButtonAttributes() {\n"
+            . "    var \$button = \$('#wp-admin-bar-lingua-translate-page a.ab-item');\n"
+            . "    if (\$button.length) {\n"
+            . "        \$button.attr('data-post-id', '{$post_id_js}');\n"
+            . "        \$button.attr('data-page-type', '{$page_type_js}');\n"
+            . "        \$button.attr('data-term-id', '{$term_id_js}');\n"
+            . "        \$button.attr('data-taxonomy', '{$taxonomy_js}');\n"
+            . "        console.log('Lingua v5.0.6: Button context set successfully!');\n"
+            . "        console.log('  - Post ID: {$post_id_js}');\n"
+            . "        console.log('  - Page Type: {$page_type_js}');\n"
+            . "        console.log('  - Term ID: {$term_id_js}');\n"
+            . "        console.log('  - Taxonomy: {$taxonomy_js}');\n"
+            . "        return true;\n"
+            . "    }\n"
+            . "    return false;\n"
+            . "}\n"
+            . "if (setButtonAttributes()) { return; }\n"
+            . "setTimeout(function() {\n"
+            . "    if (setButtonAttributes()) { return; }\n"
+            . "    var observer = new MutationObserver(function(mutations) {\n"
+            . "        if (setButtonAttributes()) { observer.disconnect(); }\n"
+            . "    });\n"
+            . "    observer.observe(document.body, { childList: true, subtree: true });\n"
+            . "    setTimeout(function() {\n"
+            . "        observer.disconnect();\n"
+            . "        if (!\$('#wp-admin-bar-lingua-translate-page a.ab-item').attr('data-page-type')) {\n"
+            . "            console.warn('Lingua v5.0.6: Button attributes not set after 5s');\n"
+            . "        }\n"
+            . "    }, 5000);\n"
+            . "}, 100);\n"
+            . "});";
 
-            // Try after short delay
-            setTimeout(function() {
-                if (setButtonAttributes()) {
-                    return;
-                }
-
-                // If still not found, use MutationObserver
-                var observer = new MutationObserver(function(mutations) {
-                    if (setButtonAttributes()) {
-                        observer.disconnect();
-                    }
-                });
-
-                observer.observe(document.body, {
-                    childList: true,
-                    subtree: true
-                });
-
-                // Stop observing after 5 seconds
-                setTimeout(function() {
-                    observer.disconnect();
-                    if (!$('#wp-admin-bar-lingua-translate-page a.ab-item').attr('data-page-type')) {
-                        console.warn('⚠️ Lingua v5.0.6: Button attributes not set after 5s');
-                    }
-                }, 5000);
-            }, 100);
-        });
-        </script>
-        <?php
+        wp_add_inline_script('lingua-admin', $inline_js, 'after');
     }
     
     private function define_public_hooks() {

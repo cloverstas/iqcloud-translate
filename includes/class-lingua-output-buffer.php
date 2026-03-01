@@ -52,7 +52,12 @@ class Lingua_Output_Buffer {
      */
     private function debug_file_log($filename, $message) {
         if (defined('LINGUA_DEBUG_FILES') && LINGUA_DEBUG_FILES) {
-            file_put_contents(LINGUA_PLUGIN_DIR . $filename, date('Y-m-d H:i:s') . " - {$message}\n", FILE_APPEND);
+            $upload_dir = wp_upload_dir();
+            $debug_dir = $upload_dir['basedir'] . '/iqcloud-translate/';
+            if (!file_exists($debug_dir)) {
+                wp_mkdir_p($debug_dir);
+            }
+            file_put_contents($debug_dir . $filename, date('Y-m-d H:i:s') . " - {$message}\n", FILE_APPEND);
         }
     }
 
@@ -62,7 +67,7 @@ class Lingua_Output_Buffer {
         $this->default_language = $this->get_default_language();
 
         // v5.2.35: Debug logging disabled by default for performance
-        $url = $_SERVER['REQUEST_URI'] ?? 'unknown';
+        $url = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
         $this->debug_file_log('output-buffer-construct.txt', "Output Buffer CONSTRUCT called for URL: {$url}");
         $this->debug_file_log('output-buffer-construct.txt', "Current language set to: {$this->current_language}, default: {$this->default_language}");
 
@@ -88,7 +93,7 @@ class Lingua_Output_Buffer {
      */
     public function start_output_buffering() {
         // v3.0.7 DEBUG: Логируем ВСЕ попытки запуска
-        $url = $_SERVER['REQUEST_URI'] ?? 'unknown';
+        $url = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
 
         // v5.2.35: Conditional debug logging
         $this->debug_file_log('start-buffering-test.txt', "start_output_buffering CALLED! URL: {$url}, lang: {$this->current_language}");
@@ -118,7 +123,7 @@ class Lingua_Output_Buffer {
         // return false;
 
         // v5.0.14: DEBUG - log WHY buffering starts or doesn't start
-        $url = $_SERVER['REQUEST_URI'] ?? 'unknown';
+        $url = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
         lingua_debug_log("[Lingua v5.0.14] should_start_buffering check for URL: {$url}, lang: {$this->current_language}");
 
         // v5.0.11 FIX: template_redirect hook already filters out admin, so no need to check is_admin()
@@ -222,7 +227,7 @@ class Lingua_Output_Buffer {
     public function process_page_output($output) {
 
         // v3.3 DEBUG: CRITICAL - log every invocation
-        $url = $_SERVER['REQUEST_URI'] ?? 'unknown';
+        $url = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
         $output_length = strlen($output);
 
         // v5.2.35: Conditional debug logging
@@ -743,22 +748,6 @@ class Lingua_Output_Buffer {
 
             $this->log_debug("v3.0.16: ✓ HTML parsed to DOM, processing " . count($translations) . " translations");
 
-            // v5.0.16: DEBUG - Save H1 elements from HTML
-            $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
-            if (strpos($request_uri, 'lavka-interernaya') !== false) {
-                $h1_debug_file = LINGUA_PLUGIN_DIR . 'h1-html-dump.txt';
-                $h1_elements = $html_dom->find('h1');
-                file_put_contents($h1_debug_file, date('Y-m-d H:i:s') . " - URL: {$request_uri}, lang: {$this->current_language}\n", FILE_APPEND);
-                file_put_contents($h1_debug_file, "Found " . count($h1_elements) . " H1 elements:\n", FILE_APPEND);
-                foreach ($h1_elements as $h1) {
-                    $h1_text = trim($h1->innertext);
-                    file_put_contents($h1_debug_file, "  - H1 innertext: '" . substr($h1_text, 0, 200) . "'\n", FILE_APPEND);
-                    file_put_contents($h1_debug_file, "  - H1 plaintext: '" . substr($h1->plaintext, 0, 200) . "'\n", FILE_APPEND);
-                    file_put_contents($h1_debug_file, "  - H1 class: '" . $h1->class . "'\n\n", FILE_APPEND);
-                }
-                file_put_contents($h1_debug_file, "\n", FILE_APPEND);
-            }
-
             $applied_count = 0;
 
             // v5.5.1: Save original meta descriptions BEFORE DOM traversal modifies them
@@ -772,215 +761,6 @@ class Lingua_Output_Buffer {
             lingua_debug_log('[Lingua v5.2.6] Starting OPTIMIZED translation application for ' . count($translations) . ' translations, lang: ' . $this->current_language);
 
             $applied_count = $this->apply_translations_optimized($html_dom, $translations);
-
-            // v5.2.6: OLD UNOPTIMIZED CODE REMOVED (was 202 lines, now 1 line)
-            // The old nested loop is preserved below for reference (commented out)
-            /*
-            foreach ($translations as $translation) {
-                if (empty($translation['original_text']) || empty($translation['translated_text'])) {
-                    continue;
-                }
-
-                $original = $translation['original_text'];
-                $translated = $translation['translated_text'];
-                $context = isset($translation['context']) ? $translation['context'] : 'unknown';
-
-                // v5.0.14: Log each translation we're trying to apply
-                if (strpos($original, 'Лавка') !== false || strpos($original, 'Magasin') !== false) {
-                    file_put_contents($test_file, date('Y-m-d H:i:s') . " - TRANSLATION: original='" . substr($original, 0, 80) . "', translated='" . substr($translated, 0, 80) . "'\n", FILE_APPEND);
-                    file_put_contents($test_file, "    Checking strpos for 'Лавка интерьерная': " . (strpos($original, 'Лавка интерьерная') !== false ? 'YES' : 'NO') . "\n", FILE_APPEND);
-                    file_put_contents($test_file, "    Original bytes: " . bin2hex(substr($original, 0, 50)) . "\n\n", FILE_APPEND);
-                }
-
-                // v3.2: CRITICAL FIX - Skip technical content (WooCommerce JSON, etc)
-                if ($this->is_technical_content($original) || $this->is_technical_content($translated)) {
-                    $this->log_debug("v3.2: Skipping technical translation: " . substr($original, 0, 50));
-                    continue;
-                }
-
-                // v3.0.28: Определяем тип блока (html_block или обычный)
-                $is_html_block = (strpos($context, 'content_html_block') !== false);
-                if ($is_html_block) {
-                    $this->log_debug("v3.0.28 HTML BLOCK: Looking for HTML block: '" . substr($original, 0, 80) . "...'");
-                } else {
-                    $this->log_debug("v3.0.16: Looking for: '" . substr($original, 0, 80) . "...'");
-                }
-
-                // Ищем все DOM элементы
-                $found = false;
-                foreach ($html_dom->find('*') as $node) {
-                    // Пропускаем script, style, head
-                    $tag = strtolower($node->tag);
-                    if (in_array($tag, array('script', 'style', 'head', 'link', 'meta'))) {
-                        continue;
-                    }
-
-                    // Получаем innertext узла
-                    $node_innertext = $node->innertext;
-
-                    // v5.0.14: DEBUG H1 elements specifically
-                    if ($tag === 'h1' && strpos($original, 'Лавка интерьерная') !== false) {
-                        $h1_lavka_file = LINGUA_PLUGIN_DIR . 'h1-lavka-exact.txt';
-                        file_put_contents($h1_lavka_file, "H1 FOUND while looking for Лавка!\n", FILE_APPEND);
-                        file_put_contents($h1_lavka_file, "  H1 raw innertext: '{$node_innertext}'\n", FILE_APPEND);
-                        file_put_contents($h1_lavka_file, "  H1 raw length: " . strlen($node_innertext) . "\n", FILE_APPEND);
-                        file_put_contents($h1_lavka_file, "  Original: '{$original}'\n", FILE_APPEND);
-                        file_put_contents($h1_lavka_file, "  Original length: " . strlen($original) . "\n\n", FILE_APPEND);
-                    }
-
-                    if (empty($node_innertext)) {
-                        continue;
-                    }
-
-                    // v3.0.24: УПРОЩЕННЫЙ ПОДХОД
-                    // Используем str_replace() без regex
-                    // См. class-translation-render.php:858
-
-                    // v3.0.31: Декодируем HTML entities для сравнения
-                    // ВАЖНО: в DOM могут быть HTML entities (&#8230;), в БД - unicode символы (…)
-                    $node_innertext_decoded = html_entity_decode($node_innertext, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                    $original_decoded = html_entity_decode($original, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                    $translated_decoded = html_entity_decode($translated, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-
-                    // v3.7: Normalize <br> tags AND whitespace around them
-                    // Problem: DB has "<br /> " (space after) but DOM has "<br />\n" (newline after)
-                    // Strategy: normalize BOTH <br> variants AND whitespace
-                    $node_innertext_normalized = preg_replace('/<br\s*\/?\s*>/i', '<br />', $node_innertext_decoded);
-                    $node_innertext_normalized = preg_replace('/<br\s*\/>\s+/', '<br /> ', $node_innertext_normalized); // Normalize whitespace after <br />
-
-                    $original_normalized = preg_replace('/<br\s*\/?\s*>/i', '<br />', $original_decoded);
-                    $original_normalized = preg_replace('/<br\s*\/>\s+/', '<br /> ', $original_normalized);
-
-                    $translated_normalized = preg_replace('/<br\s*\/?\s*>/i', '<br />', $translated_decoded);
-                    $translated_normalized = preg_replace('/<br\s*\/>\s+/', '<br /> ', $translated_normalized);
-
-                    // v5.0.9: Normalize multiple spaces to single space (fixes "Bureau  avec" vs "Bureau avec")
-                    $node_innertext_normalized = preg_replace('/\s{2,}/', ' ', $node_innertext_normalized);
-                    $original_normalized = preg_replace('/\s{2,}/', ' ', $original_normalized);
-                    $translated_normalized = preg_replace('/\s{2,}/', ' ', $translated_normalized);
-
-                    // v5.0.12: Normalize WordPress special characters (wptexturize changes)
-                    // en dash vs em dash vs regular dash
-                    $node_innertext_normalized = str_replace(array('–', '—', '‐'), '-', $node_innertext_normalized);
-                    $original_normalized = str_replace(array('–', '—', '‐'), '-', $original_normalized);
-                    $translated_normalized = str_replace(array('–', '—', '‐'), '-', $translated_normalized);
-                    // curly quotes
-                    $node_innertext_normalized = str_replace(array('"', '"', '‟'), '"', $node_innertext_normalized);
-                    $original_normalized = str_replace(array('"', '"', '‟'), '"', $original_normalized);
-                    $translated_normalized = str_replace(array('"', '"', '‟'), '"', $translated_normalized);
-                    $node_innertext_normalized = str_replace(array("\xe2\x80\x98", "\xe2\x80\x99", "\xe2\x80\x9b"), "'", $node_innertext_normalized);
-                    $original_normalized = str_replace(array("\xe2\x80\x98", "\xe2\x80\x99", "\xe2\x80\x9b"), "'", $original_normalized);
-                    $translated_normalized = str_replace(array("\xe2\x80\x98", "\xe2\x80\x99", "\xe2\x80\x9b"), "'", $translated_normalized);
-                    // ellipsis
-                    $node_innertext_normalized = str_replace('…', '...', $node_innertext_normalized);
-                    $original_normalized = str_replace('…', '...', $original_normalized);
-                    $translated_normalized = str_replace('…', '...', $translated_normalized);
-
-                    // v5.0.15: CRITICAL FIX - Trim whitespace for matching
-                    // H1 contains "\n\t\nЛавка интерьерная приятная\n\t" but DB has "Лавка интерьерная приятная"
-                    $node_innertext_normalized = trim($node_innertext_normalized);
-                    $original_normalized = trim($original_normalized);
-                    $translated_normalized = trim($translated_normalized);
-
-                    // v5.0.15: Debug matching for Лавка specifically
-                    if (strpos($original, 'Лавка интерьерная приятная') !== false) {
-                        $lavka_file = LINGUA_PLUGIN_DIR . 'lavka-match-debug.txt';
-                        file_put_contents($lavka_file, date('Y-m-d H:i:s') . " - Checking <{$tag}>\n", FILE_APPEND);
-                        file_put_contents($lavka_file, "  Node innertext RAW: '" . substr($node_innertext, 0, 100) . "'\n", FILE_APPEND);
-                        file_put_contents($lavka_file, "  Node innertext NORMALIZED: '" . $node_innertext_normalized . "'\n", FILE_APPEND);
-                        file_put_contents($lavka_file, "  Original NORMALIZED: '" . $original_normalized . "'\n", FILE_APPEND);
-                        file_put_contents($lavka_file, "  Node length: " . strlen($node_innertext_normalized) . ", Original length: " . strlen($original_normalized) . "\n", FILE_APPEND);
-                        file_put_contents($lavka_file, "  EXACT Match? " . ($node_innertext_normalized === $original_normalized ? 'YES ✅' : 'NO ❌') . "\n\n", FILE_APPEND);
-                    }
-
-                    // v5.0.16: CRITICAL FIX - Don't break after first match!
-                    // Problem: breadcrumbs SPAN matches before H1, so H1 never gets translated!
-                    // Solution: Replace ALL occurrences
-                    if ($node_innertext_normalized === $original_normalized) {
-                        // EXACT MATCH - replace entire innertext
-                        $node->innertext = $translated_normalized;
-                        $applied_count++;
-                        $found = true;
-                        $this->log_debug("v5.0.16: ✓ EXACT MATCH - Applied to <{$tag}>: '" . substr($original, 0, 50) . "...'");
-
-                        if (strpos($original, 'Лавка') !== false) {
-                            $lavka_file = LINGUA_PLUGIN_DIR . 'lavka-match-debug.txt';
-                            file_put_contents($lavka_file, date('Y-m-d H:i:s') . " - ✅ EXACT MATCH! Applied translation to <{$tag}>\n\n", FILE_APPEND);
-                        }
-                        // v5.0.16: REMOVED break - continue to find ALL matches!
-                        // break;
-                    }
-
-                    // v5.0.17: SAFE PARTIAL MATCH with length check AND partial translation prevention
-                    // User request: Prevent wrong translations when text changes
-                    // User request v5.0.17: Don't show partial translations like "Home Furniture и дачи"
-                    $original_length = strlen($original_normalized);
-                    $node_length = strlen($node_innertext_normalized);
-
-                    // If original is much shorter than node, it's likely text was extended (e.g., "Home" → "Home and Garden")
-                    // Don't apply old translation in this case
-                    if ($node_length <= $original_length + 15 && strpos($node_innertext_normalized, $original_normalized) !== false) {
-                        // Test what result would be
-                        $test_result = str_replace($original_normalized, $translated_normalized, $node_innertext_normalized);
-
-                        // v5.0.17: CRITICAL - Check if result contains untranslated Cyrillic text
-                        // If so, skip this translation to avoid showing "Möbel für zu Hause и дачи"
-                        $has_cyrillic = preg_match('/[\p{Cyrillic}]/u', $test_result);
-
-                        if (!$has_cyrillic) {
-                            // SAFE PARTIAL MATCH - node is not much longer than original AND fully translated
-                            $node->innertext = $test_result;
-                            $applied_count++;
-                            $found = true;
-                            $this->log_debug("v5.0.17: ✓ PARTIAL MATCH (fully translated) - Applied to <{$tag}>: '" . substr($original, 0, 50) . "...'");
-                        } else {
-                            $this->log_debug("v5.0.17: ✗ PARTIAL MATCH SKIPPED (would create mixed language) - for <{$tag}>: '" . substr($original, 0, 50) . "...'");
-                        }
-                        // v5.0.16: REMOVED break - continue to find ALL matches!
-                        // break;
-                    }
-
-                    // v5.0.16: Try FUZZY match (node is beginning of original - for long texts split across elements)
-                    // This handles cases where original text is 594 chars but node only has first 200 chars
-                    if (strlen($node_innertext_normalized) >= 50 &&
-                        strpos($original_normalized, $node_innertext_normalized) === 0) {
-                        // Node text is the BEGINNING of original - likely a truncated match
-                        // Extract corresponding portion of translation
-                        $node_length = strlen($node_innertext_normalized);
-                        $translated_portion = substr($translated_normalized, 0, $node_length);
-
-                        $node->innertext = $translated_portion;
-                        $applied_count++;
-                        $found = true;
-                        $this->log_debug("v5.0.16: ✓ FUZZY MATCH (beginning) - Applied portion to <{$tag}>: '" . substr($node_innertext_normalized, 0, 50) . "...'");
-                        // v5.0.16: REMOVED break - continue to find ALL matches!
-                        // break;
-                    }
-                }
-
-                if (!$found) {
-                    // v3.7: Enhanced debugging for NOT FOUND cases
-                    $is_paragraph = (strpos($original, 'Прямоугольный раздвижной') !== false);
-                    if ($is_paragraph) {
-                        $this->log_debug("v3.7 DEBUG: Paragraph NOT FOUND, details:");
-                        $this->log_debug("  Original length: " . strlen($original_normalized));
-                        $this->log_debug("  Original start: '" . substr($original_normalized, 0, 100) . "...'");
-                        $this->log_debug("  Checked " . count($html_dom->find('p')) . " <p> elements");
-
-                        // Check first few paragraphs
-                        $paragraphs = $html_dom->find('p');
-                        for ($pi = 0; $pi < min(5, count($paragraphs)); $pi++) {
-                            $p = $paragraphs[$pi];
-                            $p_text = html_entity_decode($p->innertext, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                            $p_normalized = preg_replace('/<br\s*\/?\s*>/i', '<br />', $p_text);
-                            $this->log_debug("  P[$pi] length=" . strlen($p_normalized) . ", start='" . substr($p_normalized, 0, 80) . "...'");
-                        }
-                    }
-                    $this->log_debug("v3.0.16: ✗ NOT FOUND in DOM: '" . substr($original, 0, 50) . "...'");
-                }
-            }
-            */
-            // v5.2.6: END OF COMMENTED OLD CODE - Now using apply_translations_optimized()
 
             // Рендерим DOM обратно в HTML
             $translated_html = $html_dom->save();
@@ -1370,7 +1150,8 @@ class Lingua_Output_Buffer {
             return;
         }
 
-        $debug_dir = WP_CONTENT_DIR . '/lingua-debug/';
+        $upload_dir = wp_upload_dir();
+        $debug_dir = $upload_dir['basedir'] . '/iqcloud-translate/debug-html/';
         if (!is_dir($debug_dir)) {
             wp_mkdir_p($debug_dir);
         }
@@ -1385,7 +1166,7 @@ class Lingua_Output_Buffer {
     private function get_current_language() {
         // v5.2.35: Conditional debug logging
         // КРИТИЧНО v3.0: Извлекаем язык из URL
-        $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+        $request_uri = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
 
         lingua_debug_log("[Lingua Output Buffer v5.2.159] get_current_language: REQUEST_URI='{$request_uri}'");
 
@@ -1441,7 +1222,10 @@ class Lingua_Output_Buffer {
      */
     private function get_current_url() {
         // Получаем полный URL запроса
-        $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+        $scheme = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+        $host = sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST'] ?? ''));
+        $request_uri = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
+        $url = "{$scheme}://{$host}{$request_uri}";
 
         // Удаляем языковой префикс для единообразного кэширования
         // /en/product/chair -> /product/chair

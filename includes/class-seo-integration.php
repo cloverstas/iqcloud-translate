@@ -91,7 +91,7 @@ class Lingua_SEO_Integration {
             $languages[$default_lang] = array('name' => 'Default');
         }
 
-        $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+        $request_uri = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '/'));
         $current_path = parse_url($request_uri, PHP_URL_PATH);
         $current_path = rtrim($current_path, '/');
         if (empty($current_path)) {
@@ -582,8 +582,8 @@ class Lingua_SEO_Integration {
      */
     private function get_current_page_url() {
         // Get the current request URI
-        $request_uri = $_SERVER['REQUEST_URI'];
-        
+        $request_uri = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '/'));
+
         // Remove query string if present
         $path = strtok($request_uri, '?');
         
@@ -682,7 +682,16 @@ class Lingua_SEO_Integration {
             }
         }
         
-        echo '<script type="application/ld+json">' . wp_json_encode($json_ld, JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
+        // v5.5: Use wp_print_inline_script_tag() for proper escaping (WP 5.7+, WP review compliance)
+        if (function_exists('wp_print_inline_script_tag')) {
+            wp_print_inline_script_tag(
+                wp_json_encode($json_ld, JSON_UNESCAPED_UNICODE),
+                array('type' => 'application/ld+json')
+            );
+        } else {
+            // Fallback for WP < 5.7
+            echo '<script type="application/ld+json">' . wp_json_encode($json_ld, JSON_UNESCAPED_UNICODE) . '</script>' . "\n";
+        }
     }
     
     /**

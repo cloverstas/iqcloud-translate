@@ -22,6 +22,12 @@
  */
 
 namespace Lingua;
+
+// Prevent conflicts if another plugin loads the same library
+if (class_exists('Lingua\simple_html_dom')) {
+    return;
+}
+
 /*
  * Lingua modifications
  *

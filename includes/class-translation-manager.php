@@ -60,8 +60,8 @@ class Lingua_Translation_Manager {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 lingua_debug_log("[LINGUA LOAD] unified_data_found=" . (!empty($unified_data) ? 'YES' : 'NO'));
                 if (!empty($unified_data)) {
-                    lingua_debug_log("[LINGUA LOAD] unified_data_groups=" . json_encode(array_keys($unified_data)));
-                    lingua_debug_log("[LINGUA LOAD] unified_data_content=" . json_encode($unified_data));
+                    lingua_debug_log("[LINGUA LOAD] unified_data_groups=" . wp_json_encode(array_keys($unified_data)));
+                    lingua_debug_log("[LINGUA LOAD] unified_data_content=" . wp_json_encode($unified_data));
                 }
             }
 
@@ -91,7 +91,7 @@ class Lingua_Translation_Manager {
                 }
 
                 // Build structured content from unified data
-                $translation->translated_content = json_encode($unified_data);
+                $translation->translated_content = wp_json_encode($unified_data);
 
                 // Get meta data from unified structure
                 $translation->meta = $this->extract_meta_from_unified($unified_data);
@@ -101,7 +101,7 @@ class Lingua_Translation_Manager {
                 // PHASE 2.1: DEBUG - Log successful unified load
                 if (defined('WP_DEBUG') && WP_DEBUG) {
                     lingua_debug_log("[LINGUA LOAD] unified_load=SUCCESS, content_size=" . strlen($translation->translated_content));
-                    lingua_debug_log("[LINGUA LOAD] meta_keys=" . json_encode(array_keys($translation->meta ?? array())));
+                    lingua_debug_log("[LINGUA LOAD] meta_keys=" . wp_json_encode(array_keys($translation->meta ?? array())));
                     lingua_debug_log("[LINGUA LOAD] === LOAD REQUEST SUCCESS (UNIFIED) ===");
                 }
 
@@ -128,7 +128,7 @@ class Lingua_Translation_Manager {
                 $translation->meta = $postmeta_data;
 
                 if (defined('WP_DEBUG') && WP_DEBUG) {
-                    lingua_debug_log("[LINGUA LOAD v2.0.4] Found postmeta translations: " . json_encode(array_keys($postmeta_data)));
+                    lingua_debug_log("[LINGUA LOAD v2.0.4] Found postmeta translations: " . wp_json_encode(array_keys($postmeta_data)));
                     lingua_debug_log("[LINGUA LOAD] === LOAD REQUEST SUCCESS (POSTMETA) ===");
                 }
 
@@ -160,7 +160,7 @@ class Lingua_Translation_Manager {
 
                     // PHASE 2.1: DEBUG - Log legacy load success
                     if (defined('WP_DEBUG') && WP_DEBUG) {
-                        lingua_debug_log("[LINGUA LOAD] legacy_meta_keys=" . json_encode(array_keys($meta_data ?? array())));
+                        lingua_debug_log("[LINGUA LOAD] legacy_meta_keys=" . wp_json_encode(array_keys($meta_data ?? array())));
                         lingua_debug_log("[LINGUA LOAD] === LOAD REQUEST SUCCESS (LEGACY) ===");
                     }
                 }
@@ -224,17 +224,17 @@ class Lingua_Translation_Manager {
         if (defined('WP_DEBUG') && WP_DEBUG) {
             lingua_debug_log("[LINGUA SAVE] === SAVE REQUEST START ===");
             lingua_debug_log("[LINGUA SAVE] post_id={$post_id}, target_lang={$language}");
-            lingua_debug_log("[LINGUA SAVE] data_structure=" . json_encode(array_keys($data)));
+            lingua_debug_log("[LINGUA SAVE] data_structure=" . wp_json_encode(array_keys($data)));
 
             // Log current global language state
             global $LINGUA_LANGUAGE;
             lingua_debug_log("[LINGUA SAVE] global_LINGUA_LANGUAGE=" . ($LINGUA_LANGUAGE ?? 'undefined'));
-            lingua_debug_log("[LINGUA SAVE] current_url=" . ($_SERVER['REQUEST_URI'] ?? 'unknown'));
+            lingua_debug_log("[LINGUA SAVE] current_url=" . sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '')));
 
             // PHASE 2.1: VALIDATION - Check target language correctness
             $available_languages = get_option('lingua_languages', array());
             if (empty($available_languages[$language])) {
-                lingua_debug_log("[LINGUA SAVE WARNING] Target language '{$language}' not found in available languages: " . json_encode(array_keys($available_languages)));
+                lingua_debug_log("[LINGUA SAVE WARNING] Target language '{$language}' not found in available languages: " . wp_json_encode(array_keys($available_languages)));
             } else {
                 lingua_debug_log("[LINGUA SAVE] Target language '{$language}' validated successfully");
             }
@@ -263,7 +263,7 @@ class Lingua_Translation_Manager {
                     // Log table structure
                     $columns = $wpdb->get_results("DESCRIBE {$this->string_table_name}");
                     $column_names = array_map(function($col) { return $col->Field; }, $columns);
-                    lingua_debug_log("[LINGUA DB] table_columns=" . json_encode($column_names));
+                    lingua_debug_log("[LINGUA DB] table_columns=" . wp_json_encode($column_names));
 
                     // Log total record count
                     $total_records = $wpdb->get_var("SELECT COUNT(*) FROM {$this->string_table_name}");
@@ -283,7 +283,7 @@ class Lingua_Translation_Manager {
                              WHERE context LIKE %s LIMIT 10",
                             "%.post_{$post_id}"
                         ));
-                        lingua_debug_log("[LINGUA DB] sample_existing_contexts=" . json_encode($sample_contexts));
+                        lingua_debug_log("[LINGUA DB] sample_existing_contexts=" . wp_json_encode($sample_contexts));
                     }
                 } else {
                     lingua_debug_log("[LINGUA DB ERROR] Table {$this->string_table_name} does not exist!");
@@ -908,7 +908,8 @@ class Lingua_Translation_Manager {
         add_action('wp_head', array($this, 'add_translated_meta_tags'), 1);
         
         // JavaScript fallback for title
-        add_action('wp_footer', array($this, 'add_title_fallback_script'), 999);
+        // v5.5: Changed from wp_footer to wp_enqueue_scripts for wp_add_inline_script() compatibility (WP review)
+        add_action('wp_enqueue_scripts', array($this, 'add_title_fallback_script'), 999);
         
         // Force title replacement with highest priority
         add_filter('wp_title', array($this, 'force_translate_title'), 9999, 2);
@@ -1286,9 +1287,8 @@ class Lingua_Translation_Manager {
         global $post;
         
         // Debug: Check the request URI
-        $request_uri = $_SERVER['REQUEST_URI'] ?? '';
-        
-        
+        $request_uri = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
+
         // If we have a post object, use it FIRST (prioritize actual post)
         if ($post && $post->ID) {
             return $post->ID;
@@ -1325,7 +1325,7 @@ class Lingua_Translation_Manager {
         }
         
         // Final fallback: hardcoded front page ID (temporary)
-        if (is_home() || is_front_page() || $_SERVER['REQUEST_URI'] === '/') {
+        if (is_home() || is_front_page() || sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '')) === '/') {
             return 17; // Known front page ID
         }
         
@@ -1565,15 +1565,15 @@ class Lingua_Translation_Manager {
         }
         
         $translated_title = esc_js($translation->meta['seo_title']);
-        
-        echo '<script type="text/javascript">
-        (function() {
-            // Only change title if it still shows default
-            if (document.title === "IQCloud Translate") {
-                document.title = "' . $translated_title . '";
-            }
-        })();
-        </script>';
+
+        // v5.5: Use wp_add_inline_script() instead of inline <script> tag (WP review compliance)
+        $inline_js = "(function() {\n"
+            . "if (document.title === 'IQCloud Translate') {\n"
+            . "    document.title = '{$translated_title}';\n"
+            . "}\n"
+            . "})();";
+
+        wp_add_inline_script('lingua-dynamic-translation', $inline_js, 'after');
     }
     
     
@@ -1606,7 +1606,7 @@ class Lingua_Translation_Manager {
                 lingua_debug_log("[LINGUA KEYS] sql_results_count=" . count($translations));
                 if (!empty($translations)) {
                     $found_contexts = array_map(function($t) { return $t->context; }, $translations);
-                    lingua_debug_log("[LINGUA KEYS] found_contexts=" . json_encode($found_contexts));
+                    lingua_debug_log("[LINGUA KEYS] found_contexts=" . wp_json_encode($found_contexts));
                 }
             }
 
@@ -1670,10 +1670,10 @@ class Lingua_Translation_Manager {
                         $group_summary[$group] = array_keys($fields);
                     }
                 }
-                lingua_debug_log("[LINGUA KEYS] grouped_structure=" . json_encode($group_summary));
+                lingua_debug_log("[LINGUA KEYS] grouped_structure=" . wp_json_encode($group_summary));
 
                 if (!empty($context_parsing_issues)) {
-                    lingua_debug_log("[LINGUA KEYS WARNING] context_issues=" . json_encode($context_parsing_issues));
+                    lingua_debug_log("[LINGUA KEYS WARNING] context_issues=" . wp_json_encode($context_parsing_issues));
                 }
                 lingua_debug_log("[LINGUA KEYS] === GET_UNIFIED_DATA SUCCESS ===");
             }

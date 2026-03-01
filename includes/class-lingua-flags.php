@@ -26,9 +26,10 @@ class Lingua_Flags {
             
             return '🌐';
         } elseif ($type === 'image') {
-            // Use flag images from CDN
-            $flag_url = 'https://flagcdn.com/16x12/' . self::get_country_iso($country_code) . '.png';
-            return '<img src="' . esc_url($flag_url) . '" alt="' . esc_attr($country_code) . '" class="lingua-flag-img" />';
+            // Use local flag SVG images bundled with the plugin
+            $country_iso = self::get_country_iso($country_code);
+            $flag_url = plugins_url('public/css/flags/4x3/' . $country_iso . '.svg', dirname(__FILE__));
+            return '<img src="' . esc_url($flag_url) . '" alt="' . esc_attr($country_code) . '" class="lingua-flag-img" width="16" height="12" />';
         } elseif ($type === 'css') {
             // CSS class for flag sprites
             return '<span class="lingua-flag lingua-flag-' . esc_attr($country_code) . '"></span>';
@@ -38,7 +39,7 @@ class Lingua_Flags {
     }
     
     /**
-     * Convert language code to country ISO code (for flagcdn.com)
+     * Convert language code to country ISO code
      */
     private static function get_country_iso($lang_code) {
         // Basic mapping for most common cases

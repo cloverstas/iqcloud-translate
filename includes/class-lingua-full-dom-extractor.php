@@ -1900,8 +1900,8 @@ class Lingua_Full_Dom_Extractor {
 
         lingua_debug_log("[Lingua v3.1 Extractor] Post {$post_id} Statistics:");
         lingua_debug_log("  Total strings: {$total_strings}");
-        lingua_debug_log("  By group: " . json_encode($stats));
-        lingua_debug_log("  By type: " . json_encode($type_stats));
+        lingua_debug_log("  By group: " . wp_json_encode($stats));
+        lingua_debug_log("  By type: " . wp_json_encode($type_stats));
         lingua_debug_log("  Extraction method: 3-type architecture (content_blocks + text_nodes + attributes)");
     }
 

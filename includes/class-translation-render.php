@@ -313,7 +313,7 @@ class Lingua_Translation_Render {
         }
         
         // Skip for certain file types
-        $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+        $request_uri = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
         if (preg_match('/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/i', $request_uri)) {
             return true;
         }
@@ -330,7 +330,7 @@ class Lingua_Translation_Render {
         lingua_debug_log('Lingua Translation Render: Processing HTML output, length: ' . strlen($html));
         lingua_debug_log('Lingua Translation Render: Current language: ' . ($LINGUA_LANGUAGE ?? 'NOT_SET'));
         lingua_debug_log('Lingua Translation Render: Default language: ' . $this->url_rewriter->get_default_language());
-        lingua_debug_log('Lingua Translation Render: REQUEST_URI: ' . ($_SERVER['REQUEST_URI'] ?? 'NOT_SET'));
+        lingua_debug_log('Lingua Translation Render: REQUEST_URI: ' . sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '')));
         
         // Check force capture mode
         $force_capture = get_option('lingua_force_capture_mode', false);
@@ -948,17 +948,17 @@ class Lingua_Translation_Render {
             echo '</p>';
             echo '</div>';
 
-            // Add JavaScript to handle dismissal
-            echo '<script>
-            jQuery(document).ready(function($) {
-                $(document).on("click", "[data-notice=\"lingua-v2-upgrade\"] .notice-dismiss", function() {
-                    $.post(ajaxurl, {
-                        action: "lingua_dismiss_v2_notice",
-                        _ajax_nonce: "' . wp_create_nonce('lingua_dismiss_notice') . '"
-                    });
-                });
-            });
-            </script>';
+            // v5.5: Use wp_add_inline_script() instead of inline <script> tag (WP review compliance)
+            $dismiss_nonce = wp_create_nonce('lingua_dismiss_notice');
+            $dismiss_js = 'jQuery(document).ready(function($) {'
+                . '$(document).on("click", "[data-notice=\"lingua-v2-upgrade\"] .notice-dismiss", function() {'
+                . '$.post(ajaxurl, {'
+                . 'action: "lingua_dismiss_v2_notice",'
+                . '_ajax_nonce: "' . $dismiss_nonce . '"'
+                . '});'
+                . '});'
+                . '});';
+            wp_add_inline_script('jquery', $dismiss_js);
         }
     }
 
@@ -973,7 +973,7 @@ class Lingua_Translation_Render {
      * AJAX handler for notice dismissal
      */
     public function dismiss_v2_notice() {
-        if (!wp_verify_nonce($_POST['_ajax_nonce'], 'lingua_dismiss_notice')) {
+        if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_ajax_nonce'])), 'lingua_dismiss_notice')) {
             wp_die('Security check failed');
         }
 

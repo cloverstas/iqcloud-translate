@@ -221,13 +221,13 @@ class Lingua_String_Capture {
         }
 
         // Skip certain file types
-        $request_uri = sanitize_text_field($_SERVER['REQUEST_URI'] ?? '');
+        $request_uri = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
         if (preg_match('/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|xml|txt|pdf)$/i', $request_uri)) {
             return false;
         }
 
         // Skip if user agent looks like a bot (basic check)
-        $user_agent = sanitize_text_field($_SERVER['HTTP_USER_AGENT'] ?? '');
+        $user_agent = sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'] ?? ''));
         if (preg_match('/(bot|crawler|spider|scraper)/i', $user_agent)) {
             return false;
         }
@@ -420,7 +420,7 @@ class Lingua_String_Capture {
      */
     private function generate_page_cache_key($html) {
         // Create hash based on URL and content signature
-        $url = sanitize_text_field($_SERVER['REQUEST_URI'] ?? '');
+        $url = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
         $content_signature = substr(md5($html), 0, 8); // Short signature to detect content changes
 
         return 'page_' . md5($url . $content_signature);

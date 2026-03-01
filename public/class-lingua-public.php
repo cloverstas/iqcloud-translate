@@ -16,8 +16,9 @@ class Lingua_Public {
     public function __construct($version) {
         $this->version = $version;
 
-        // v4.0: Register footer hook in constructor to ensure it always runs
-        add_action('wp_print_footer_scripts', array($this, 'output_language_data_to_js'), 1);
+        // v4.0: Register hook to inject language data into JS
+        // v5.5: Changed from wp_print_footer_scripts to wp_enqueue_scripts for wp_add_inline_script() compatibility
+        add_action('wp_enqueue_scripts', array($this, 'output_language_data_to_js'), 20);
 
         // v5.2: Register footer hook for media library templates
         if (current_user_can(lingua_translating_capability())) {
@@ -254,7 +255,7 @@ class Lingua_Public {
 
         // Prepare language data for JavaScript
         $language_data = array();
-        $current_path = $_SERVER['REQUEST_URI'] ?? '/';
+        $current_path = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '/'));
 
         // v5.2.31: DEBUG - Log current path for debugging
         lingua_debug_log("[LINGUA v5.2.31 PHP DEBUG] current_path from REQUEST_URI: {$current_path}");
@@ -294,37 +295,30 @@ class Lingua_Public {
             );
         }
 
-        ?>
-        <script type="text/javascript">
-        // v5.3.21: Global debug mode flag and logging function
-        window.linguaDebugMode = <?php echo lingua_is_debug_enabled() ? 'true' : 'false'; ?>;
-        window.linguaDebug = function() {
-            if (window.linguaDebugMode && typeof console !== 'undefined' && console.log) {
-                console.log.apply(console, arguments);
-            }
-        };
+        // v5.5: Use wp_add_inline_script() instead of inline <script> tag (WP review compliance)
+        $debug_mode = lingua_is_debug_enabled() ? 'true' : 'false';
+        $inline_js = "// v5.3.21: Global debug mode flag and logging function\n"
+            . "window.linguaDebugMode = {$debug_mode};\n"
+            . "window.linguaDebug = function() {\n"
+            . "    if (window.linguaDebugMode && typeof console !== 'undefined' && console.log) {\n"
+            . "        console.log.apply(console, arguments);\n"
+            . "    }\n"
+            . "};\n"
+            . "window.linguaSwitcher = window.linguaSwitcher || {};\n"
+            . "window.linguaSwitcher.defaultLang = '" . esc_js($default_lang) . "';\n"
+            . "window.linguaSwitcher.languages = " . wp_json_encode($language_data) . ";\n"
+            . "window.linguaSwitcher.debugMode = window.linguaDebugMode;\n"
+            . "(function() {\n"
+            . "    var path = window.location.pathname;\n"
+            . "    var match = path.match(/^\\/([a-z]{2})(?:\\/|$)/);\n"
+            . "    window.linguaSwitcher.currentLang = match ? match[1] : window.linguaSwitcher.defaultLang;\n"
+            . "    window.linguaDebug('[LINGUA v5.2.31] Language auto-detected from URL:', window.linguaSwitcher.currentLang, 'path:', path);\n"
+            . "})();\n"
+            . "window.linguaDebug('[LINGUA v5.2.14 DEBUG] Language data injected:', window.linguaSwitcher);\n"
+            . "window.linguaDebug('[LINGUA v5.2.14 DEBUG] Current URL:', window.location.pathname);\n"
+            . "window.linguaDebug('[LINGUA v5.2.14 DEBUG] Available languages:', Object.keys(window.linguaSwitcher.languages));";
 
-        window.linguaSwitcher = window.linguaSwitcher || {};
-        // v5.2.14: CRITICAL FIX - Don't set currentLang from PHP (it gets cached with wrong value)
-        // Instead, detect language from URL in JavaScript (see switcher-fix.js)
-        // window.linguaSwitcher.currentLang = '<?php echo esc_js($current_lang); ?>';  // DISABLED - causes cache issues
-        window.linguaSwitcher.defaultLang = '<?php echo esc_js($default_lang); ?>';
-        window.linguaSwitcher.languages = <?php echo json_encode($language_data); ?>;
-        window.linguaSwitcher.debugMode = window.linguaDebugMode; // v5.3.21: Add debug flag to linguaSwitcher
-
-        // v5.2.31: CRITICAL FIX - Regex must match /XX/ AND /XX (with or without trailing slash)
-        (function() {
-            var path = window.location.pathname;
-            var match = path.match(/^\/([a-z]{2})(?:\/|$)/);  // Matches /it/ or /it
-            window.linguaSwitcher.currentLang = match ? match[1] : window.linguaSwitcher.defaultLang;
-            window.linguaDebug('[LINGUA v5.2.31] Language auto-detected from URL:', window.linguaSwitcher.currentLang, 'path:', path);
-        })();
-
-        window.linguaDebug('[LINGUA v5.2.14 DEBUG] Language data injected:', window.linguaSwitcher);
-        window.linguaDebug('[LINGUA v5.2.14 DEBUG] Current URL:', window.location.pathname);
-        window.linguaDebug('[LINGUA v5.2.14 DEBUG] Available languages:', Object.keys(window.linguaSwitcher.languages));
-        </script>
-        <?php
+        wp_add_inline_script('lingua-switcher-fix', $inline_js, 'before');
     }
 
     /**
@@ -433,9 +427,17 @@ class Lingua_Public {
         }
 
         // Generate script tags HTML
+        // v5.5: Use wp_get_script_tag() for proper attributes (WP 5.7+), fallback for older WP
         $script_html = '';
         foreach ($scripts as $handle => $url) {
-            $script_html .= '<script type="text/javascript" src="' . esc_url($url) . '" id="' . esc_attr($handle) . '-js"></script>' . "\n";
+            if (function_exists('wp_get_script_tag')) {
+                $script_html .= wp_get_script_tag(array(
+                    'src' => esc_url($url),
+                    'id'  => esc_attr($handle) . '-js',
+                )) . "\n";
+            } else {
+                $script_html .= '<script src="' . esc_url($url) . '" id="' . esc_attr($handle) . '-js"></script>' . "\n";
+            }
         }
 
         // Generate style tags HTML
@@ -474,18 +476,18 @@ class Lingua_Public {
 
         $start_time = microtime(true);
         lingua_debug_log('[Lingua AJAX] ajax_get_translatable_content called');
-        lingua_debug_log('[Lingua AJAX] POST data: ' . json_encode($_POST));
+        lingua_debug_log('[Lingua AJAX] POST data: ' . wp_json_encode($_POST));
         lingua_debug_log('[Lingua AJAX] Current user ID: ' . get_current_user_id());
 
         // КРИТИЧЕСКАЯ ПРОВЕРКА: Nonce validation
         // v5.2.78: CRITICAL - Generate test nonce to compare
         $test_nonce = wp_create_nonce('lingua_admin_nonce');
-        $provided_nonce = $_POST['nonce'] ?? '';
+        $provided_nonce = sanitize_text_field(wp_unslash($_POST['nonce'] ?? ''));
         $verify_result = wp_verify_nonce($provided_nonce, 'lingua_admin_nonce');
 
         lingua_debug_log('[LINGUA v5.2.78 NONCE DEBUG] ===== NONCE DIAGNOSTIC =====');
         lingua_debug_log('[LINGUA v5.2.78 NONCE] User ID: ' . get_current_user_id());
-        lingua_debug_log('[LINGUA v5.2.78 NONCE] Current URL: ' . ($_SERVER['REQUEST_URI'] ?? 'unknown'));
+        lingua_debug_log('[LINGUA v5.2.78 NONCE] Current URL: ' . sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '')));
         lingua_debug_log('[LINGUA v5.2.78 NONCE] Provided nonce: ' . $provided_nonce);
         lingua_debug_log('[LINGUA v5.2.78 NONCE] Test fresh nonce: ' . $test_nonce);
         lingua_debug_log('[LINGUA v5.2.78 NONCE] Match: ' . ($provided_nonce === $test_nonce ? 'YES' : 'NO'));
@@ -594,9 +596,9 @@ class Lingua_Public {
                 }
 
                 // Apply existing translations (use term_id as context instead of post_id)
-                lingua_debug_log('[Lingua v5.0.5 DEBUG] SEO fields BEFORE apply_translations: ' . json_encode($unified_structure['seo_fields'] ?? []));
+                lingua_debug_log('[Lingua v5.0.5 DEBUG] SEO fields BEFORE apply_translations: ' . wp_json_encode($unified_structure['seo_fields'] ?? []));
                 $unified_structure = $this->apply_existing_translations_for_taxonomy($unified_structure, $term_id, $taxonomy, $target_language);
-                lingua_debug_log('[Lingua v5.0.5 DEBUG] SEO fields AFTER apply_translations: ' . json_encode($unified_structure['seo_fields'] ?? []));
+                lingua_debug_log('[Lingua v5.0.5 DEBUG] SEO fields AFTER apply_translations: ' . wp_json_encode($unified_structure['seo_fields'] ?? []));
 
                 // Return response
                 $response_data = array(
@@ -760,7 +762,7 @@ class Lingua_Public {
                 $count = 0;
                 foreach ($response_data['content_blocks'] as $block) {
                     if (isset($block['plural_pair']) && !empty($block['plural_pair'])) {
-                        lingua_debug_log('[LINGUA v5.2.44 DEBUG] Content block with plural_pair: ' . json_encode([
+                        lingua_debug_log('[LINGUA v5.2.44 DEBUG] Content block with plural_pair: ' . wp_json_encode([
                             'original' => $block['original'] ?? $block['original_text'] ?? 'N/A',
                             'plural_pair' => $block['plural_pair'],
                             'is_plural' => $block['is_plural'] ?? false
@@ -785,7 +787,7 @@ class Lingua_Public {
             // КРИТИЧЕСКАЯ ПРОВЕРКА: Если нет контента для перевода
             if ($total_items === 0) {
                 lingua_debug_log('[Lingua AJAX] ERROR: No content found to translate for post ' . $post_id);
-                lingua_debug_log('[Lingua AJAX] Unified structure: ' . json_encode($unified_structure));
+                lingua_debug_log('[Lingua AJAX] Unified structure: ' . wp_json_encode($unified_structure));
                 wp_send_json_error('No text to translate found on this page. Please check if the page has extractable content.');
                 return;
             }
@@ -851,7 +853,7 @@ class Lingua_Public {
         }
 
         // Метод 2: Анализ переданного URL из JavaScript (приоритет) или $_SERVER['REQUEST_URI']
-        $request_uri = $_POST['request_uri'] ?? $_SERVER['REQUEST_URI'] ?? '';
+        $request_uri = sanitize_text_field(wp_unslash($_POST['request_uri'] ?? $_SERVER['REQUEST_URI'] ?? ''));
         lingua_debug_log('[Lingua AJAX] Analyzing REQUEST_URI: ' . $request_uri);
 
         // Удаляем языковой префикс из URL (/en/, /ru/, и т.д.)
@@ -1573,7 +1575,7 @@ class Lingua_Public {
             }
         }
 
-        lingua_debug_log('[Lingua v5.0.4] Extracted taxonomy meta: ' . json_encode($result));
+        lingua_debug_log('[Lingua v5.0.4] Extracted taxonomy meta: ' . wp_json_encode($result));
 
         return $result;
     }

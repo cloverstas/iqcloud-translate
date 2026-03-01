@@ -162,7 +162,7 @@ function lingua_init()
     global $lingua;
 
     // v5.0.14: DEBUG - confirm lingua_init called
-    $url = $_SERVER['REQUEST_URI'] ?? 'unknown';
+    $url = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
     lingua_debug_log("[Lingua v5.0.14] ⚡ lingua_init() called for URL: {$url}");
 
     $lingua = new Lingua();

@@ -59,14 +59,14 @@ $default_language = get_option('lingua_default_language', 'ru');
 ?>
 
 <div class="wrap">
-    <h1 class="wp-heading-inline"><?php _e('Manage Translations', 'iqcloud-translate'); ?></h1>
-    <a href="#" class="page-title-action" id="bulk-translate-posts"><?php _e('Bulk Translate', 'iqcloud-translate'); ?></a>
+    <h1 class="wp-heading-inline"><?php esc_html_e('Manage Translations', 'iqcloud-translate'); ?></h1>
+    <a href="#" class="page-title-action" id="bulk-translate-posts"><?php esc_html_e('Bulk Translate', 'iqcloud-translate'); ?></a>
     
     <!-- Statistics Cards -->
     <div class="lingua-stats-row">
         <div class="lingua-stat-card">
             <div class="lingua-stat-number"><?php echo esc_html($stats['total']); ?></div>
-            <div class="lingua-stat-label"><?php _e('Total Translations', 'iqcloud-translate'); ?></div>
+            <div class="lingua-stat-label"><?php esc_html_e('Total Translations', 'iqcloud-translate'); ?></div>
         </div>
         
         <?php foreach ($stats['by_language'] as $lang => $count): ?>
@@ -86,13 +86,13 @@ $default_language = get_option('lingua_default_language', 'ru');
     <div class="tablenav top">
         <div class="alignleft actions">
             <select name="post_type" id="filter-by-post-type">
-                <option value="any" <?php selected($post_type_filter, 'any'); ?>><?php _e('All Post Types', 'iqcloud-translate'); ?></option>
-                <option value="post" <?php selected($post_type_filter, 'post'); ?>><?php _e('Posts', 'iqcloud-translate'); ?></option>
-                <option value="page" <?php selected($post_type_filter, 'page'); ?>><?php _e('Pages', 'iqcloud-translate'); ?></option>
+                <option value="any" <?php selected($post_type_filter, 'any'); ?>><?php esc_html_e('All Post Types', 'iqcloud-translate'); ?></option>
+                <option value="post" <?php selected($post_type_filter, 'post'); ?>><?php esc_html_e('Posts', 'iqcloud-translate'); ?></option>
+                <option value="page" <?php selected($post_type_filter, 'page'); ?>><?php esc_html_e('Pages', 'iqcloud-translate'); ?></option>
             </select>
             
             <select name="language" id="filter-by-language">
-                <option value=""><?php _e('All Languages', 'iqcloud-translate'); ?></option>
+                <option value=""><?php esc_html_e('All Languages', 'iqcloud-translate'); ?></option>
                 <?php foreach ($languages as $code => $lang): ?>
                     <option value="<?php echo esc_attr($code); ?>" <?php selected($language_filter, $code); ?>>
                         <?php echo isset($lang['flag']) ? $lang['flag'] . ' ' : ''; ?>
@@ -101,7 +101,7 @@ $default_language = get_option('lingua_default_language', 'ru');
                 <?php endforeach; ?>
             </select>
             
-            <button type="button" class="button" id="filter-posts"><?php _e('Filter', 'iqcloud-translate'); ?></button>
+            <button type="button" class="button" id="filter-posts"><?php esc_html_e('Filter', 'iqcloud-translate'); ?></button>
         </div>
     </div>
 
@@ -113,11 +113,11 @@ $default_language = get_option('lingua_default_language', 'ru');
                     <td class="manage-column column-cb check-column">
                         <input type="checkbox" id="cb-select-all" />
                     </td>
-                    <th class="manage-column column-title"><?php _e('Title', 'iqcloud-translate'); ?></th>
-                    <th class="manage-column column-type"><?php _e('Type', 'iqcloud-translate'); ?></th>
-                    <th class="manage-column column-date"><?php _e('Date', 'iqcloud-translate'); ?></th>
-                    <th class="manage-column column-translations"><?php _e('Translations', 'iqcloud-translate'); ?></th>
-                    <th class="manage-column column-actions"><?php _e('Actions', 'iqcloud-translate'); ?></th>
+                    <th class="manage-column column-title"><?php esc_html_e('Title', 'iqcloud-translate'); ?></th>
+                    <th class="manage-column column-type"><?php esc_html_e('Type', 'iqcloud-translate'); ?></th>
+                    <th class="manage-column column-date"><?php esc_html_e('Date', 'iqcloud-translate'); ?></th>
+                    <th class="manage-column column-translations"><?php esc_html_e('Translations', 'iqcloud-translate'); ?></th>
+                    <th class="manage-column column-actions"><?php esc_html_e('Actions', 'iqcloud-translate'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -143,13 +143,13 @@ $default_language = get_option('lingua_default_language', 'ru');
                                 </strong>
                                 <div class="row-actions">
                                     <span class="edit">
-                                        <a href="<?php echo esc_url(get_edit_post_link($post_id)); ?>"><?php _e('Edit', 'iqcloud-translate'); ?></a> |
+                                        <a href="<?php echo esc_url(get_edit_post_link($post_id)); ?>"><?php esc_html_e('Edit', 'iqcloud-translate'); ?></a> |
                                     </span>
                                     <span class="view">
-                                        <a href="<?php echo esc_url(get_permalink($post_id)); ?>" target="_blank"><?php _e('View', 'iqcloud-translate'); ?></a> |
+                                        <a href="<?php echo esc_url(get_permalink($post_id)); ?>" target="_blank"><?php esc_html_e('View', 'iqcloud-translate'); ?></a> |
                                     </span>
                                     <span class="translate">
-                                        <a href="#" class="lingua-translate-post" data-post-id="<?php echo esc_attr($post_id); ?>"><?php _e('Translate', 'iqcloud-translate'); ?></a>
+                                        <a href="#" class="lingua-translate-post" data-post-id="<?php echo esc_attr($post_id); ?>"><?php esc_html_e('Translate', 'iqcloud-translate'); ?></a>
                                     </span>
                                 </div>
                             </td>
@@ -172,7 +172,7 @@ $default_language = get_option('lingua_default_language', 'ru');
                             </td>
                             <td class="column-actions">
                                 <button type="button" class="button button-small lingua-translate-post" data-post-id="<?php echo esc_attr($post_id); ?>">
-                                    <?php _e('Translate', 'iqcloud-translate'); ?>
+                                    <?php esc_html_e('Translate', 'iqcloud-translate'); ?>
                                 </button>
                             </td>
                         </tr>
@@ -181,8 +181,8 @@ $default_language = get_option('lingua_default_language', 'ru');
                 <?php else: ?>
                     <tr>
                         <td colspan="6" style="text-align: center; padding: 50px;">
-                            <p><?php _e('No posts found.', 'iqcloud-translate'); ?></p>
-                            <p><a href="<?php echo esc_url(admin_url('post-new.php')); ?>" class="button button-primary"><?php _e('Create your first post', 'iqcloud-translate'); ?></a></p>
+                            <p><?php esc_html_e('No posts found.', 'iqcloud-translate'); ?></p>
+                            <p><a href="<?php echo esc_url(admin_url('post-new.php')); ?>" class="button button-primary"><?php esc_html_e('Create your first post', 'iqcloud-translate'); ?></a></p>
                         </td>
                     </tr>
                 <?php endif; ?>
@@ -193,11 +193,11 @@ $default_language = get_option('lingua_default_language', 'ru');
         <div class="tablenav bottom">
             <div class="alignleft actions bulkactions">
                 <select name="action">
-                    <option value="-1"><?php _e('Bulk Actions', 'iqcloud-translate'); ?></option>
-                    <option value="bulk_translate"><?php _e('Translate Selected', 'iqcloud-translate'); ?></option>
-                    <option value="bulk_delete"><?php _e('Delete Translations', 'iqcloud-translate'); ?></option>
+                    <option value="-1"><?php esc_html_e('Bulk Actions', 'iqcloud-translate'); ?></option>
+                    <option value="bulk_translate"><?php esc_html_e('Translate Selected', 'iqcloud-translate'); ?></option>
+                    <option value="bulk_delete"><?php esc_html_e('Delete Translations', 'iqcloud-translate'); ?></option>
                 </select>
-                <input type="submit" class="button action" value="<?php _e('Apply', 'iqcloud-translate'); ?>" />
+                <input type="submit" class="button action" value="<?php esc_html_e('Apply', 'iqcloud-translate'); ?>" />
             </div>
         </div>
     </form>
@@ -219,7 +219,8 @@ $default_language = get_option('lingua_default_language', 'ru');
     ?>
 </div>
 
-<style>
+<?php
+wp_add_inline_style('lingua-admin', '
 .lingua-stats-row {
     display: flex;
     gap: 20px;
@@ -288,41 +289,44 @@ $default_language = get_option('lingua_default_language', 'ru');
 .column-date {
     width: 100px;
 }
-</style>
+');
+?>
 
-<script>
+<?php
+wp_add_inline_script('jquery', '
 jQuery(document).ready(function($) {
     // Handle filter button
-    $('#filter-posts').on('click', function() {
-        var post_type = $('#filter-by-post-type').val();
-        var language = $('#filter-by-language').val();
-        
+    $("#filter-posts").on("click", function() {
+        var post_type = $("#filter-by-post-type").val();
+        var language = $("#filter-by-language").val();
+
         var url = new URL(window.location);
-        url.searchParams.set('post_type', post_type);
-        url.searchParams.set('language', language);
-        url.searchParams.delete('paged');
-        
+        url.searchParams.set("post_type", post_type);
+        url.searchParams.set("language", language);
+        url.searchParams.delete("paged");
+
         window.location.href = url.toString();
     });
-    
+
     // Handle select all checkbox
-    $('#cb-select-all').on('change', function() {
-        $('input[name="selected_posts[]"]').prop('checked', this.checked);
+    $("#cb-select-all").on("change", function() {
+        $("input[name=\\"selected_posts[]\\"]").prop("checked", this.checked);
     });
-    
+
     // Handle translate post buttons
-    $('.lingua-translate-post').on('click', function(e) {
+    $(".lingua-translate-post").on("click", function(e) {
         e.preventDefault();
-        var postId = $(this).data('post-id');
-        
+        var postId = $(this).data("post-id");
+
         // This will be implemented in the next step with the modal
-        alert('Translation modal will open here for post ID: ' + postId);
+        alert("Translation modal will open here for post ID: " + postId);
     });
-    
+
     // Handle bulk translate button
-    $('#bulk-translate-posts').on('click', function(e) {
+    $("#bulk-translate-posts").on("click", function(e) {
         e.preventDefault();
-        alert('Bulk translation functionality will be implemented');
+        alert("Bulk translation functionality will be implemented");
     });
 });
-</script>
+');
+?>

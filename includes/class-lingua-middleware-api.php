@@ -262,8 +262,8 @@ class Lingua_Middleware_API {
         lingua_debug_log('[Lingua Middleware] Request to: ' . $url);
         lingua_debug_log('[Lingua Middleware] API Key: ' . substr($this->api_key, 0, 10) . '...');
         lingua_debug_log('[Lingua Middleware] Origin: ' . $this->origin);
-        lingua_debug_log('[Lingua Middleware] Headers: ' . json_encode($headers));
-        lingua_debug_log('[Lingua Middleware] Data: ' . json_encode($data));
+        lingua_debug_log('[Lingua Middleware] Headers: ' . wp_json_encode($headers));
+        lingua_debug_log('[Lingua Middleware] Data: ' . wp_json_encode($data));
 
         // Prepare request arguments
         $args = array(
@@ -275,7 +275,7 @@ class Lingua_Middleware_API {
         );
 
         if ($data) {
-            $encoded = json_encode($data, JSON_UNESCAPED_UNICODE);
+            $encoded = wp_json_encode($data, JSON_UNESCAPED_UNICODE);
             // v5.3.29: Prevent Curl error when json_encode fails
             if ($encoded === false) {
                 lingua_debug_log('[Lingua Middleware API] json_encode failed: ' . json_last_error_msg());
@@ -529,7 +529,7 @@ class Lingua_Middleware_API {
                     'Content-Type' => 'application/json',
                     'X-Origin' => $this->origin
                 ),
-                'body' => json_encode(array(
+                'body' => wp_json_encode(array(
                     'languages' => $languages
                 )),
                 'timeout' => 10
