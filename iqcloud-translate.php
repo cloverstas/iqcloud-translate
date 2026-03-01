@@ -162,7 +162,7 @@ require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-auto-translator.php'; //
 add_filter('cron_schedules', function($schedules) {
     $schedules['every_minute'] = array(
         'interval' => 60,
-        'display' => __('Every Minute', 'iqcloud-translate')
+        'display' => 'Every Minute'
     );
     return $schedules;
 });
