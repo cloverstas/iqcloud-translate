@@ -105,8 +105,12 @@ class Lingua {
     public function translate_site_option($value) {
         global $LINGUA_LANGUAGE, $wpdb;
 
-        // Skip if default language or no language set
-        $default_language = get_option('lingua_default_language', lingua_get_site_language());
+        // v1.0.6: Use cached default language to avoid recursion through get_locale()
+        static $cached_default_lang = null;
+        if ($cached_default_lang === null) {
+            $cached_default_lang = get_option('lingua_default_language', 'ru');
+        }
+        $default_language = $cached_default_lang;
         if (empty($LINGUA_LANGUAGE) || $LINGUA_LANGUAGE === $default_language) {
             return $value;
         }
@@ -175,13 +179,29 @@ class Lingua {
      * @return string Modified locale
      */
     public function change_locale_for_language($locale) {
+        // v1.0.6: CRITICAL FIX - Prevent infinite recursion!
+        // This filter calls lingua_get_site_language() → get_locale() → triggers this filter again → ∞ loop
+        // This was the ROOT CAUSE of memory exhaustion on all servers, not just weak ones.
+        static $in_filter = false;
+        if ($in_filter) {
+            return $locale;
+        }
+        $in_filter = true;
+
         // Don't change locale in admin
         if (is_admin() && !wp_doing_ajax()) {
+            $in_filter = false;
             return $locale;
         }
 
         global $LINGUA_LANGUAGE;
-        $default_language = get_option('lingua_default_language', lingua_get_site_language());
+        // v1.0.6: Cache default language and avoid calling lingua_get_site_language()
+        // which calls get_locale() and would trigger this filter again (infinite recursion)
+        static $cached_default_lang = null;
+        if ($cached_default_lang === null) {
+            $cached_default_lang = get_option('lingua_default_language', 'ru');
+        }
+        $default_language = $cached_default_lang;
 
         // Only change locale if we're NOT on default language
         if (!empty($LINGUA_LANGUAGE) && $LINGUA_LANGUAGE !== $default_language) {
@@ -208,9 +228,11 @@ class Lingua {
 
             lingua_debug_log("[Lingua v5.0.2] Changing locale from {$locale} to {$new_locale} (language: {$LINGUA_LANGUAGE})");
 
+            $in_filter = false;
             return $new_locale;
         }
 
+        $in_filter = false;
         return $locale;
     }
 
