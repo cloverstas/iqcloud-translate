@@ -140,7 +140,24 @@ function lingua_get_available_post_types()
 
 // v1.0.6: CORE FILES ONLY - loaded on every request (lightweight)
 require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-languages.php'; // v1.0.5: Load early so Lingua_Languages is available during activation
-require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua.php';
+
+// v1.0.6: Defer loading class-lingua.php for non-lingua AJAX to save ~30MB memory
+// On a 1GB VPS, this prevents heartbeat/WooCommerce AJAX from loading unnecessary code
+if (!(defined('DOING_AJAX') && DOING_AJAX) || lingua_is_our_ajax_request_early()) {
+    require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua.php';
+}
+
+/**
+ * v1.0.6: Early check for lingua AJAX - called before plugins_loaded
+ * Uses raw $_REQUEST since sanitize functions may not be available yet
+ */
+function lingua_is_our_ajax_request_early() {
+    if (!(defined('DOING_AJAX') && DOING_AJAX)) {
+        return false;
+    }
+    $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
+    return (strpos($action, 'lingua_') === 0);
+}
 
 /**
  * v1.0.6: Lazy loading system for heavy components
@@ -227,12 +244,37 @@ add_filter('cron_schedules', function($schedules) {
     return $schedules;
 });
 
+/**
+ * v1.0.6: Check if current AJAX request is related to our plugin
+ * If not, we can skip heavy initialization entirely.
+ */
+function lingua_is_our_ajax_request() {
+    if (!(defined('DOING_AJAX') && DOING_AJAX)) {
+        return false; // Not AJAX at all
+    }
+    $action = isset($_REQUEST['action']) ? sanitize_text_field($_REQUEST['action']) : '';
+    // Our AJAX actions all start with 'lingua_'
+    return (strpos($action, 'lingua_') === 0);
+}
+
 // Initialize the plugin - Architecture v2.0
 function lingua_init()
 {
     global $lingua;
 
-    // v5.0.14: DEBUG - confirm lingua_init called
+    // v1.0.6: For non-lingua AJAX requests (heartbeat, WooCommerce, etc.),
+    // skip ALL plugin initialization to save memory.
+    // On a 1GB VPS with WooCommerce + WoodMart, every MB counts.
+    if (defined('DOING_AJAX') && DOING_AJAX && !lingua_is_our_ajax_request()) {
+        lingua_debug_log('[Lingua v1.0.6] Skipping init for non-lingua AJAX: ' . ($_REQUEST['action'] ?? 'unknown'));
+        return;
+    }
+
+    // v1.0.6: For WP-CLI, skip initialization entirely
+    if (defined('WP_CLI') && WP_CLI) {
+        return;
+    }
+
     $url = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
     lingua_debug_log("[Lingua v1.0.6] ⚡ lingua_init() called for URL: {$url}");
 
@@ -240,13 +282,11 @@ function lingua_init()
     $lingua->run();
 
     // v1.0.6: Auto-enable v2.0 pipeline ONCE (not on every request)
-    // Previously called update_option() on EVERY request which is wasteful
     if (!get_option('lingua_enable_v2_pipeline', false)) {
         update_option('lingua_enable_v2_pipeline', true);
         lingua_debug_log('[Lingua v1.0.6] v2.0 pipeline enabled (one-time)');
     }
 
-    // Log successful initialization
     lingua_debug_log('[Lingua v1.0.6] Plugin initialized');
 }
 add_action('plugins_loaded', 'lingua_init');
