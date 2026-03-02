@@ -138,26 +138,85 @@ function lingua_get_available_post_types()
     return $available;
 }
 
-// Load core plugin classes
+// v1.0.6: CORE FILES ONLY - loaded on every request (lightweight)
 require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-languages.php'; // v1.0.5: Load early so Lingua_Languages is available during activation
 require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua.php';
 
-// Load new architecture v2.0 classes
-require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-cache-manager.php';
-require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-dom-parser.php';
-require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-string-filter-engine.php';
-require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-string-capture.php';
-require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-plural-forms.php';
+/**
+ * v1.0.6: Lazy loading system for heavy components
+ * These files are loaded ON DEMAND to reduce memory footprint.
+ * On weak servers (256MB PHP memory_limit), loading all ~37 files at once
+ * combined with WooCommerce + themes exceeds the memory limit.
+ *
+ * Files are grouped by when they're needed:
+ * - Frontend rendering: HTML DOM parser, output buffer, DOM extractor, content filter
+ * - Admin features: gettext scan, string capture settings, plural forms
+ * - Auto-translation: auto-translator (only during cron/queue processing)
+ * - Search: search integration (only when search query detected)
+ */
 
-// Load architecture v2.0 components
-require_once LINGUA_PLUGIN_DIR . 'includes/lib/lingua-html-dom.php';
-require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-full-dom-extractor.php';
-require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-output-buffer.php';
-require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-content-filter.php';
-require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-media-replacer.php'; // v5.2.159: Media translation
-require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-search.php'; // v5.2.181: Search in translations
-require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-gettext-scan.php'; // v5.2.187: Gettext string scanning
-require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-auto-translator.php'; // v5.3.0: On-demand auto-translation
+/**
+ * Load v2.0 frontend rendering components (heavy files)
+ * Called only on template_redirect (frontend page rendering)
+ */
+function lingua_load_frontend_components() {
+    static $loaded = false;
+    if ($loaded) return;
+    $loaded = true;
+
+    require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-cache-manager.php';
+    require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-dom-parser.php';
+    require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-string-filter-engine.php';
+    require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-string-capture.php';
+    require_once LINGUA_PLUGIN_DIR . 'includes/lib/lingua-html-dom.php';
+    require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-full-dom-extractor.php';
+    require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-output-buffer.php';
+    require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-content-filter.php';
+    require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-media-replacer.php';
+    require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-search.php';
+
+    lingua_debug_log('[Lingua v1.0.6] Frontend components loaded (lazy)');
+}
+
+/**
+ * Load admin-specific heavy components
+ * Called only on admin pages (not AJAX)
+ */
+function lingua_load_admin_components() {
+    static $loaded = false;
+    if ($loaded) return;
+    $loaded = true;
+
+    require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-plural-forms.php';
+    require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-gettext-scan.php';
+    // Load string capture + cache manager for admin settings
+    if (!class_exists('Lingua_Cache_Manager')) {
+        require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-cache-manager.php';
+    }
+    if (!class_exists('Lingua_String_Capture')) {
+        require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-string-capture.php';
+        require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-dom-parser.php';
+        require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-string-filter-engine.php';
+    }
+
+    lingua_debug_log('[Lingua v1.0.6] Admin components loaded (lazy)');
+}
+
+/**
+ * Load auto-translator component
+ * Called only when queue processing is needed
+ */
+function lingua_load_auto_translator() {
+    static $loaded = false;
+    if ($loaded) return;
+    $loaded = true;
+
+    // Auto-translator needs DOM components
+    lingua_load_frontend_components();
+    require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-auto-translator.php';
+
+    lingua_debug_log('[Lingua v1.0.6] Auto-translator loaded (lazy)');
+}
 
 // v5.2.179: Add custom cron interval for translation queue
 add_filter('cron_schedules', function($schedules) {
@@ -175,31 +234,20 @@ function lingua_init()
 
     // v5.0.14: DEBUG - confirm lingua_init called
     $url = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
-    lingua_debug_log("[Lingua v5.0.14] ⚡ lingua_init() called for URL: {$url}");
+    lingua_debug_log("[Lingua v1.0.6] ⚡ lingua_init() called for URL: {$url}");
 
     $lingua = new Lingua();
     $lingua->run();
 
-    // Initialize new architecture v2.0 components
-    if (class_exists('Lingua_String_Capture')) {
-        $string_capture = Lingua_String_Capture::get_instance();
-    }
-
-    // Auto-enable v2.0 pipeline if components are available
-    if (
-        class_exists('Lingua_Full_Dom_Extractor') &&
-        class_exists('Lingua_Output_Buffer') &&
-        class_exists('Lingua_Content_Filter')
-    ) {
-
-        // Enable v2.0 pipeline
+    // v1.0.6: Auto-enable v2.0 pipeline ONCE (not on every request)
+    // Previously called update_option() on EVERY request which is wasteful
+    if (!get_option('lingua_enable_v2_pipeline', false)) {
         update_option('lingua_enable_v2_pipeline', true);
-
-        lingua_debug_log('Lingua: Auto-enabled v2.0 pipeline');
+        lingua_debug_log('[Lingua v1.0.6] v2.0 pipeline enabled (one-time)');
     }
 
     // Log successful initialization
-    lingua_debug_log('Lingua Plugin v2.0.0 initialized with new architecture');
+    lingua_debug_log('[Lingua v1.0.6] Plugin initialized');
 }
 add_action('plugins_loaded', 'lingua_init');
 

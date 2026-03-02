@@ -235,68 +235,82 @@ class Lingua {
     }
     
     private function load_dependencies() {
-        // Core classes
+        // v1.0.6: CORE classes - always needed (lightweight)
         require_once LINGUA_PLUGIN_DIR . 'includes/class-database.php';
-        require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-languages.php'; // v5.2.128: Centralized language list
-        // v5.2.174: Yandex API disabled - all translation goes through Middleware
-        // require_once LINGUA_PLUGIN_DIR . 'includes/class-yandex-api.php';
-        require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-middleware-api.php'; // v5.2: Middleware integration
+        require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-languages.php';
+        require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-middleware-api.php';
         require_once LINGUA_PLUGIN_DIR . 'includes/class-url-rewriter.php';
-        require_once LINGUA_PLUGIN_DIR . 'includes/class-content-processor.php';
-        require_once LINGUA_PLUGIN_DIR . 'includes/class-translation-manager.php';
-        require_once LINGUA_PLUGIN_DIR . 'includes/class-seo-integration.php';
-        require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-media-replacer.php';
-        // ОТКАТ: class-lingua-language-switcher.php УДАЛЕН - используем nav-menu-integration
-        // require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-language-switcher.php';
-        require_once LINGUA_PLUGIN_DIR . 'includes/class-nav-menu-integration.php';
-        require_once LINGUA_PLUGIN_DIR . 'includes/class-translation-render.php';
-        require_once LINGUA_PLUGIN_DIR . 'includes/class-string-capture-settings.php';
-        require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-translation-queue.php'; // v5.2.179: Auto-translate queue
-        
-        // Admin classes (загружаем всегда для AJAX запросов)
+        require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-translation-queue.php';
+
+        // Admin class - always needed for AJAX handlers
         require_once LINGUA_PLUGIN_DIR . 'admin/class-lingua-admin.php';
-        
-        // Public classes
-        require_once LINGUA_PLUGIN_DIR . 'public/class-lingua-public.php';
+
+        // v1.0.6: Frontend/translation classes - only needed for non-AJAX page rendering
+        $is_ajax = (defined('DOING_AJAX') && DOING_AJAX);
+        $is_rest = (defined('REST_REQUEST') && REST_REQUEST);
+        $is_cron = (defined('DOING_CRON') && DOING_CRON);
+        $is_cli  = (defined('WP_CLI') && WP_CLI);
+
+        if (!$is_ajax && !$is_rest && !$is_cron && !$is_cli) {
+            // These are needed for frontend page rendering and admin pages
+            require_once LINGUA_PLUGIN_DIR . 'includes/class-content-processor.php';
+            require_once LINGUA_PLUGIN_DIR . 'includes/class-translation-manager.php';
+            require_once LINGUA_PLUGIN_DIR . 'includes/class-seo-integration.php';
+            require_once LINGUA_PLUGIN_DIR . 'includes/class-nav-menu-integration.php';
+            require_once LINGUA_PLUGIN_DIR . 'includes/class-translation-render.php';
+            require_once LINGUA_PLUGIN_DIR . 'includes/class-string-capture-settings.php';
+            require_once LINGUA_PLUGIN_DIR . 'public/class-lingua-public.php';
+
+            // v1.0.6: Load media replacer only when needed
+            if (!class_exists('Lingua_Media_Replacer')) {
+                require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-media-replacer.php';
+            }
+
+            lingua_debug_log('[Lingua v1.0.6] Full dependencies loaded (page rendering mode)');
+        } else {
+            lingua_debug_log('[Lingua v1.0.6] Minimal dependencies loaded (AJAX/REST/Cron mode)');
+        }
     }
     
     private function init_components() {
-        // Initialize URL rewriter
+        // Initialize URL rewriter - always needed
         $this->url_rewriter = new Lingua_URL_Rewriter();
         $this->url_rewriter->init();
-        
+
         // Store globally for access from admin
         global $lingua_url_rewriter;
         $lingua_url_rewriter = $this->url_rewriter;
-        
-        // Initialize translation manager
-        $this->translation_manager = new Lingua_Translation_Manager();
-        $this->translation_manager->apply_translation_filters();
-        
-        // Initialize SEO integration
-        $this->seo_integration = new Lingua_SEO_Integration();
-        $this->seo_integration->init();
-        
-        // Initialize language switcher - ОТКАТ К РАБОЧЕЙ ВЕРСИИ
-        // new Lingua_Language_Switcher(); // ОТКЛЮЧЕНО - имеет git конфликты
-        
-        // Initialize translation render (DOM-based HTML processing)
-        // v5.2.2: Re-enabled with proper gettext timing fix
-        // Gettext filters now register on wp_loaded hook instead of constructor
-        $this->translation_render = new Lingua_Translation_Render();
 
-        // SAFE v2.0 INITIALIZATION: Check if v2.0 classes exist before initializing
-        $this->init_v2_architecture_safe();
+        // v1.0.6: Skip heavy component initialization for AJAX/REST/Cron
+        $is_ajax = (defined('DOING_AJAX') && DOING_AJAX);
+        $is_rest = (defined('REST_REQUEST') && REST_REQUEST);
+        $is_cron = (defined('DOING_CRON') && DOING_CRON);
+        $is_cli  = (defined('WP_CLI') && WP_CLI);
 
-        // ВКЛЮЧАЕМ Nav Menu Integration - возвращаем рабочую версию
-        lingua_debug_log("[Lingua] Creating Lingua_Nav_Menu_Integration instance...");
-        $nav_menu = new Lingua_Nav_Menu_Integration();
-        lingua_debug_log("[Lingua] Lingua_Nav_Menu_Integration created: " . (is_object($nav_menu) ? 'SUCCESS' : 'FAILED'));
-        
-        // Register widgets - TEMPORARILY DISABLED (file missing)
-        // add_action('widgets_init', array($this, 'register_widgets'));
-        
-        // Register cron hooks for auto-translation
+        if (!$is_ajax && !$is_rest && !$is_cron && !$is_cli) {
+            // Initialize translation manager
+            $this->translation_manager = new Lingua_Translation_Manager();
+            $this->translation_manager->apply_translation_filters();
+
+            // Initialize SEO integration
+            $this->seo_integration = new Lingua_SEO_Integration();
+            $this->seo_integration->init();
+
+            // Initialize translation render (DOM-based HTML processing)
+            $this->translation_render = new Lingua_Translation_Render();
+
+            // SAFE v2.0 INITIALIZATION: Check if v2.0 classes exist before initializing
+            $this->init_v2_architecture_safe();
+
+            // Nav Menu Integration
+            $nav_menu = new Lingua_Nav_Menu_Integration();
+
+            lingua_debug_log('[Lingua v1.0.6] Full components initialized');
+        } else {
+            lingua_debug_log('[Lingua v1.0.6] Skipped heavy components (AJAX/REST/Cron)');
+        }
+
+        // Register cron hooks for auto-translation (always needed)
         add_action('lingua_auto_translate_post', array($this, 'handle_auto_translate_post'), 10, 2);
 
         // v5.2.179: Auto-translate queue initialization
@@ -314,6 +328,16 @@ class Lingua {
             update_option('lingua_queue_table_version', '1.0.0');
         }
 
+        // v1.0.6: Register cron hook with lazy loading wrapper
+        // Auto-translator is loaded only when cron actually fires
+        add_action('lingua_process_translation_queue', function() {
+            lingua_load_auto_translator();
+            if (class_exists('Lingua_Auto_Translator')) {
+                $translator = Lingua_Auto_Translator::get_instance();
+                $translator->process_queue();
+            }
+        });
+
         // Hook into post publish to add to queue
         if (Lingua_Translation_Queue::is_auto_translate_enabled()) {
             add_action('publish_post', array($this, 'on_post_publish'), 10, 2);
@@ -321,10 +345,6 @@ class Lingua {
 
             // WooCommerce products
             add_action('publish_product', array($this, 'on_post_publish'), 10, 2);
-
-            // v5.3.2: Queue processing moved to Lingua_Auto_Translator class
-            // It uses full HTML extraction for complete page translation
-            // See: includes/class-lingua-auto-translator.php::process_queue()
 
             // Schedule queue processing if not already scheduled
             if (!wp_next_scheduled('lingua_process_translation_queue') && !Lingua_Translation_Queue::is_paused()) {
@@ -419,6 +439,9 @@ class Lingua {
         Lingua_Translation_Queue::mark_processing($item->id);
 
         try {
+            // v1.0.6: Lazy-load auto-translator only when needed
+            lingua_load_auto_translator();
+
             // v5.3.12: Use Lingua_Auto_Translator for full HTML extraction
             // This extracts ALL strings from rendered page, not just 3 fields
             $translator = Lingua_Auto_Translator::get_instance();
@@ -522,11 +545,16 @@ class Lingua {
         
         // Админ-специфичные хуки только в админке
         if (is_admin()) {
+            // v1.0.6: Load admin-specific heavy components (gettext scan, plural forms etc.)
+            // Only for non-AJAX admin pages
+            if (!(defined('DOING_AJAX') && DOING_AJAX)) {
+                lingua_load_admin_components();
+            }
+
             lingua_debug_log('[Lingua] Registering admin hooks...');
             // Menu and pages
             add_action('admin_menu', array($admin, 'add_admin_menu'));
             add_action('admin_init', array($admin, 'handle_settings_save'));
-            lingua_debug_log('[Lingua] Registered admin_init hook for handle_settings_save');
 
             // Scripts and styles - admin area
             add_action('admin_enqueue_scripts', array($admin, 'enqueue_styles'));
@@ -772,12 +800,48 @@ class Lingua {
     }
     
     private function define_public_hooks() {
+        // v1.0.6: Skip public hooks for AJAX/REST/Cron to save memory
+        $is_ajax = (defined('DOING_AJAX') && DOING_AJAX);
+        $is_rest = (defined('REST_REQUEST') && REST_REQUEST);
+        $is_cron = (defined('DOING_CRON') && DOING_CRON);
+        $is_cli  = (defined('WP_CLI') && WP_CLI);
+
+        if ($is_ajax || $is_rest || $is_cron || $is_cli) {
+            // v1.0.6: For AJAX requests, only register AJAX handlers
+            // Load the public class file only if needed for AJAX handlers
+            if ($is_ajax && !class_exists('Lingua_Public')) {
+                require_once LINGUA_PLUGIN_DIR . 'public/class-lingua-public.php';
+            }
+            if (class_exists('Lingua_Public')) {
+                $this->public = new Lingua_Public($this->version);
+                $public = $this->public;
+                // Register only AJAX handlers (no scripts/styles/output buffer needed)
+                add_action('wp_ajax_lingua_get_translatable_content', array($public, 'ajax_get_translatable_content'));
+                add_action('wp_ajax_nopriv_lingua_get_translatable_content', array($public, 'ajax_get_translatable_content'));
+                add_action('wp_ajax_lingua_translate_frontend', array($public, 'ajax_translate_frontend'));
+                add_action('wp_ajax_nopriv_lingua_translate_frontend', array($public, 'ajax_translate_frontend'));
+                add_action('wp_ajax_lingua_get_dynamic_translations', array($public, 'ajax_get_dynamic_translations'));
+                add_action('wp_ajax_nopriv_lingua_get_dynamic_translations', array($public, 'ajax_get_dynamic_translations'));
+                add_action('wp_ajax_lingua_translate_ajax_content', array($public, 'ajax_translate_ajax_content'));
+                add_action('wp_ajax_nopriv_lingua_translate_ajax_content', array($public, 'ajax_translate_ajax_content'));
+                add_action('wp_ajax_lingua_refresh_nonce', function() {
+                    wp_send_json_success(array('nonce' => wp_create_nonce('lingua_admin_nonce')));
+                });
+                add_action('wp_ajax_lingua_load_media_library_scripts', array($public, 'ajax_load_media_library_scripts'));
+            }
+            lingua_debug_log('[Lingua v1.0.6] Public hooks: AJAX-only mode');
+            return; // Skip all frontend rendering hooks
+        }
+
         // v5.2.151: Save as class property to prevent garbage collection
         $this->public = new Lingua_Public($this->version);
 
-        // PHASE 2.1: Initialize Output Buffer EARLY        // v5.0.11 FIX: Use template_redirect instead of init (is_admin() is unreliable on init)
-        // template_redirect fires only on frontend, never in admin
+        // PHASE 2.1: Initialize Output Buffer EARLY (with lazy loading)
+        // v1.0.6: Load heavy frontend components only when actually rendering a page
         add_action('template_redirect', function() {
+            // Load frontend components on demand
+            lingua_load_frontend_components();
+
             if (class_exists('Lingua_Output_Buffer')) {
                 $output_buffer = new Lingua_Output_Buffer();
                 $output_buffer->start_output_buffering();
