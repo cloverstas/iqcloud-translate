@@ -514,9 +514,9 @@ class Lingua_Admin {
 
         if ($old_debug !== $new_debug) {
             if ($new_debug) {
-                error_log('[Lingua v5.3.20] Debug mode ENABLED via admin settings');
+                lingua_debug_log('[Lingua] Debug mode ENABLED via admin settings');
             } else {
-                error_log('[Lingua v5.3.20] Debug mode DISABLED via admin settings');
+                lingua_debug_log('[Lingua] Debug mode DISABLED via admin settings');
             }
         }
 

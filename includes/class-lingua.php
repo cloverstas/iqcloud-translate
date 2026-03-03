@@ -518,12 +518,7 @@ class Lingua {
             }
         });
 
-        // v5.2.77: CRITICAL DEBUG - Wrap save handler with logging
-        add_action('wp_ajax_lingua_save_translation', function() use ($admin) {
-            lingua_debug_log("🔥🔥🔥 LINGUA v5.2.77: wp_ajax_lingua_save_translation ACTION TRIGGERED!");
-            lingua_debug_log("🔥 POST data: " . print_r($_POST, true));
-            call_user_func(array($admin, 'ajax_save_translation'));
-        });
+        add_action('wp_ajax_lingua_save_translation', array($admin, 'ajax_save_translation'));
 
         add_action('wp_ajax_lingua_get_modal_template', array($admin, 'ajax_get_modal_template'));
         add_action('wp_ajax_lingua_auto_translate_text', array($admin, 'ajax_auto_translate_text'));

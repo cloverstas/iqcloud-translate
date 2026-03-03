@@ -4,7 +4,7 @@ Tags: translation, multilingual, translate, localization, i18n
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.4
+Stable tag: 1.0.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,27 @@ Your translations are stored in the database and will be preserved. If you react
 
 == Changelog ==
 
+= 1.0.10 =
+* Fix gettext scanner (Full Rescan) — admin components now load correctly for plugin AJAX requests
+* Production cleanup: version sync, debug code gating, LICENSE file
+
+= 1.0.9 =
+* Fix mixed content translation — nodes containing both text and HTML tags now translate correctly
+* Fix HTML structure preservation — inline tags (strong, em, a, span) no longer break during translation
+
+= 1.0.8 =
+* Fix stale translation cache — translated HTML cache now clears automatically after saving new translations
+
+= 1.0.7 =
+* Fix lazy loading for AJAX content extraction — frontend translation components load for plugin AJAX requests
+
+= 1.0.6 =
+* Fix memory exhaustion on low-resource servers — lazy loading of admin components
+* Fix infinite recursion in locale filter
+
+= 1.0.5 =
+* WordPress.org review compliance: sanitization, escaping, local assets, inline scripts
+
 = 1.0.4 =
 * Renamed plugin to IQCloud Translate — Site Translation Toolkit
 
@@ -133,6 +154,24 @@ Your translations are stored in the database and will be preserved. If you react
 * Media translation support
 
 == Upgrade Notice ==
+
+= 1.0.10 =
+Fix gettext scanner and production cleanup. Recommended update.
+
+= 1.0.9 =
+Critical fix for mixed content translation and HTML structure preservation.
+
+= 1.0.8 =
+Fix stale translation cache after saving.
+
+= 1.0.7 =
+Fix AJAX content extraction on frontend.
+
+= 1.0.6 =
+Fix memory exhaustion on low-resource servers.
+
+= 1.0.5 =
+WordPress.org review compliance fixes.
 
 = 1.0.4 =
 Plugin renamed to IQCloud Translate — Site Translation Toolkit.

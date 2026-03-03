@@ -2,7 +2,7 @@
 /**
  * Plugin Name: IQCloud Translate
  * Description: Powerful multilingual translation toolkit with visual editor, auto-translation, and WooCommerce support.
- * Version: 1.0.5
+ * Version: 1.0.10
  * Author: YourNewSite
  * Author URI: https://yournewsite.ru
  * License: GPL v2 or later
