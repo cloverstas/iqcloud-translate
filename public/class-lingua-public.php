@@ -735,12 +735,16 @@ class Lingua_Public {
             lingua_debug_log('[Lingua AJAX] DOM extraction completed. Structure keys: ' . implode(', ', array_keys($unified_structure)));
 
             // Применяем существующие переводы к извлеченной структуре
+            $debug_file = '/tmp/lingua_ajax_debug.log';
+            file_put_contents($debug_file, date('H:i:s') . " apply_existing_translations START\n", FILE_APPEND);
             $unified_structure = $this->apply_existing_translations($unified_structure, $post_id, $target_language);
+            file_put_contents($debug_file, date('H:i:s') . " apply_existing_translations DONE\n", FILE_APPEND);
 
             lingua_debug_log('[Lingua AJAX] Applied existing translations');
 
             // Логируем статистику для отладки
             $this->log_extraction_stats($post_id, $target_language, $unified_structure);
+            file_put_contents($debug_file, date('H:i:s') . " Preparing response JSON...\n", FILE_APPEND);
 
             // Формируем ответ ТОЛЬКО в новом v3.0 формате (убираем legacy)
             $response_data = array(
@@ -812,6 +816,8 @@ class Lingua_Public {
 
             // Возвращаем полный унифицированный ответ
             $elapsed = microtime(true) - $start_time;
+            file_put_contents('/tmp/lingua_ajax_debug.log', date('H:i:s') . " Total time: " . round($elapsed, 2) . "s, items: $total_items, memory: " . round(memory_get_peak_usage(true)/1024/1024) . "MB\n", FILE_APPEND);
+            file_put_contents('/tmp/lingua_ajax_debug.log', date('H:i:s') . " Sending JSON response...\n", FILE_APPEND);
             lingua_debug_log('[Lingua AJAX] ⏱️ Total extraction time: ' . round($elapsed, 2) . ' seconds');
             wp_send_json_success($response_data);
 
