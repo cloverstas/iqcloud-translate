@@ -1180,6 +1180,14 @@ class Lingua_Admin {
                     }
                     $message = !empty($message_parts) ? 'Translation: ' . implode(', ', $message_parts) : 'Translation updated';
 
+                    // v1.0.8: Clear translated HTML cache after saving translations
+                    // Without this, stale cached pages are served with old/missing translations
+                    if (class_exists('Lingua_Output_Buffer')) {
+                        $ob = new Lingua_Output_Buffer();
+                        $ob->clear_all_translation_caches();
+                        lingua_debug_log('[Lingua v1.0.8] Cleared all translation caches after save');
+                    }
+
                     wp_send_json_success(array(
                         'message' => $message,
                         'statistics' => $statistics,
