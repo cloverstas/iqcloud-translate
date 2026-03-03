@@ -267,30 +267,33 @@ class Lingua {
         // Admin class - always needed for AJAX handlers
         require_once LINGUA_PLUGIN_DIR . 'admin/class-lingua-admin.php';
 
-        // v1.0.6: Frontend/translation classes - only needed for non-AJAX page rendering
+        // v1.0.7: Load full dependencies for page rendering AND lingua AJAX requests
+        // Lingua AJAX handlers (e.g. lingua_get_translatable_content) need Translation_Manager,
+        // Plural_Forms, etc. to process translations.
         $is_ajax = (defined('DOING_AJAX') && DOING_AJAX);
         $is_rest = (defined('REST_REQUEST') && REST_REQUEST);
         $is_cron = (defined('DOING_CRON') && DOING_CRON);
         $is_cli  = (defined('WP_CLI') && WP_CLI);
+        $is_lingua_ajax = ($is_ajax && lingua_is_our_ajax_request());
 
-        if (!$is_ajax && !$is_rest && !$is_cron && !$is_cli) {
-            // These are needed for frontend page rendering and admin pages
+        // Load full deps for: page rendering, admin pages, AND lingua AJAX
+        if ((!$is_ajax && !$is_rest && !$is_cron && !$is_cli) || $is_lingua_ajax) {
             require_once LINGUA_PLUGIN_DIR . 'includes/class-content-processor.php';
             require_once LINGUA_PLUGIN_DIR . 'includes/class-translation-manager.php';
             require_once LINGUA_PLUGIN_DIR . 'includes/class-seo-integration.php';
             require_once LINGUA_PLUGIN_DIR . 'includes/class-nav-menu-integration.php';
             require_once LINGUA_PLUGIN_DIR . 'includes/class-translation-render.php';
+            require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-plural-forms.php';
             require_once LINGUA_PLUGIN_DIR . 'includes/class-string-capture-settings.php';
             require_once LINGUA_PLUGIN_DIR . 'public/class-lingua-public.php';
 
-            // v1.0.6: Load media replacer only when needed
             if (!class_exists('Lingua_Media_Replacer')) {
                 require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-media-replacer.php';
             }
 
-            lingua_debug_log('[Lingua v1.0.6] Full dependencies loaded (page rendering mode)');
+            lingua_debug_log('[Lingua v1.0.7] Full dependencies loaded (' . ($is_lingua_ajax ? 'lingua AJAX' : 'page rendering') . ')');
         } else {
-            lingua_debug_log('[Lingua v1.0.6] Minimal dependencies loaded (AJAX/REST/Cron mode)');
+            lingua_debug_log('[Lingua v1.0.7] Minimal dependencies loaded (AJAX/REST/Cron mode)');
         }
     }
     
