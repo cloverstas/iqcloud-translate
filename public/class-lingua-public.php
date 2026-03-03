@@ -470,14 +470,23 @@ class Lingua_Public {
      * Теперь использует полный DOM парсинг вместо гибридного подхода
      */
     public function ajax_get_translatable_content() {
+        $debug_file = '/tmp/lingua_ajax_debug.log';
+        file_put_contents($debug_file, date('H:i:s') . " === ajax_get_translatable_content START ===\n", FILE_APPEND);
+        file_put_contents($debug_file, date('H:i:s') . " POST: " . json_encode($_POST) . "\n", FILE_APPEND);
+
         // v1.0.7: Load frontend components needed for DOM extraction
-        // These are lazy-loaded and not available during AJAX by default
         if (function_exists('lingua_load_frontend_components')) {
             lingua_load_frontend_components();
+            file_put_contents($debug_file, date('H:i:s') . " Frontend components loaded\n", FILE_APPEND);
         }
         if (function_exists('lingua_load_admin_components')) {
             lingua_load_admin_components();
+            file_put_contents($debug_file, date('H:i:s') . " Admin components loaded\n", FILE_APPEND);
         }
+
+        file_put_contents($debug_file, date('H:i:s') . " Dom extractor exists: " . (class_exists('Lingua_Full_Dom_Extractor') ? 'YES' : 'NO') . "\n", FILE_APPEND);
+        file_put_contents($debug_file, date('H:i:s') . " Output buffer exists: " . (class_exists('Lingua_Output_Buffer') ? 'YES' : 'NO') . "\n", FILE_APPEND);
+        file_put_contents($debug_file, date('H:i:s') . " Translation manager exists: " . (class_exists('Lingua_Translation_Manager') ? 'YES' : 'NO') . "\n", FILE_APPEND);
 
         // v5.2.79: ABSOLUTE CRITICAL - This MUST show in logs if function is called
         lingua_debug_log('🚨🚨🚨 LINGUA v5.2.79 CRITICAL: ajax_get_translatable_content() FUNCTION ENTRY POINT 🚨🚨🚨');
@@ -922,6 +931,8 @@ class Lingua_Public {
      * Заменяет старый гибридный подход
      */
     private function extract_content_via_dom($post_id) {
+        $debug_file = '/tmp/lingua_ajax_debug.log';
+        file_put_contents($debug_file, date('H:i:s') . " extract_content_via_dom($post_id) START\n", FILE_APPEND);
         lingua_debug_log('[Lingua AJAX] extract_content_via_dom started for post ' . $post_id);
 
         // Отключаем фильтры переводов для получения оригинального контента
@@ -930,31 +941,36 @@ class Lingua_Public {
         try {
             // Используем новый Full DOM Extractor v2.0 для извлечения контента
             if (!class_exists('Lingua_Full_Dom_Extractor')) {
+                file_put_contents($debug_file, date('H:i:s') . " ERROR: Lingua_Full_Dom_Extractor NOT FOUND\n", FILE_APPEND);
                 throw new Exception('Lingua_Full_Dom_Extractor class not found');
             }
 
-            lingua_debug_log('[Lingua AJAX] Lingua_Full_Dom_Extractor class found');
+            file_put_contents($debug_file, date('H:i:s') . " Lingua_Full_Dom_Extractor found, creating instance\n", FILE_APPEND);
             $dom_extractor = new Lingua_Full_Dom_Extractor();
 
             // Получаем HTML страницы для парсинга
-            lingua_debug_log('[Lingua AJAX] Getting page HTML for post ' . $post_id);
+            file_put_contents($debug_file, date('H:i:s') . " Getting page HTML for post $post_id\n", FILE_APPEND);
             $page_html = $this->get_page_html($post_id);
 
             if (!$page_html) {
+                file_put_contents($debug_file, date('H:i:s') . " ERROR: get_page_html returned empty/false\n", FILE_APPEND);
                 throw new Exception('Could not retrieve page HTML for post ' . $post_id);
             }
 
-            lingua_debug_log('[Lingua AJAX] Page HTML retrieved, length: ' . strlen($page_html));
+            file_put_contents($debug_file, date('H:i:s') . " Page HTML retrieved, length: " . strlen($page_html) . "\n", FILE_APPEND);
+            file_put_contents($debug_file, date('H:i:s') . " HTML first 300 chars: " . substr($page_html, 0, 300) . "\n", FILE_APPEND);
 
             // Извлекаем контент через полный DOM парсинг
-            lingua_debug_log('[Lingua AJAX] Starting DOM extraction');
             $unified_structure = $dom_extractor->extract_from_full_html($page_html, $post_id);
 
-            lingua_debug_log('[Lingua AJAX] DOM extraction completed successfully');
+            $block_count = count($unified_structure['content_blocks'] ?? []);
+            $string_count = count($unified_structure['page_strings'] ?? []);
+            $seo_count = count($unified_structure['seo_fields'] ?? []);
+            $media_count = count($unified_structure['media'] ?? []);
+            file_put_contents($debug_file, date('H:i:s') . " DOM extraction done: blocks=$block_count, strings=$string_count, seo=$seo_count, media=$media_count\n", FILE_APPEND);
 
         } catch (Exception $e) {
-            lingua_debug_log('[Lingua AJAX] DOM extraction error: ' . $e->getMessage());
-            lingua_debug_log('[Lingua AJAX] Exception trace: ' . $e->getTraceAsString());
+            file_put_contents($debug_file, date('H:i:s') . " EXCEPTION: " . $e->getMessage() . "\n", FILE_APPEND);
             // Возвращаем пустую структуру в случае ошибки
             $unified_structure = array(
                 'content_blocks' => array(),
