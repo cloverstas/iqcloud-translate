@@ -390,6 +390,7 @@ class Lingua_Output_Buffer {
         $cached_translated_html = get_transient($translated_cache_key);
 
         if ($cached_translated_html) {
+            file_put_contents('/tmp/lingua_ob_trace.log', date('H:i:s') . " CACHE HIT! Returning cached HTML, len=" . strlen($cached_translated_html) . "\n", FILE_APPEND);
             $this->debug_file_log('cache-performance.txt', "🚀 TRANSLATED CACHE HIT - URL: {$current_url}, lang: {$this->current_language}");
             $this->debug_file_log('process-translation-mode-test.txt', "⚡ Returning cached translated HTML");
 
@@ -404,6 +405,7 @@ class Lingua_Output_Buffer {
             return $cached_translated_html;
         }
 
+        file_put_contents('/tmp/lingua_ob_trace.log', date('H:i:s') . " CACHE MISS, translating fresh...\n", FILE_APPEND);
         $this->debug_file_log('process-translation-mode-test.txt', "Cache MISS, continuing with translation...");
 
         try {
@@ -486,6 +488,7 @@ class Lingua_Output_Buffer {
             }
 
             $extract_time = microtime(true) - $start_extract_time;
+            file_put_contents('/tmp/lingua_ob_trace.log', date('H:i:s') . " Extracted " . count($strings_in_html) . " strings from HTML in " . round($extract_time, 3) . "s\n", FILE_APPEND);
             lingua_debug_log("[Lingua v5.2.37 P5] Extracted " . count($strings_in_html) . " unique strings from HTML in " . round($extract_time, 3) . "s");
 
 
@@ -621,6 +624,11 @@ class Lingua_Output_Buffer {
 
             $db_time = microtime(true) - $start_db_time;
             $fallback_count = count($translations) - $exact_count;
+            file_put_contents('/tmp/lingua_ob_trace.log', date('H:i:s') . " DB query: exact={$exact_count}, fallback={$fallback_count}, total=" . count($translations) . " in " . round($db_time, 3) . "s\n", FILE_APPEND);
+            // Log first 3 translations found
+            foreach (array_slice($translations, 0, 3) as $idx => $t) {
+                file_put_contents('/tmp/lingua_ob_trace.log', date('H:i:s') . "   sample #{$idx}: '" . substr($t['original_text'], 0, 50) . "' => '" . substr($t['translated_text'], 0, 50) . "'\n", FILE_APPEND);
+            }
             lingua_debug_log("[Lingua v5.3.26] Phase 2 (normalized fallback): found {$fallback_count} more translations");
             lingua_debug_log("[Lingua v5.2.37 P5] Loaded " . count($translations) . " translations from DB (queried " . count($strings_in_html) . " strings) in " . round($db_time, 3) . "s");
 
@@ -766,6 +774,7 @@ class Lingua_Output_Buffer {
             lingua_debug_log('[Lingua v5.2.6] Starting OPTIMIZED translation application for ' . count($translations) . ' translations, lang: ' . $this->current_language);
 
             $applied_count = $this->apply_translations_optimized($html_dom, $translations);
+            file_put_contents('/tmp/lingua_ob_trace.log', date('H:i:s') . " apply_translations_optimized: applied={$applied_count} of " . count($translations) . " translations\n", FILE_APPEND);
 
             // Рендерим DOM обратно в HTML
             $translated_html = $html_dom->save();
