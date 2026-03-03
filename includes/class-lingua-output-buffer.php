@@ -111,6 +111,7 @@ class Lingua_Output_Buffer {
         // Запускаем буферизацию
         ob_start(array($this, 'process_page_output'), 0);
         $this->is_enabled = true;
+        file_put_contents('/tmp/lingua_ob_trace.log', date('H:i:s') . " OB_START lang={$this->current_language} default={$this->default_language} URI={$url}\n", FILE_APPEND);
 
         // Логируем запуск
         $this->debug_file_log('start-buffering-test.txt', "Output buffering STARTED for language: {$this->current_language}");
@@ -278,13 +279,17 @@ class Lingua_Output_Buffer {
 
             // Режим применения переводов (используем cache_key вместо post_id)
             $is_trans_mode = $this->is_translation_mode();
+            file_put_contents('/tmp/lingua_ob_trace.log', date('H:i:s') . " is_trans_mode=" . ($is_trans_mode ? 'YES' : 'NO') . " lang={$this->current_language} default={$this->default_language}\n", FILE_APPEND);
             $this->debug_file_log('process-page-flow.txt', "is_translation_mode() = " . ($is_trans_mode ? 'TRUE' : 'FALSE'));
 
             if ($is_trans_mode) {
+                file_put_contents('/tmp/lingua_ob_trace.log', date('H:i:s') . " ENTERING process_translation_mode, html_len=" . strlen($output) . "\n", FILE_APPEND);
                 $this->debug_file_log('process-page-flow.txt', "✓ ENTERING process_translation_mode()");
                 $output = $this->process_translation_mode($output, $original_html_cache_key);
+                file_put_contents('/tmp/lingua_ob_trace.log', date('H:i:s') . " EXITED process_translation_mode, html_len=" . strlen($output) . "\n", FILE_APPEND);
                 $this->debug_file_log('process-page-flow.txt', "✓ EXITED process_translation_mode()");
             } else {
+                file_put_contents('/tmp/lingua_ob_trace.log', date('H:i:s') . " SKIPPING translations!\n", FILE_APPEND);
                 $this->debug_file_log('process-page-flow.txt', "✗ SKIPPING translations (is_translation_mode = false)");
             }
 
