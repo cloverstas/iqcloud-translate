@@ -1,0 +1,4 @@
+# Exclude from GitHub archive downloads
+.gitignore export-ignore
+.gitattributes export-ignore
+.git export-ignore

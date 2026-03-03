@@ -616,7 +616,8 @@ wp_print_inline_script_tag(
     'var linguaStringsData = ' . wp_json_encode($lingua_strings_data) . ';'
 );
 
-$strings_js = <<<'JSEOF'
+ob_start();
+?>
 jQuery(document).ready(function($) {
     var _sd = window.linguaStringsData || {};
     var _i18n = _sd.i18n || {};
@@ -917,6 +918,7 @@ jQuery(document).ready(function($) {
         }
     });
 });
-JSEOF;
+<?php
+$strings_js = ob_get_clean();
 wp_print_inline_script_tag($strings_js);
 ?>

@@ -782,7 +782,8 @@ wp_print_inline_script_tag(
     'var linguaSettingsData = ' . wp_json_encode($lingua_settings_data) . ';'
 );
 
-$settings_js = <<<'JSEOF'
+ob_start();
+?>
 jQuery(document).ready(function($) {
     var _sd = window.linguaSettingsData || {};
     var _i18n = _sd.i18n || {};
@@ -1642,6 +1643,7 @@ jQuery(document).ready(function($) {
         linguaQueue.init();
     }
 });
-JSEOF;
+<?php
+$settings_js = ob_get_clean();
 wp_print_inline_script_tag($settings_js);
 ?>
