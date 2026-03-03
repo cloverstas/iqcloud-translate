@@ -3123,15 +3123,7 @@ class Lingua_Output_Buffer {
             // Normalize text ONCE per node
             $normalized = $this->normalize_text_once($node_innertext);
 
-            if (stripos($normalized, 'will') !== false || stripos($normalized, 'privacy') !== false || stripos($normalized, 'policy') !== false) {
-            }
-
-            if ($is_title_subtitle) {
-            }
-
             if (empty($normalized) || strlen($normalized) < 2) {
-                if ($is_title_subtitle) {
-                }
                 continue;
             }
 

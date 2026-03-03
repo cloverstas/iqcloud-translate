@@ -470,6 +470,15 @@ class Lingua_Public {
      * Теперь использует полный DOM парсинг вместо гибридного подхода
      */
     public function ajax_get_translatable_content() {
+        // v1.0.7: Load frontend components needed for DOM extraction
+        // These are lazy-loaded and not available during AJAX by default
+        if (function_exists('lingua_load_frontend_components')) {
+            lingua_load_frontend_components();
+        }
+        if (function_exists('lingua_load_admin_components')) {
+            lingua_load_admin_components();
+        }
+
         // v5.2.79: ABSOLUTE CRITICAL - This MUST show in logs if function is called
         lingua_debug_log('🚨🚨🚨 LINGUA v5.2.79 CRITICAL: ajax_get_translatable_content() FUNCTION ENTRY POINT 🚨🚨🚨');
         lingua_debug_log('🚨 Backtrace: ' . wp_debug_backtrace_summary());
@@ -1378,6 +1387,10 @@ class Lingua_Public {
      * v3.8: Extract content from URL (for taxonomy/archive pages)
      */
     private function extract_content_from_url($url) {
+        // v1.0.7: Ensure frontend components are loaded for DOM extraction
+        if (function_exists('lingua_load_frontend_components')) {
+            lingua_load_frontend_components();
+        }
         lingua_debug_log('[Lingua v3.8] Extracting content from URL: ' . $url);
 
         // v5.3.33: Strip language prefix from URL to get default language version
