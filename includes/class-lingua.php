@@ -571,8 +571,8 @@ class Lingua {
         // Админ-специфичные хуки только в админке
         if (is_admin()) {
             // v1.0.6: Load admin-specific heavy components (gettext scan, plural forms etc.)
-            // Only for non-AJAX admin pages
-            if (!(defined('DOING_AJAX') && DOING_AJAX)) {
+            // v1.0.10: Also load for lingua AJAX requests (scan, plural forms need these)
+            if (!(defined('DOING_AJAX') && DOING_AJAX) || lingua_is_our_ajax_request_early()) {
                 lingua_load_admin_components();
             }
 
