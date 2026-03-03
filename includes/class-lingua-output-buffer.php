@@ -2506,17 +2506,36 @@ class Lingua_Output_Buffer {
                 // v5.3.45: Check if node contains HTML tags - if so, use recursive translation
                 $node_has_html = preg_match('/<[a-z]/i', $node_innertext);
 
-                // v5.3.45: For nodes with HTML, always use recursive translation
-                // Don't skip based on substring_of_longer - HTML structure variations are different strings, not duplicates
+                // v1.0.9: For nodes with HTML, first try DIRECT full replacement from DB
+                // This fixes mixed content like "Will be used... <a><strong>Privacy Policy</strong></a>"
+                // where translate_page_recursive() only translates inner elements but misses outer text
                 if ($node_has_html) {
-                    // Use recursive translation to preserve nested HTML structure
-                    $translated_html = $this->translate_page_recursive($node_innertext, $translation_map);
+                    // First: try direct full replacement (same as non-HTML path)
+                    if (!isset($substring_of_longer[$node_lookup_key])) {
+                        $full_translated = $translation_map[$node_lookup_key]['translated'];
+                        if (!empty($full_translated)) {
+                            $leading_ws = '';
+                            $trailing_ws = '';
+                            if (preg_match('/^(\s+|(?:&nbsp;)+)/i', $node_innertext, $m)) {
+                                $leading_ws = $m[1];
+                            }
+                            if (preg_match('/(\s+|(?:&nbsp;)+)$/i', $node_innertext, $m)) {
+                                $trailing_ws = $m[1];
+                            }
+                            $node->innertext = $leading_ws . $full_translated . $trailing_ws;
+                            $applied_count++;
+                            $exact_matches++;
+                            continue;
+                        }
+                    }
 
+                    // Fallback: recursive translation for inner elements
+                    $translated_html = $this->translate_page_recursive($node_innertext, $translation_map);
                     if ($translated_html !== false && $translated_html !== $node_innertext) {
                         $node->innertext = $translated_html;
                         $applied_count++;
                         $exact_matches++;
-                        continue; // Skip to next node after recursive translation
+                        continue;
                     }
                 }
 
@@ -2543,38 +2562,44 @@ class Lingua_Output_Buffer {
 
             // v5.6.0: Strategy 1.5: PLAINTEXT MATCH (HTML-agnostic, TranslatePress-inspired)
             // If exact HTML match failed, try matching by stripped plaintext.
-            // This handles cases like:
-            //   DOM renders: "Переведите сайт на<br>\n\t\t<span class="highlight">любой язык</span>"
-            //   DB stores:   "Переведите сайт на<br /> <span class="highlight">любой язык</span>"
-            //   Both strip to: "переведите сайт на любой язык"
-            // When plaintext matches, we use translate_page_recursive() to translate the HTML
-            // preserving the original DOM structure.
+            // v1.0.9: If translation is plain text but node has HTML structure,
+            //         use translate_page_recursive() to preserve inner HTML tags.
             $node_has_html_check = preg_match('/<[a-z]/i', $node_innertext);
             if ($node_has_html_check) {
                 $node_plaintext_key = $this->strip_tags_for_matching($node_innertext);
 
                 if (!empty($node_plaintext_key) && isset($plaintext_map[$node_plaintext_key])) {
                     $pt_data = $plaintext_map[$node_plaintext_key];
-
-                    // v5.6.0: Direct replacement with full translation from DB
-                    // Since plaintext matches, the DB has the correct translated HTML block.
-                    // Use it directly — this is the most reliable approach.
                     $full_translation = $pt_data['translated'];
+
                     if (!empty($full_translation)) {
-                        // Preserve leading/trailing whitespace from original node
-                        $leading_ws = '';
-                        $trailing_ws = '';
-                        if (preg_match('/^(\s+)/', $node_innertext, $m)) {
-                            $leading_ws = $m[1];
+                        $translation_has_html = preg_match('/<[a-z]/i', $full_translation);
+
+                        if ($translation_has_html) {
+                            // v5.6.0: Translation has HTML — use as full replacement
+                            $leading_ws = '';
+                            $trailing_ws = '';
+                            if (preg_match('/^(\s+)/', $node_innertext, $m)) {
+                                $leading_ws = $m[1];
+                            }
+                            if (preg_match('/(\s+)$/', $node_innertext, $m)) {
+                                $trailing_ws = $m[1];
+                            }
+                            $node->innertext = $leading_ws . $full_translation . $trailing_ws;
+                            $applied_count++;
+                            $exact_matches++;
+                            continue;
+                        } else {
+                            // v1.0.9: Translation is plain text but node has HTML (e.g. <a><span>)
+                            // Use recursive to replace only text nodes, preserving HTML structure
+                            $translated_html = $this->translate_page_recursive($node_innertext, $translation_map);
+                            if ($translated_html !== false && $translated_html !== $node_innertext) {
+                                $node->innertext = $translated_html;
+                                $applied_count++;
+                                $exact_matches++;
+                                continue;
+                            }
                         }
-                        if (preg_match('/(\s+)$/', $node_innertext, $m)) {
-                            $trailing_ws = $m[1];
-                        }
-                        $node->innertext = $leading_ws . $full_translation . $trailing_ws;
-                        $applied_count++;
-                        $exact_matches++;
-                        lingua_debug_log("[Lingua v5.6.0] ✓ Applied full translation for <{$tag}>: '" . substr($node_plaintext_key, 0, 60) . "'");
-                        continue;
                     }
                 }
             }
