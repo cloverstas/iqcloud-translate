@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: IQCloud Translate
- * Description: Powerful multilingual translation toolkit with visual editor, auto-translation, and WooCommerce support.
- * Version: 1.0.10
+ * Description: Powerful multilingual translation toolkit with visual editor and WooCommerce support.
+ * Version: 1.1.0
  * Author: YourNewSite
  * Author URI: https://yournewsite.ru
  * License: GPL v2 or later
@@ -22,7 +22,6 @@ define('LINGUA_VERSION', trim(file_get_contents(__DIR__ . '/VERSION')));
 define('LINGUA_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('LINGUA_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('LINGUA_PLUGIN_BASENAME', plugin_basename(__FILE__));
-define('LINGUA_MIDDLEWARE_URL', 'https://translate.yournewsite.ru'); // Middleware API URL (hardcoded)
 
 /**
  * v5.3.20: Debug logging control
@@ -168,7 +167,6 @@ function lingua_is_our_ajax_request_early() {
  * Files are grouped by when they're needed:
  * - Frontend rendering: HTML DOM parser, output buffer, DOM extractor, content filter
  * - Admin features: gettext scan, string capture settings, plural forms
- * - Auto-translation: auto-translator (only during cron/queue processing)
  * - Search: search integration (only when search query detected)
  */
 
@@ -219,30 +217,6 @@ function lingua_load_admin_components() {
     lingua_debug_log('[Lingua v1.0.6] Admin components loaded (lazy)');
 }
 
-/**
- * Load auto-translator component
- * Called only when queue processing is needed
- */
-function lingua_load_auto_translator() {
-    static $loaded = false;
-    if ($loaded) return;
-    $loaded = true;
-
-    // Auto-translator needs DOM components
-    lingua_load_frontend_components();
-    require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-auto-translator.php';
-
-    lingua_debug_log('[Lingua v1.0.6] Auto-translator loaded (lazy)');
-}
-
-// v5.2.179: Add custom cron interval for translation queue
-add_filter('cron_schedules', function($schedules) {
-    $schedules['every_minute'] = array(
-        'interval' => 60,
-        'display' => 'Every Minute'
-    );
-    return $schedules;
-});
 
 /**
  * v1.0.6: Check if current AJAX request is related to our plugin

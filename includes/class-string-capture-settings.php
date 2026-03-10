@@ -124,7 +124,7 @@ add_action('admin_init', function() {
         __('Minimum String Length', 'iqcloud-translate'),
         function() {
             $settings = Lingua_String_Capture_Settings::get_settings();
-            echo '<input type="number" name="lingua_string_capture_settings[min_string_length]" value="' . $settings['min_string_length'] . '" min="1" max="50">';
+            echo '<input type="number" name="lingua_string_capture_settings[min_string_length]" value="' . esc_attr($settings['min_string_length']) . '" min="1" max="50">';
             echo '<p class="description">' . esc_html__('Minimum number of characters for a string to be captured', 'iqcloud-translate') . '</p>';
         },
         'lingua-settings',
@@ -136,7 +136,7 @@ add_action('admin_init', function() {
         __('Maximum String Length', 'iqcloud-translate'),
         function() {
             $settings = Lingua_String_Capture_Settings::get_settings();
-            echo '<input type="number" name="lingua_string_capture_settings[max_string_length]" value="' . $settings['max_string_length'] . '" min="50" max="5000">';
+            echo '<input type="number" name="lingua_string_capture_settings[max_string_length]" value="' . esc_attr($settings['max_string_length']) . '" min="50" max="5000">';
             echo '<p class="description">' . esc_html__('Maximum number of characters for a string to be captured', 'iqcloud-translate') . '</p>';
         },
         'lingua-settings',

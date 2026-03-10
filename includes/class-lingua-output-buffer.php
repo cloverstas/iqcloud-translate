@@ -633,8 +633,6 @@ class Lingua_Output_Buffer {
             lingua_debug_log("[Lingua v5.2.37 P5] Loaded " . count($translations) . " translations from DB (queried " . count($strings_in_html) . " strings) in " . round($db_time, 3) . "s");
 
             // v5.3.1: Removed synchronous on-demand translation (caused 504 timeout)
-            // Auto-translation now happens in background via save_post hook + cron queue
-            // See Lingua_Auto_Translator::queue_post_for_translation()
 
             // v5.0.16: CRITICAL FIX - Sort translations by length (longest first)
             // Problem: "Мебель для дома" was matching inside "Мебель для дома и дачи"

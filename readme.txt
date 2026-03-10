@@ -4,15 +4,15 @@ Tags: translation, multilingual, translate, localization, i18n
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.10
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Powerful multilingual translation toolkit with visual editor and WooCommerce support.
+Manual multilingual translation toolkit with visual editor and WooCommerce support.
 
 == Description ==
 
-IQCloud Translate is a modern translation plugin that makes your WordPress site multilingual with ease. Translate any content directly from the frontend using a convenient visual editor.
+IQCloud Translate is a lightweight manual translation plugin that makes your WordPress site multilingual with ease. Translate any content directly from the frontend using a convenient visual editor — no external API required.
 
 = Key Features =
 
@@ -35,17 +35,6 @@ IQCloud Translate is a modern translation plugin that makes your WordPress site 
 4. Click "Translate Page" in the admin bar
 5. Translate content in the visual editor panel
 6. Save and your translations are live!
-
-= Pro Features =
-
-Upgrade to Pro for additional features:
-
-* **Auto-Translation** - Automatic translation via API integration
-* **Bulk Translation** - Translate your entire website with one click
-* **Translation Queue** - Background processing for large sites
-* **Priority Support** - Get help when you need it
-
-[Get IQCloud Translate Pro](https://translate.yournewsite.ru)
 
 = Requirements =
 
@@ -81,7 +70,7 @@ No, translations are cached and served efficiently. The visual editor only loads
 
 = Can I use automatic translation? =
 
-Yes, with IQCloud Translate Pro you get access to automatic translation via API.
+The free version supports manual translation only. Automatic translation is available as a separate add-on: IQCloud Translate Pro.
 
 = How does the language switcher work? =
 
@@ -108,6 +97,14 @@ Your translations are stored in the database and will be preserved. If you react
 5. SEO fields translation - translate meta descriptions and Open Graph tags
 
 == Changelog ==
+
+= 1.1.0 =
+* Major: Separated into free and Pro versions for WordPress.org compliance
+* Fixed: All output escaping issues (esc_html, esc_attr, esc_url, wp_kses_post)
+* Removed: Auto-translation features moved to Pro add-on
+* Removed: Language limits — unlimited languages in free version
+* Added: Extensibility hooks for Pro add-on integration
+* Improved: Reduced memory footprint by removing unused Pro dependencies
 
 = 1.0.10 =
 * Fix gettext scanner (Full Rescan) — admin components now load correctly for plugin AJAX requests
@@ -155,6 +152,9 @@ Your translations are stored in the database and will be preserved. If you react
 
 == Upgrade Notice ==
 
+= 1.1.0 =
+Major update: free/Pro split. Auto-translation moved to Pro add-on. All escaping issues fixed. Unlimited languages.
+
 = 1.0.10 =
 Fix gettext scanner and production cleanup. Recommended update.
 
@@ -184,24 +184,6 @@ Initial release of IQCloud Translate - make your WordPress site multilingual!
 
 == Third Party Services ==
 
-This plugin connects to the IQCloud Translation API in the following cases (Pro feature only):
+This plugin does NOT connect to any external services. All translations are created manually and stored locally in your WordPress database. No data is sent to third-party servers.
 
-= IQCloud Translation API =
-
-The Pro version of this plugin connects to the IQCloud Translation API to provide automatic translation and license management.
-
-* **Service URL:** https://translate.yournewsite.ru
-* **Service provider:** IQCloud
-
-**When the connection is made and what data is sent:**
-
-1. **License activation and status check** — When you enter your API key and click "Activate", or when the plugin checks your license status on the settings page. Data sent: API key, site URL.
-2. **Automatic translation** — When you click "Auto-translate", use "Translate All Posts", or when background translation queue processes. Data sent: text content for translation, target language code, source language code.
-3. **API status display** — When loading the settings page to show token usage, active languages, and subscription status. Data sent: API key.
-
-**Data NOT sent:** passwords, email addresses, personal user data, database credentials, or any sensitive information beyond the text content being translated.
-
-* **Privacy Policy:** [https://translate.yournewsite.ru/privacy](https://translate.yournewsite.ru/privacy)
-* **Terms of Service:** [https://translate.yournewsite.ru/terms](https://translate.yournewsite.ru/terms)
-
-The free version of this plugin does NOT connect to any external services. All translations are stored locally in your WordPress database.
+Auto-translation via external API is available as a separate add-on: IQCloud Translate Pro.

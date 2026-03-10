@@ -30,52 +30,6 @@ jQuery(document).ready(function($) {
         $(target).addClass('active');
     });
     
-    // v5.2: Toggle API key visibility for Middleware API
-    $('#toggle-api-key').on('click', function() {
-        var $input = $('#middleware_api_key');
-        var $button = $(this);
-
-        if ($input.attr('type') === 'password') {
-            $input.attr('type', 'text');
-            $button.text(lingua_admin.strings.hide || 'Hide');
-        } else {
-            $input.attr('type', 'password');
-            $button.text(lingua_admin.strings.show || 'Show');
-        }
-    });
-    
-    // v5.2: Test Middleware API connection
-    $('#test-api-connection').on('click', function() {
-        var $button = $(this);
-        var $result = $('#api-test-result');
-
-        $button.prop('disabled', true);
-        $result.removeClass('success error').addClass('loading').text(lingua_admin.strings.testing_connection || 'Testing...');
-
-        $.ajax({
-            url: lingua_admin.ajax_url,
-            type: 'POST',
-            data: {
-                action: 'lingua_test_api',
-                nonce: lingua_admin.nonce,
-                api_key: $('#middleware_api_key').val()
-            },
-            success: function(response) {
-                if (response.success) {
-                    $result.removeClass('loading error').addClass('success').text('✓ ' + response.data);
-                } else {
-                    $result.removeClass('loading success').addClass('error').text('✗ ' + response.data);
-                }
-            },
-            error: function() {
-                $result.removeClass('loading success').addClass('error').text('✗ ' + (lingua_admin.strings.connection_failed || 'Connection failed'));
-            },
-            complete: function() {
-                $button.prop('disabled', false);
-            }
-        });
-    });
-    
     // Handle filter button on translations page
     $('#filter-posts').on('click', function() {
         var post_type = $('#filter-by-post-type').val();

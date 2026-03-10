@@ -942,11 +942,11 @@ class Lingua_Translation_Render {
         $components_loaded = $this->cache_manager && $this->dom_parser && $this->filter_engine && $this->string_capture;
 
         if ($components_loaded) {
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static HTML with no dynamic data
             echo '<div class="notice notice-success is-dismissible" data-notice="lingua-v2-upgrade">';
             echo '<p><strong>IQCloud Translate:</strong> ';
             echo esc_html__('New architecture v2.0 is active! Enhanced performance and better string capture are now available.', 'iqcloud-translate');
-            echo '</p>';
-            echo '</div>';
+            echo '</p></div>';
 
             // v5.5: Use wp_print_inline_script_tag() for inline JS in admin_notices context (WP review compliance)
             $dismiss_nonce = wp_create_nonce('lingua_dismiss_notice');

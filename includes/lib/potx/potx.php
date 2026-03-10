@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile -- Third-party library (POTX), not modified by IQCloud Translate
 // $Id: potx.inc,v 1.1.2.17.2.7.2.19.2.16 2011/01/26 12:16:06 goba Exp $
 
 /**

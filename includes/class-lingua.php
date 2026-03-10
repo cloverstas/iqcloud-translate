@@ -245,6 +245,9 @@ class Lingua {
 
         // v5.2: Hide admin bar in iframe preview mode
         $this->hide_admin_bar_in_preview();
+
+        // Allow add-ons to extend plugin functionality
+        do_action('lingua_loaded');
     }
 
     /**
@@ -260,9 +263,7 @@ class Lingua {
         // v1.0.6: CORE classes - always needed (lightweight)
         require_once LINGUA_PLUGIN_DIR . 'includes/class-database.php';
         require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-languages.php';
-        require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-middleware-api.php';
         require_once LINGUA_PLUGIN_DIR . 'includes/class-url-rewriter.php';
-        require_once LINGUA_PLUGIN_DIR . 'includes/class-lingua-translation-queue.php';
 
         // Admin class - always needed for AJAX handlers
         require_once LINGUA_PLUGIN_DIR . 'admin/class-lingua-admin.php';
@@ -335,163 +336,11 @@ class Lingua {
             lingua_debug_log('[Lingua v1.0.6] Skipped heavy components (AJAX/REST/Cron)');
         }
 
-        // Register cron hooks for auto-translation (always needed)
-        add_action('lingua_auto_translate_post', array($this, 'handle_auto_translate_post'), 10, 2);
-
-        // v5.2.179: Auto-translate queue initialization
-        $this->init_translation_queue();
+        // Allow add-ons to hook into component initialization
+        do_action('lingua_components_initialized');
     }
 
-    /**
-     * Initialize translation queue system
-     * v5.2.179: Auto-translate website feature
-     */
-    private function init_translation_queue() {
-        // Create queue table if needed
-        if (get_option('lingua_queue_table_version') !== '1.0.0') {
-            Lingua_Translation_Queue::create_table();
-            update_option('lingua_queue_table_version', '1.0.0');
-        }
 
-        // v1.0.6: Register cron hook with lazy loading wrapper
-        // Auto-translator is loaded only when cron actually fires
-        add_action('lingua_process_translation_queue', function() {
-            lingua_load_auto_translator();
-            if (class_exists('Lingua_Auto_Translator')) {
-                $translator = Lingua_Auto_Translator::get_instance();
-                $translator->process_queue();
-            }
-        });
-
-        // Hook into post publish to add to queue
-        if (Lingua_Translation_Queue::is_auto_translate_enabled()) {
-            add_action('publish_post', array($this, 'on_post_publish'), 10, 2);
-            add_action('publish_page', array($this, 'on_post_publish'), 10, 2);
-
-            // WooCommerce products
-            add_action('publish_product', array($this, 'on_post_publish'), 10, 2);
-
-            // Schedule queue processing if not already scheduled
-            if (!wp_next_scheduled('lingua_process_translation_queue') && !Lingua_Translation_Queue::is_paused()) {
-                wp_schedule_event(time(), 'every_minute', 'lingua_process_translation_queue');
-            }
-        } else {
-            // Clear scheduled event if disabled
-            wp_clear_scheduled_hook('lingua_process_translation_queue');
-        }
-    }
-
-    /**
-     * Add published post to translation queue
-     * v5.2.179: Auto-translate website feature
-     *
-     * @param int $post_id Post ID
-     * @param WP_Post $post Post object
-     */
-    public function on_post_publish($post_id, $post) {
-        // Skip autosaves and revisions
-        if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) {
-            return;
-        }
-
-        // Skip if auto-translate is disabled
-        if (!Lingua_Translation_Queue::is_auto_translate_enabled()) {
-            return;
-        }
-
-        // Check Pro status
-        $api = new Lingua_Middleware_API();
-        if (!$api->is_pro_active()) {
-            return;
-        }
-
-        // Add to queue with high priority (new posts should be processed first)
-        $added = Lingua_Translation_Queue::add_post($post_id, 5);
-
-        if ($added > 0) {
-            lingua_debug_log("[Lingua v5.2.179] Added post #{$post_id} to translation queue for {$added} languages");
-        }
-    }
-
-    /**
-     * Process queue batch via WP-Cron
-     * v5.2.179: Background processing
-     */
-    public function process_queue_batch() {
-        // Skip if paused
-        if (Lingua_Translation_Queue::is_paused()) {
-            return;
-        }
-
-        // Check Pro status
-        $api = new Lingua_Middleware_API();
-        if (!$api->is_pro_active()) {
-            return;
-        }
-
-        // Process up to 5 items per batch
-        $processed = 0;
-        $max_items = 5;
-
-        while ($processed < $max_items) {
-            $item = Lingua_Translation_Queue::get_next();
-
-            if (!$item) {
-                break; // No more items
-            }
-
-            $this->process_queue_item($item);
-            $processed++;
-        }
-
-        if ($processed > 0) {
-            lingua_debug_log("[Lingua v5.2.179] Processed {$processed} queue items");
-        }
-    }
-
-    /**
-     * Process single queue item
-     *
-     * @param object $item Queue item
-     */
-    /**
-     * Process a queue item and return result
-     * v5.3.12: Uses Lingua_Auto_Translator for complete page translation
-     * v5.3.37: Returns array with success status and error message for proper JS handling
-     */
-    private function process_queue_item($item) {
-        // Mark as processing
-        Lingua_Translation_Queue::mark_processing($item->id);
-
-        try {
-            // v1.0.6: Lazy-load auto-translator only when needed
-            lingua_load_auto_translator();
-
-            // v5.3.12: Use Lingua_Auto_Translator for full HTML extraction
-            // This extracts ALL strings from rendered page, not just 3 fields
-            $translator = Lingua_Auto_Translator::get_instance();
-            $result = $translator->translate_post($item->post_id, $item->language_code);
-
-            if (is_wp_error($result)) {
-                $error_message = $result->get_error_message();
-                Lingua_Translation_Queue::mark_failed($item->id, $error_message);
-                lingua_debug_log("[Lingua v5.3.12] Failed to translate post #{$item->post_id}: " . $error_message);
-                // v5.3.37: Return error info for JavaScript
-                return array('success' => false, 'error' => $error_message);
-            } else {
-                Lingua_Translation_Queue::mark_completed($item->id, $result['total'], $result['translated']);
-                lingua_debug_log("[Lingua v5.3.12] Translated post #{$item->post_id} to {$item->language_code}: {$result['translated']}/{$result['total']} strings");
-                return array('success' => true, 'total' => $result['total'], 'translated' => $result['translated']);
-            }
-
-        } catch (Exception $e) {
-            $error_message = $e->getMessage();
-            Lingua_Translation_Queue::mark_failed($item->id, $error_message);
-            lingua_debug_log("[Lingua v5.3.12] Exception translating post #{$item->post_id}: " . $error_message);
-            // v5.3.37: Return error info for JavaScript
-            return array('success' => false, 'error' => $error_message);
-        }
-    }
     
     private function set_locale() {
         // Translations are loaded automatically by WordPress.org since WP 4.6
@@ -503,10 +352,6 @@ class Lingua {
         $admin = new Lingua_Admin($this->version);
         
         // AJAX handlers (должны быть доступны всегда)
-        add_action('wp_ajax_lingua_save_api_settings', array($admin, 'ajax_save_api_settings'));
-        add_action('wp_ajax_lingua_test_api', array($admin, 'ajax_test_api'));
-        add_action('wp_ajax_lingua_check_pro_status', array($admin, 'ajax_check_pro_status'));
-        add_action('wp_ajax_lingua_disconnect_license', array($admin, 'ajax_disconnect_license'));
         add_action('wp_ajax_lingua_translate_content', array($admin, 'ajax_translate_content'));
 
         // v5.2.77: DEBUG - Log all AJAX requests to lingua actions
@@ -521,8 +366,6 @@ class Lingua {
         add_action('wp_ajax_lingua_save_translation', array($admin, 'ajax_save_translation'));
 
         add_action('wp_ajax_lingua_get_modal_template', array($admin, 'ajax_get_modal_template'));
-        add_action('wp_ajax_lingua_auto_translate_text', array($admin, 'ajax_auto_translate_text'));
-        add_action('wp_ajax_lingua_auto_translate_batch', array($admin, 'ajax_auto_translate_batch')); // v5.2.199
 
         // v3.2: Clear bad WooCommerce translations
         add_action('wp_ajax_lingua_clear_bad_translations', array($admin, 'ajax_clear_bad_translations'));
@@ -533,9 +376,6 @@ class Lingua {
         // v5.0.13: Delete page translations (for debugging)
         add_action('wp_ajax_lingua_delete_page_translations', array($admin, 'ajax_delete_page_translations'));
 
-        // v5.2: Middleware API test connection
-        add_action('wp_ajax_lingua_test_middleware_connection', array($admin, 'ajax_test_middleware_connection'));
-
         // v5.2.187: Save string translation from strings page
         add_action('wp_ajax_lingua_save_string_translation', array($admin, 'ajax_save_string_translation'));
 
@@ -543,16 +383,8 @@ class Lingua {
         add_action('wp_ajax_lingua_get_plural_forms', array($admin, 'ajax_get_plural_forms'));
         add_action('wp_ajax_lingua_save_plural_translations', array($admin, 'ajax_save_plural_translations'));
 
-        // v5.2.179: Translation queue AJAX endpoints
-        add_action('wp_ajax_lingua_get_queue_status', array($this, 'ajax_get_queue_status'));
-        add_action('wp_ajax_lingua_translate_all', array($this, 'ajax_translate_all'));
-        add_action('wp_ajax_lingua_pause_queue', array($this, 'ajax_pause_queue'));
-        add_action('wp_ajax_lingua_resume_queue', array($this, 'ajax_resume_queue'));
-        add_action('wp_ajax_lingua_retry_failed', array($this, 'ajax_retry_failed'));
-        add_action('wp_ajax_lingua_process_queue_item', array($this, 'ajax_process_queue_item'));
-
-        // v5.2: Middleware verification endpoint (public REST API)
-        add_action('rest_api_init', array($this, 'register_middleware_verification_endpoint'));
+        // Allow add-ons (e.g., IQCloud Translate Pro) to register additional AJAX handlers
+        do_action('lingua_register_ajax_handlers', $admin);
 
         // ОТКАТ: Menu AJAX handler удален - Nav_Menu_Integration сам обрабатывает меню
         // add_action('wp_ajax_add-menu-item', array($this, 'ajax_add_menu_item'), 5);
@@ -672,12 +504,7 @@ class Lingua {
 
         $debug_js .= "console.groupEnd();";
 
-        if (function_exists('wp_print_inline_script_tag')) {
-            wp_print_inline_script_tag($debug_js);
-        } else {
-            // Fallback for WP < 5.7
-            echo '<script>' . $debug_js . '</script>';
-        }
+        wp_print_inline_script_tag($debug_js);
     }
 
     public function init_admin_bar_hooks() {
@@ -971,112 +798,7 @@ class Lingua {
     public function get_seo_integration() {
         return $this->seo_integration;
     }
-    
-    /**
-     * Handle auto-translation cron job
-     */
-    public function handle_auto_translate_post($post_id, $target_lang) {
-        $post = get_post($post_id);
-        if (!$post || $post->post_status !== 'publish') {
-            return;
-        }
-        
-        // Check if translation already exists
-        $translation_manager = new Lingua_Translation_Manager();
-        $existing = $translation_manager->get_translation($post_id, $target_lang);
-        
-        if ($existing) {
-            // Translation already exists, skip
-            return;
-        }
-        
-        try {
-            // Extract content
-            $processor = new Lingua_Content_Processor();
-            $translatable = $processor->extract_translatable_content($post->post_content);
-            $meta_fields = $processor->extract_meta_fields($post_id);
-            
-            // v5.2.174: Use Middleware API instead of Yandex
-            $api = new Lingua_Middleware_API();
-            
-            // Auto-translate title
-            $translated_title = '';
-            if (!empty($post->post_title)) {
-                $title_result = $api->translate($post->post_title, $target_lang);
-                if (!is_wp_error($title_result)) {
-                    $translated_title = $title_result;
-                }
-            }
-            
-            // Auto-translate excerpt
-            $translated_excerpt = '';
-            if (!empty($post->post_excerpt)) {
-                $excerpt_result = $api->translate($post->post_excerpt, $target_lang);
-                if (!is_wp_error($excerpt_result)) {
-                    $translated_excerpt = $excerpt_result;
-                }
-            }
-            
-            // Auto-translate content blocks
-            $translated_content_blocks = array();
-            foreach ($translatable as $block) {
-                if (!empty($block['original'])) {
-                    $block_result = $api->translate($block['original'], $target_lang);
-                    if (!is_wp_error($block_result)) {
-                        $translated_content_blocks[] = array(
-                            'type' => $block['type'],
-                            'original' => $block['original'],
-                            'translated' => $block_result
-                        );
-                    }
-                }
-            }
-            
-            // Reconstruct translated content
-            $translated_content = $processor->reconstruct_content($post->post_content, $translated_content_blocks);
-            
-            // Auto-translate meta fields if enabled
-            $translated_meta = array();
-            $auto_translate_seo = get_option('lingua_auto_translate_seo', false);
-            
-            if ($auto_translate_seo) {
-                foreach ($meta_fields as $key => $value) {
-                    if (!empty($value)) {
-                        $meta_result = $api->translate($value, $target_lang);
-                        if (!is_wp_error($meta_result)) {
-                            $translated_meta[$key] = $meta_result;
-                        }
-                    }
-                }
-            }
-            
-            // Save auto-translation
-            $translation_data = array(
-                'title' => $translated_title,
-                'content' => $translated_content,
-                'excerpt' => $translated_excerpt,
-                'status' => 'auto',
-                'meta' => $translated_meta
-            );
-            
-            $result = $translation_manager->save_translation($post_id, $target_lang, $translation_data);
-            
-            if ($result) {
-                // Log successful auto-translation
-                lingua_debug_log("Lingua: Auto-translated post {$post_id} to {$target_lang}");
-            }
 
-        } catch (Exception $e) {
-            // Log error
-            lingua_debug_log("Lingua: Auto-translation failed for post {$post_id} to {$target_lang}: " . $e->getMessage());
-        }
-    }
-    
-    /**
-     * ОТКАТ: ajax_add_menu_item метод удален - Nav_Menu_Integration обрабатывает меню
-     * Переключатель теперь добавляется через стандартную WordPress архитектуру
-     */
-    
     /**
      * SAFE v2.0 ARCHITECTURE INITIALIZATION
      * Prevents Fatal Errors if v2.0 classes are missing
@@ -1166,260 +888,5 @@ class Lingua {
         register_widget('Lingua_Language_Switcher_Widget');
 
         lingua_debug_log('Lingua: Widgets registered successfully');
-    }
-
-    /**
-     * Register Middleware verification endpoint (v5.2)
-     * This endpoint allows Middleware API to verify WordPress site ownership
-     */
-    public function register_middleware_verification_endpoint() {
-        register_rest_route('lingua/v1', '/middleware/verify', array(
-            'methods' => 'POST',
-            'callback' => array($this, 'handle_middleware_verification'),
-            'permission_callback' => '__return_true', // Public endpoint
-        ));
-    }
-
-    /**
-     * Handle Middleware verification request (v5.2)
-     * Verifies that the API key matches the configured key
-     *
-     * @param WP_REST_Request $request
-     * @return WP_REST_Response|WP_Error
-     */
-    public function handle_middleware_verification($request) {
-        $api_key = $request->get_header('X-API-Key');
-        $challenge = $request->get_param('challenge');
-
-        lingua_debug_log('[Lingua Middleware Verify] Received verification request');
-        lingua_debug_log('[Lingua Middleware Verify] API Key: ' . substr($api_key, 0, 10) . '...');
-        lingua_debug_log('[Lingua Middleware Verify] Challenge: ' . $challenge);
-
-        // Get configured API key
-        $configured_key = get_option('lingua_middleware_api_key', '');
-
-        // Verify API key
-        if (empty($api_key) || $api_key !== $configured_key) {
-            lingua_debug_log('[Lingua Middleware Verify] API key mismatch or empty');
-            return new WP_Error(
-                'invalid_api_key',
-                'Invalid API key',
-                array('status' => 401)
-            );
-        }
-
-        // Return verification response
-        $response = array(
-            'verified' => true,
-            'site' => home_url(),
-            'wordpress_version' => get_bloginfo('version'),
-            'lingua_version' => defined('LINGUA_VERSION') ? LINGUA_VERSION : '5.0',
-            'challenge_response' => !empty($challenge) ? hash('sha256', $challenge . $configured_key) : null
-        );
-
-        lingua_debug_log('[Lingua Middleware Verify] Verification successful');
-
-        return rest_ensure_response($response);
-    }
-
-    // =========================================================================
-    // v5.2.179: Translation Queue AJAX Handlers
-    // =========================================================================
-
-    /**
-     * AJAX: Get queue status
-     */
-    public function ajax_get_queue_status() {
-        check_ajax_referer('lingua_admin_nonce', 'nonce');
-
-        if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error('Unauthorized');
-            return;
-        }
-
-        $status = array(
-            'enabled' => Lingua_Translation_Queue::is_auto_translate_enabled(),
-            'paused' => Lingua_Translation_Queue::is_paused(),
-            'stats' => Lingua_Translation_Queue::get_stats(),
-            'by_language' => Lingua_Translation_Queue::get_language_status(),
-            'recent_errors' => Lingua_Translation_Queue::get_recent_errors(5),
-            'next_cron' => wp_next_scheduled('lingua_process_translation_queue')
-        );
-
-        wp_send_json_success($status);
-    }
-
-    /**
-     * AJAX: Start translating all posts (populate queue)
-     * v5.3.16: Added taxonomy support (product categories, tags)
-     */
-    public function ajax_translate_all() {
-        check_ajax_referer('lingua_admin_nonce', 'nonce');
-
-        if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error('Unauthorized');
-            return;
-        }
-
-        // Check Pro status
-        $api = new Lingua_Middleware_API();
-        if (!$api->is_pro_active()) {
-            wp_send_json_error(__('Pro license required for auto-translation', 'iqcloud-translate'));
-            return;
-        }
-
-        // v5.3.17: Get post types from settings (checkboxes in admin)
-        $post_types = lingua_get_translatable_post_types();
-
-        // Populate queue with all posts
-        $added = Lingua_Translation_Queue::populate_all_posts($post_types);
-
-        // v5.3.16: Also populate taxonomy terms (product categories, tags)
-        // If 'product' is in post types, also include WooCommerce taxonomies
-        if (in_array('product', $post_types)) {
-            $taxonomies = array('product_cat', 'product_tag');
-            $added += Lingua_Translation_Queue::populate_all_terms($taxonomies);
-        }
-
-        // Resume queue if paused
-        Lingua_Translation_Queue::resume();
-
-        // Reschedule cron if needed
-        if (!wp_next_scheduled('lingua_process_translation_queue')) {
-            wp_schedule_event(time(), 'every_minute', 'lingua_process_translation_queue');
-        }
-
-        wp_send_json_success(array(
-            'added' => $added,
-            'message' => sprintf(__('Added %d items to translation queue', 'iqcloud-translate'), $added)
-        ));
-    }
-
-    /**
-     * AJAX: Pause queue processing
-     */
-    public function ajax_pause_queue() {
-        check_ajax_referer('lingua_admin_nonce', 'nonce');
-
-        if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error('Unauthorized');
-            return;
-        }
-
-        Lingua_Translation_Queue::pause();
-        wp_clear_scheduled_hook('lingua_process_translation_queue');
-
-        wp_send_json_success(array(
-            'paused' => true,
-            'message' => __('Queue processing paused', 'iqcloud-translate')
-        ));
-    }
-
-    /**
-     * AJAX: Resume queue processing
-     */
-    public function ajax_resume_queue() {
-        check_ajax_referer('lingua_admin_nonce', 'nonce');
-
-        if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error('Unauthorized');
-            return;
-        }
-
-        Lingua_Translation_Queue::resume();
-
-        // Reschedule cron
-        if (!wp_next_scheduled('lingua_process_translation_queue')) {
-            wp_schedule_event(time(), 'every_minute', 'lingua_process_translation_queue');
-        }
-
-        wp_send_json_success(array(
-            'paused' => false,
-            'message' => __('Queue processing resumed', 'iqcloud-translate')
-        ));
-    }
-
-    /**
-     * AJAX: Retry all failed items
-     */
-    public function ajax_retry_failed() {
-        check_ajax_referer('lingua_admin_nonce', 'nonce');
-
-        if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error('Unauthorized');
-            return;
-        }
-
-        $count = Lingua_Translation_Queue::retry_failed();
-
-        wp_send_json_success(array(
-            'retried' => $count,
-            'message' => sprintf(__('Reset %d failed items for retry', 'iqcloud-translate'), $count)
-        ));
-    }
-
-    /**
-     * AJAX: Process single queue item (for real-time progress)
-     */
-    public function ajax_process_queue_item() {
-        check_ajax_referer('lingua_admin_nonce', 'nonce');
-
-        if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error('Unauthorized');
-            return;
-        }
-
-        // Check Pro status
-        $api = new Lingua_Middleware_API();
-        if (!$api->is_pro_active()) {
-            wp_send_json_error(__('Pro license required', 'iqcloud-translate'));
-            return;
-        }
-
-        // Get next item
-        $item = Lingua_Translation_Queue::get_next();
-
-        if (!$item) {
-            wp_send_json_success(array(
-                'processed' => false,
-                'message' => __('No items in queue', 'iqcloud-translate'),
-                'stats' => Lingua_Translation_Queue::get_stats()
-            ));
-            return;
-        }
-
-        // Process item and get result
-        // v5.3.37: Now returns array with success status and error message
-        $process_result = $this->process_queue_item($item);
-
-        // Get updated stats
-        $stats = Lingua_Translation_Queue::get_stats();
-        $by_language = Lingua_Translation_Queue::get_language_status();
-
-        // v5.3.37: Return error to JavaScript if processing failed
-        if (!$process_result['success']) {
-            wp_send_json_error(array(
-                'message' => $process_result['error'],
-                'item' => array(
-                    'post_id' => $item->post_id,
-                    'language' => $item->language_code
-                ),
-                'stats' => $stats,
-                'by_language' => $by_language,
-                'has_more' => $stats['pending'] > 0
-            ));
-            return;
-        }
-
-        wp_send_json_success(array(
-            'processed' => true,
-            'item' => array(
-                'post_id' => $item->post_id,
-                'language' => $item->language_code
-            ),
-            'stats' => $stats,
-            'by_language' => $by_language,
-            'has_more' => $stats['pending'] > 0
-        ));
     }
 }

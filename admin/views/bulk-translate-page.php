@@ -24,8 +24,8 @@ $post_types = get_post_types(array('public' => true), 'objects');
     <?php settings_errors('lingua_bulk'); ?>
     
     <div class="card">
-        <h2><?php esc_html_e('Auto-translate Multiple Posts', 'iqcloud-translate'); ?></h2>
-        <p><?php esc_html_e('Select posts and languages for bulk auto-translation. Translations will be processed in the background.', 'iqcloud-translate'); ?></p>
+        <h2><?php esc_html_e('Bulk Translation', 'iqcloud-translate'); ?></h2>
+        <p><?php esc_html_e('Select posts and languages for bulk translation. Requires the IQCloud Translate Pro add-on for auto-translation.', 'iqcloud-translate'); ?></p>
         
         <form method="post" action="">
             <?php wp_nonce_field('lingua_bulk_translate', 'lingua_bulk_nonce'); ?>
@@ -126,46 +126,12 @@ $post_types = get_post_types(array('public' => true), 'objects');
             </tbody>
         </table>
         
-        <h3><?php esc_html_e('Recent Translation Jobs', 'iqcloud-translate'); ?></h3>
         <?php
-        // Show scheduled cron jobs
-        $cron_jobs = _get_cron_array();
-        $lingua_jobs = array();
-        
-        foreach ($cron_jobs as $timestamp => $jobs) {
-            if (isset($jobs['lingua_auto_translate_post'])) {
-                foreach ($jobs['lingua_auto_translate_post'] as $job) {
-                    $lingua_jobs[] = array(
-                        'timestamp' => $timestamp,
-                        'post_id' => $job['args'][0] ?? 0,
-                        'language' => $job['args'][1] ?? 'unknown'
-                    );
-                }
-            }
-        }
+        /**
+         * Display additional bulk translation status (e.g., scheduled cron jobs).
+         * Pro add-on can hook here to show translation queue.
+         */
+        do_action('lingua_bulk_translate_status');
         ?>
-        
-        <?php if (empty($lingua_jobs)): ?>
-            <p><?php esc_html_e('No translation jobs scheduled.', 'iqcloud-translate'); ?></p>
-        <?php else: ?>
-            <table class="wp-list-table widefat fixed striped">
-                <thead>
-                    <tr>
-                        <th><?php esc_html_e('Post ID', 'iqcloud-translate'); ?></th>
-                        <th><?php esc_html_e('Language', 'iqcloud-translate'); ?></th>
-                        <th><?php esc_html_e('Scheduled Time', 'iqcloud-translate'); ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach (array_slice($lingua_jobs, 0, 10) as $job): ?>
-                        <tr>
-                            <td><?php echo intval($job['post_id']); ?></td>
-                            <td><?php echo esc_html($job['language']); ?></td>
-                            <td><?php echo date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $job['timestamp']); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php endif; ?>
     </div>
 </div>

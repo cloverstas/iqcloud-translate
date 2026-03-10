@@ -40,31 +40,6 @@ window.linguaDebug('🔧 Features: Enhanced context labeling, string grouping, v
 jQuery(document).ready(function($) {
     window.linguaDebug('✅ Lingua Translation Modal v2.0 initialized');
 
-    // v5.2.170: Check Pro status on page load (async, updates is_pro if changed)
-    (function checkProStatusOnLoad() {
-        if (!window.lingua_admin || !window.lingua_admin.nonce) return;
-
-        $.ajax({
-            url: window.lingua_admin.ajax_url,
-            type: 'POST',
-            data: {
-                action: 'lingua_check_pro_status',
-                nonce: window.lingua_admin.nonce
-            },
-            success: function(response) {
-                if (response.success && typeof response.data.is_pro !== 'undefined') {
-                    var wasPro = window.lingua_admin.is_pro;
-                    var nowPro = response.data.is_pro;
-
-                    if (wasPro !== nowPro) {
-                        window.linguaDebug('[Lingua v5.2.170] Pro status changed:', wasPro, '->', nowPro);
-                        window.lingua_admin.is_pro = nowPro;
-                    }
-                }
-            }
-        });
-    })();
-
     // v5.2.110: Listen for nonce updates from iframe via postMessage
     // Set flag when nonce is updated to signal that extractContent can proceed
     window.linguaNonceReady = false;
@@ -117,12 +92,7 @@ jQuery(document).ready(function($) {
             // Кнопка извлечения контента
             $(document).on('click', '#lingua-extract-content', this.extractContent.bind(this));
             
-            // Кнопка автоперевода всего
-            $(document).on('click', '#lingua-auto-translate-all', this.autoTranslateAll.bind(this));
-            
-            // Кнопки перевода отдельных блоков
-            $(document).on('click', '.lingua-translate-single', this.translateSingle.bind(this));
-            // Современные кнопки перевода обрабатываются ниже в более специфичном селекторе
+            // Auto-translate buttons removed (Pro feature removed)
             
             // Кнопка сохранения переводов
             $(document).on('click', '#lingua-save-translation', this.saveTranslation.bind(this));
@@ -160,8 +130,7 @@ jQuery(document).ready(function($) {
             // Drag resize functionality
             $(document).on('mousedown', '.lingua-resize-handle', this.startResize.bind(this));
 
-            // КРИТИЧЕСКИ ВАЖНО: Обработчик для современных кнопок перевода v3.0 (только в модале)
-            $(document).on('click', '#lingua-unified-content .lingua-translate-button', this.translateModernItem.bind(this));
+            // Auto-translate modern button handler removed (Pro feature removed)
 
             // v3.2: Tab navigation
             $(document).on('click', '.lingua-tab-button', this.switchTab.bind(this));
@@ -300,8 +269,7 @@ jQuery(document).ready(function($) {
             var currentPanelWidth = ($modal.width() / $(window).width()) * 100;
             this.syncIframeResize(currentPanelWidth);
 
-            // v5.2: Check Pro status and hide/show features
-            this.applyProRestrictions();
+            // Pro restrictions removed - all features unlocked
 
             // v5.2.41: Skip Media Library auto-load to avoid console errors
             // Media Library will be loaded on-demand when user clicks "Add Media"
@@ -312,68 +280,7 @@ jQuery(document).ready(function($) {
             // This fixes "Security check failed - invalid nonce" error
         },
 
-        /**
-         * v5.2.137: Restored Pro version restrictions
-         * Checks is_pro from localized data and applies feature gating
-         */
-        applyProRestrictions: function() {
-            // v5.2.137: Restored Pro restrictions
-            var isPro = window.lingua_admin && (window.lingua_admin.is_pro === true || window.lingua_admin.is_pro === '1' || window.lingua_admin.is_pro === 1);
-            window.linguaDebug('[Lingua v5.2.137] Pro status: ' + (isPro ? 'TRUE' : 'FALSE'));
-
-            if (!isPro) {
-                var middlewareUrl = (window.lingua_admin && window.lingua_admin.middleware_url) || 'https://translate.yournewsite.ru/plans';
-
-                // Disable and style "Auto-Translate All" button
-                var $autoTranslateAll = $('#lingua-auto-translate-all');
-                if ($autoTranslateAll.length > 0 && !$autoTranslateAll.next('.lingua-pro-notice').length) {
-                    $autoTranslateAll
-                        .prop('disabled', true)
-                        .css({
-                            'opacity': '0.6',
-                            'cursor': 'not-allowed'
-                        });
-
-                    $autoTranslateAll.after(
-                        '<div class="lingua-pro-notice" style="background: #fff3cd; border: 1px solid #ffc107; color: #856404; padding: 8px 12px; border-radius: 8px; margin-top: 8px; font-size: 13px;">' +
-                            '🔒 <strong>Pro Feature</strong> - <a href="' + middlewareUrl + '" target="_blank" style="color: #856404; text-decoration: underline;">Upgrade to enable auto-translation</a>' +
-                        '</div>'
-                    );
-                }
-
-                // Disable individual translate buttons and add notice
-                $('.lingua-translate-button').each(function() {
-                    var $button = $(this);
-                    if (!$button.next('.lingua-pro-notice').length) {
-                        $button
-                            .prop('disabled', true)
-                            .css({
-                                'opacity': '0.6',
-                                'cursor': 'not-allowed'
-                            });
-
-                        $button.after(
-                            '<div class="lingua-pro-notice" style="background: #fff3cd; border: 1px solid #ffc107; color: #856404; padding: 6px 10px; border-radius: 8px; margin-top: 6px; font-size: 12px;">' +
-                                '🔒 Available in <a href="' + middlewareUrl + '" target="_blank" style="color: #856404; text-decoration: underline;">Pro version</a>' +
-                            '</div>'
-                        );
-                    }
-                });
-
-                // Show main upgrade notice only once
-                if ($('.lingua-upgrade-notice').length === 0) {
-                    var $upgradeNotice = $('<div class="lingua-upgrade-notice" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; padding: 24px; border-radius: 8px; margin: 12px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px;">' +
-                        '<div style="flex: 1;">' +
-                            '<strong style="font-size: 14px; display: block; margin-bottom: 2px;">🔒 Pro Features Locked</strong>' +
-                            '<span style="font-size: 12px; opacity: 0.95;">Auto-translation and Media translation require a Pro license.</span>' +
-                        '</div>' +
-                        '<a href="' + middlewareUrl + '" target="_blank" class="button button-primary" style="background: #ffffff; color: #667eea; border: none; border-radius: 8px; font-weight: 600; font-size: 13px; padding: 8px 20px; white-space: nowrap;">Upgrade to Pro →</a>' +
-                        '</div>');
-
-                    $('.lingua-modal-header').after($upgradeNotice);
-                }
-            }
-        },
+        // applyProRestrictions removed - all features unlocked
 
         /**
          * v5.2.7: Ensure Media Library scripts are loaded before opening modal
@@ -858,8 +765,7 @@ jQuery(document).ready(function($) {
             // v3.7: Восстанавливаем маркеры для уже переведённых элементов
             this.restoreTranslationMarkers(data);
 
-            // v5.2: Apply Pro restrictions after content is loaded
-            this.applyProRestrictions();
+            // Pro restrictions removed - all features unlocked
         },
         
         /**
@@ -875,17 +781,6 @@ jQuery(document).ready(function($) {
                     <div class="lingua-translated">
                         <label>${lingua_admin.strings.translation || 'Translation'} #${index + 1}</label>
                         <textarea class="lingua-translated-text" data-field="content-${index}" rows="2" placeholder="${lingua_admin.strings.enter_translation || 'Enter translation...'}">${this.escapeHtml(block.translated || '')}</textarea>
-                        <button type="button" class="button lingua-translate-single" data-field="content-${index}">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="m5 8 6 6"/>
-                                <path d="m4 14 6-6 2-3"/>
-                                <path d="M2 5h12"/>
-                                <path d="M7 2h1"/>
-                                <path d="m22 22-5-10-5 10"/>
-                                <path d="M14 18h6"/>
-                            </svg>
-                            ${lingua_admin.strings.translate || 'Translate'}
-                        </button>
                     </div>
                 </div>
             `;
@@ -931,17 +826,6 @@ jQuery(document).ready(function($) {
                     <div class="lingua-translated">
                         <label>${lingua_admin.strings.translation || 'Translation'}</label>
                         ${translatedElement}
-                        <button type="button" class="button lingua-translate-single" data-field="string-${index}">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="m5 8 6 6"/>
-                                <path d="m4 14 6-6 2-3"/>
-                                <path d="M2 5h12"/>
-                                <path d="M7 2h1"/>
-                                <path d="m22 22-5-10-5 10"/>
-                                <path d="M14 18h6"/>
-                            </svg>
-                            ${lingua_admin.strings.translate || 'Translate'}
-                        </button>
                     </div>
                 </div>
             `;
@@ -1045,17 +929,6 @@ jQuery(document).ready(function($) {
                     <div class="lingua-translated">
                         <label>${lingua_admin.strings.translation || 'Translation'}</label>
                         ${translatedElement}
-                        <button type="button" class="button lingua-translate-single" data-field="${fieldKey}">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="m5 8 6 6"/>
-                                <path d="m4 14 6-6 2-3"/>
-                                <path d="M2 5h12"/>
-                                <path d="M7 2h1"/>
-                                <path d="m22 22-5-10-5 10"/>
-                                <path d="M14 18h6"/>
-                            </svg>
-                            ${lingua_admin.strings.translate || 'Translate'}
-                        </button>
                     </div>
                 </div>
             `;
@@ -1077,17 +950,6 @@ jQuery(document).ready(function($) {
                     <div class="lingua-translated">
                         <label>${lingua_admin.strings.translation || 'Translation'}</label>
                         <input type="text" class="lingua-translated-meta" data-field="meta-${key}" placeholder="${lingua_admin.strings.enter_translation || 'Enter translation...'}" />
-                        <button type="button" class="button lingua-translate-single" data-field="meta-${key}">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="m5 8 6 6"/>
-                                <path d="m4 14 6-6 2-3"/>
-                                <path d="M2 5h12"/>
-                                <path d="M7 2h1"/>
-                                <path d="m22 22-5-10-5 10"/>
-                                <path d="M14 18h6"/>
-                            </svg>
-                            ${lingua_admin.strings.translate || 'Translate'}
-                        </button>
                     </div>
                 </div>
             `;
@@ -1095,300 +957,19 @@ jQuery(document).ready(function($) {
             return template;
         },
         
-        /**
-         * Автоперевод всего контента
-         */
-        autoTranslateAll: function(e) {
-            e.preventDefault();
-
-            // v5.2: Check Pro restriction (convert string to boolean)
-            var isPro = window.lingua_admin && (window.lingua_admin.is_pro === true || window.lingua_admin.is_pro === '1' || window.lingua_admin.is_pro === 1);
-            if (!isPro) {
-                window.linguaDebug('🔒 LINGUA: Auto-translate blocked - Pro feature');
-                return;
-            }
-
-            // Показываем красивое уведомление вместо confirm
-            this.showNotification(lingua_admin.strings.confirm_auto_translate || 'Auto-translate all content?', function() {
-                translationModal.processAutoTranslation();
-            });
-        },
+        // autoTranslateAll removed (Pro feature removed)
         
-        /**
-         * Обработка автоперевода после подтверждения
-         * v5.3.39: CHUNKED BATCH translation - 50 texts per request to avoid 502 timeout
-         */
-        processAutoTranslation: function() {
-            var self = this;
-            var fieldsToTranslate = [];
-            var textsToTranslate = [];
+        // processAutoTranslation removed (Pro feature removed)
 
-            // Collect SEO fields
-            $('#lingua-seo-content .lingua-seo-field').each(function() {
-                var $field = $(this);
-                var originalText = $field.find('.lingua-original-text').text().trim();
-                var translatedText = $field.find('.lingua-translated-text').val().trim();
-
-                if (originalText && !translatedText) {
-                    fieldsToTranslate.push({ element: $field, type: 'seo' });
-                    textsToTranslate.push(originalText);
-                }
-            });
-
-            // Collect page content items
-            $('#lingua-unified-content .lingua-translation-item').each(function(index) {
-                var $item = $(this);
-                var originalText = $item.find('.lingua-original-text').val() || $item.find('.lingua-original-text').text();
-                originalText = originalText ? originalText.trim() : '';
-                var translatedText = $item.find('.lingua-translated-text').val();
-                translatedText = translatedText ? translatedText.trim() : '';
-
-                if (originalText && !translatedText) {
-                    fieldsToTranslate.push({ element: $item, type: 'content', index: index });
-                    textsToTranslate.push(originalText);
-                }
-            });
-
-            var totalTexts = textsToTranslate.length;
-            window.linguaDebug('[LINGUA v5.3.39] CHUNKED BATCH auto-translate: ' + totalTexts + ' texts');
-
-            if (totalTexts === 0) {
-                alert(lingua_admin.strings.no_content_to_translate || 'No content to translate');
-                return;
-            }
-
-            var targetLang = $('#lingua-target-lang').val();
-            var CHUNK_SIZE = 50; // v5.3.39: 50 texts per request to avoid server timeout
-            var chunks = [];
-
-            // Split into chunks of 50
-            for (var i = 0; i < totalTexts; i += CHUNK_SIZE) {
-                chunks.push({
-                    texts: textsToTranslate.slice(i, i + CHUNK_SIZE),
-                    startIndex: i
-                });
-            }
-
-            window.linguaDebug('[LINGUA v5.3.39] Split into ' + chunks.length + ' chunks of max ' + CHUNK_SIZE + ' texts');
-            this.updateProgress(5, 'Translating ' + totalTexts + ' texts in ' + chunks.length + ' batches...');
-
-            // Process chunks sequentially
-            this.processChunkedTranslation(chunks, 0, fieldsToTranslate, targetLang, totalTexts);
-        },
-
-        /**
-         * v5.3.39: Process translation chunks sequentially
-         */
-        processChunkedTranslation: function(chunks, chunkIndex, fieldsToTranslate, targetLang, totalTexts) {
-            var self = this;
-
-            if (chunkIndex >= chunks.length) {
-                // All chunks completed
-                self.updateProgress(100, 'Auto-translation completed! (' + totalTexts + ' texts)', 'success');
-                $('#lingua-save-translation').prop('disabled', false);
-                return;
-            }
-
-            var chunk = chunks[chunkIndex];
-            var chunkNum = chunkIndex + 1;
-            var totalChunks = chunks.length;
-            var baseProgress = Math.round((chunkIndex / totalChunks) * 90) + 5; // 5-95%
-
-            this.updateProgress(baseProgress, 'Batch ' + chunkNum + '/' + totalChunks + ': translating ' + chunk.texts.length + ' texts...');
-
-            $.post(lingua_admin.ajax_url, {
-                action: 'lingua_auto_translate_batch',
-                nonce: lingua_admin.nonce,
-                texts: chunk.texts,
-                source_lang: 'auto',
-                target_lang: targetLang
-            }).done(function(response) {
-                if (response.success && response.data && response.data.translations) {
-                    var translations = response.data.translations;
-                    window.linguaDebug('[LINGUA v5.3.39] Chunk ' + chunkNum + ' received ' + translations.length + ' translations');
-
-                    // Apply translations to fields
-                    for (var i = 0; i < translations.length; i++) {
-                        var fieldIndex = chunk.startIndex + i;
-                        if (fieldIndex < fieldsToTranslate.length) {
-                            var field = fieldsToTranslate[fieldIndex];
-                            field.element.find('.lingua-translated-text').val(translations[i]);
-                        }
-                    }
-
-                    // Process next chunk
-                    self.processChunkedTranslation(chunks, chunkIndex + 1, fieldsToTranslate, targetLang, totalTexts);
-                } else {
-                    console.error('[LINGUA v5.3.39] Chunk ' + chunkNum + ' failed:', response);
-                    self.updateProgress(baseProgress, 'Batch ' + chunkNum + ' failed, trying one-by-one...', 'error');
-                    // Fallback: translate remaining fields one by one
-                    self.translateFieldsNew(fieldsToTranslate.slice(chunk.startIndex), 0);
-                }
-            }).fail(function(xhr, status, error) {
-                console.error('[LINGUA v5.3.39] Chunk ' + chunkNum + ' request failed:', error, 'Status:', xhr.status);
-
-                if (xhr.status === 502 || xhr.status === 504) {
-                    // Server timeout - try smaller chunk or one-by-one
-                    self.updateProgress(baseProgress, 'Server timeout on batch ' + chunkNum + ', trying one-by-one...', 'error');
-                } else {
-                    self.updateProgress(baseProgress, 'Batch ' + chunkNum + ' failed (' + error + '), trying one-by-one...', 'error');
-                }
-
-                // Fallback: translate remaining fields one by one
-                self.translateFieldsNew(fieldsToTranslate.slice(chunk.startIndex), 0);
-            });
-        },
+        // processChunkedTranslation removed (Pro feature removed)
         
-        /**
-         * v5.2.165: New sequential translation for updated UI structure
-         */
-        translateFieldsNew: function(fields, currentIndex) {
-            var self = this;
+        // translateFieldsNew removed (Pro feature removed)
 
-            if (currentIndex >= fields.length) {
-                this.updateProgress(100, lingua_admin.strings.auto_translate_complete || 'Auto-translation completed!', 'success');
-                // Enable save button after translation
-                $('#lingua-save-translation').prop('disabled', false);
-                return;
-            }
-
-            var field = fields[currentIndex];
-            var progress = Math.round(((currentIndex + 1) / fields.length) * 100);
-            var fieldLabel = field.type === 'seo' ? ('SEO: ' + field.seoType) : ('Content #' + (field.index + 1));
-
-            this.updateProgress(progress, 'Translating ' + fieldLabel + '... (' + (currentIndex + 1) + '/' + fields.length + ')');
-
-            // Get original text from element
-            var $element = field.element;
-            var originalText = '';
-
-            if (field.type === 'seo') {
-                originalText = $element.find('.lingua-original-text').text().trim();
-            } else {
-                originalText = $element.find('.lingua-original-text').val() || $element.find('.lingua-original-text').text();
-                originalText = originalText ? originalText.trim() : '';
-            }
-
-            if (!originalText) {
-                // Skip empty fields
-                setTimeout(function() {
-                    self.translateFieldsNew(fields, currentIndex + 1);
-                }, 100);
-                return;
-            }
-
-            var targetLang = $('#lingua-target-lang').val();
-
-            window.linguaDebug('[LINGUA] Auto-translate:', fieldLabel);
-
-            // AJAX request for translation
-            // v5.2.165: Use source_lang: 'auto' like translateModernItem does
-            $.post(lingua_admin.ajax_url, {
-                action: 'lingua_auto_translate_text',
-                nonce: lingua_admin.nonce,
-                text: originalText,
-                source_lang: 'auto',
-                target_lang: targetLang
-            }).done(function(response) {
-                if (response.success && response.data && response.data.translated_text) {
-                    var translatedText = response.data.translated_text;
-
-                    // Check if translation is same as original (API might return original on error)
-                    if (translatedText === originalText) {
-                        console.warn('[LINGUA v5.2.165] WARNING: Translation same as original! API may have failed.');
-                    }
-
-                    // Set translated text in the textarea
-                    $element.find('.lingua-translated-text').val(translatedText);
-                    window.linguaDebug('[LINGUA v5.2.165] Translated ' + fieldLabel + ': ' + originalText.substring(0, 30) + '...');
-                } else {
-                    console.warn('[LINGUA v5.2.165] Translation failed for ' + fieldLabel + ':', response);
-                }
-
-                // Continue with next field
-                setTimeout(function() {
-                    self.translateFieldsNew(fields, currentIndex + 1);
-                }, 300);
-            }).fail(function(xhr, status, error) {
-                console.error('[LINGUA v5.2.165] AJAX error:', error);
-                // Continue despite error
-                setTimeout(function() {
-                    self.translateFieldsNew(fields, currentIndex + 1);
-                }, 300);
-            });
-        },
-
-        /**
-         * Последовательный перевод полей (legacy)
-         */
-        translateFields: function(fields, currentIndex) {
-            if (currentIndex >= fields.length) {
-                this.updateProgress(100, lingua_admin.strings.auto_translate_complete || 'Auto-translation completed', 'success');
-                return;
-            }
-
-            var fieldName = fields[currentIndex];
-            var progress = Math.round(((currentIndex + 1) / fields.length) * 70) + 30; // 30-100%
-
-            this.updateProgress(progress, lingua_admin.strings.translating + ' ' + fieldName + '...');
-
-            // Переводим текущее поле
-            this.translateFieldByName(fieldName, function(success) {
-                setTimeout(function() {
-                    translationModal.translateFields(fields, currentIndex + 1);
-                }, 500); // Небольшая задержка между запросами
-            });
-        },
+        // translateFields removed (Pro feature removed)
         
-        /**
-         * Перевод отдельного поля
-         */
-        translateSingle: function(e) {
-            e.preventDefault();
-            
-            var $button = $(e.currentTarget);
-            var fieldName = $button.data('field');
-            
-            $button.prop('disabled', true).text(lingua_admin.strings.translating || 'Translating...');
-            
-            this.translateFieldByName(fieldName, function(success) {
-                $button.prop('disabled', false).text(lingua_admin.strings.translate || 'Translate');
-            });
-        },
+        // translateSingle removed (Pro feature removed)
         
-        /**
-         * Перевод поля по имени
-         */
-        translateFieldByName: function(fieldName, callback) {
-            var sourceText = this.getFieldSourceText(fieldName);
-            var sourceLang = $('#lingua-source-lang').val();
-            var targetLang = $('#lingua-target-lang').val();
-            
-            if (!sourceText) {
-                if (callback) callback(false);
-                return;
-            }
-            
-            // AJAX запрос для перевода
-            $.post(lingua_admin.ajax_url, {
-                action: 'lingua_auto_translate_text',
-                nonce: lingua_admin.nonce,
-                text: sourceText,
-                source_lang: sourceLang,
-                target_lang: targetLang
-            }).done(function(response) {
-                if (response.success) {
-                    translationModal.setFieldTranslation(fieldName, response.data.translated_text);
-                    if (callback) callback(true);
-                } else {
-                    alert(lingua_admin.strings.translation_failed + ': ' + (response.data || 'Unknown error'));
-                    if (callback) callback(false);
-                }
-            }).fail(function() {
-                alert(lingua_admin.strings.ajax_error || 'AJAX request failed');
-                if (callback) callback(false);
-            });
-        },
+        // translateFieldByName removed (Pro feature removed)
         
         /**
          * Получение исходного текста поля
@@ -4082,20 +3663,6 @@ jQuery(document).ready(function($) {
         var $container = $('#lingua-seo-content');
         $container.empty();
 
-        // v5.2.165: Check Pro restriction and show upgrade notice (like Media tab)
-        var isPro = window.lingua_admin && (window.lingua_admin.is_pro === true || window.lingua_admin.is_pro === '1' || window.lingua_admin.is_pro === 1);
-        if (!isPro) {
-            var middlewareUrl = (window.lingua_admin && window.lingua_admin.middleware_url) || 'https://translate.yournewsite.ru/plans';
-            $container.html(
-                '<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; padding: 40px; border-radius: 8px; margin: 20px; text-align: center;">' +
-                    '<h3 style="margin: 0 0 16px 0; font-size: 24px; font-weight: bold; color: #ffffff;">🔒 SEO Translation - Pro Feature</h3>' +
-                    '<p style="margin: 16px 0; font-size: 16px; color: #ffffff;">Translate SEO titles, meta descriptions, and Open Graph tags with our Pro version.</p>' +
-                    '<a href="' + middlewareUrl + '" target="_blank" class="button button-primary" style="background: #ffffff; color: #667eea; border: none; border-radius: 8px; margin-top: 12px; font-weight: 600; padding: 12px 24px; font-size: 16px;">Upgrade to Pro →</a>' +
-                '</div>'
-            );
-            return;
-        }
-
         if (!seoFields || seoFields.length === 0) {
             $container.html('<div class="lingua-empty-state"><div class="lingua-empty-state-icon">🔍</div><div class="lingua-empty-state-text">No SEO fields found</div></div>');
             return;
@@ -4257,17 +3824,6 @@ jQuery(document).ready(function($) {
                         </span>` : ''}
                     </label>
                     <textarea class="lingua-translated-text" placeholder="${strings.enter_translation || 'Enter translation...'}" rows="3" data-max-length="${maxLength || ''}">${this.escapeHtml(translatedText)}</textarea>
-                    <button class="lingua-translate-button" type="button">
-                        <svg class="lingua-button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m5 8 6 6"/>
-                            <path d="m4 14 6-6 2-3"/>
-                            <path d="M2 5h12"/>
-                            <path d="M7 2h1"/>
-                            <path d="m22 22-5-10-5 10"/>
-                            <path d="M14 18h6"/>
-                        </svg>
-                        <span class="lingua-button-text">${strings.auto_translate || 'Auto-translate'}</span>
-                    </button>
                 </div>
             </div>
         `);
@@ -4296,38 +3852,6 @@ jQuery(document).ready(function($) {
                 }
             });
         }
-
-        // Add auto-translate handler for SEO field
-        var self = this;
-        $field.find('.lingua-translate-button').on('click', function() {
-            var $button = $(this);
-            var $originalTextarea = $field.find('.lingua-original-text');
-            var $translatedTextarea = $field.find('.lingua-translated-text');
-            // v5.0.11 FIX: .lingua-original-text is DIV in SEO fields, use .text()
-            var originalText = $originalTextarea.text().trim();
-
-            if (!originalText) {
-                alert('No text to translate');
-                return;
-            }
-
-            // Show loading state
-            $button.prop('disabled', true);
-            var originalButtonText = $button.find('.lingua-button-text').text();
-            $button.find('.lingua-button-text').text('Translating...');
-
-            // Use the existing auto-translate function
-            self.autoTranslateSingle(originalText, function(translation) {
-                if (translation) {
-                    $translatedTextarea.val(translation);
-                    // Trigger input event to update character counter
-                    $translatedTextarea.trigger('input');
-                }
-                // Restore button state
-                $button.prop('disabled', false);
-                $button.find('.lingua-button-text').text(originalButtonText);
-            });
-        });
 
         return $field;
     };
@@ -4365,17 +3889,6 @@ jQuery(document).ready(function($) {
                         <span class="lingua-block-number">#${index + 1}</span>
                     </label>
                     <textarea class="lingua-translated-text" placeholder="Enter translation..." rows="3">${this.escapeHtml(translatedText)}</textarea>
-                    <button class="lingua-translate-button" type="button">
-                        <svg class="lingua-button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m5 8 6 6"/>
-                            <path d="m4 14 6-6 2-3"/>
-                            <path d="M2 5h12"/>
-                            <path d="M7 2h1"/>
-                            <path d="m22 22-5-10-5 10"/>
-                            <path d="M14 18h6"/>
-                        </svg>
-                        <span class="lingua-button-text">Auto-translate</span>
-                    </button>
                 </div>
             </div>
         `);
@@ -4643,17 +4156,6 @@ jQuery(document).ready(function($) {
                     <div class="lingua-plural-forms">
                         ${translationFieldsHTML}
                     </div>
-                    <button class="lingua-translate-button" type="button">
-                        <svg class="lingua-button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m5 8 6 6"/>
-                            <path d="m4 14 6-6 2-3"/>
-                            <path d="M2 5h12"/>
-                            <path d="M7 2h1"/>
-                            <path d="m22 22-5-10-5 10"/>
-                            <path d="M14 18h6"/>
-                        </svg>
-                        <span class="lingua-button-text">Auto-translate</span>
-                    </button>
                 </div>
             </div>
         `);
@@ -4661,635 +4163,9 @@ jQuery(document).ready(function($) {
         return $item;
     };
 
-    /**
-     * v3.2: Auto-translate single text string
-     */
-    window.translationModal.autoTranslateSingle = function(text, callback) {
-        var targetLang = $('#lingua-target-lang').val();
+    // autoTranslateSingle removed (Pro feature removed)
 
-        if (!text || !targetLang) {
-            console.error('Missing text or target language');
-            if (callback) callback(null);
-            return;
-        }
-
-        $.ajax({
-            url: window.lingua_admin.ajax_url,
-            type: 'POST',
-            data: {
-                action: 'lingua_auto_translate_text',
-                text: text,
-                target_lang: targetLang,
-                nonce: window.lingua_admin.nonce
-            },
-            success: function(response) {
-                window.linguaDebug('🔄 Auto-translate response:', response);
-                window.linguaDebug('🔄 Response data type:', typeof response.data);
-                window.linguaDebug('🔄 Response data:', response.data);
-
-                if (response.success && response.data) {
-                    // Check if data is object with translated_text property
-                    var translatedText = '';
-                    if (typeof response.data === 'object' && response.data.translated_text) {
-                        translatedText = response.data.translated_text;
-                    } else if (typeof response.data === 'object' && response.data.translated) {
-                        translatedText = response.data.translated;
-                    } else if (typeof response.data === 'string') {
-                        translatedText = response.data;
-                    } else {
-                        translatedText = response.data;
-                    }
-
-                    window.linguaDebug('🔄 Translated text:', translatedText);
-                    if (callback) callback(translatedText);
-                } else {
-                    console.error('Auto-translate failed:', response);
-                    if (callback) callback(null);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Auto-translate AJAX error:', error);
-                if (callback) callback(null);
-            }
-        });
-    };
-
-    // Добавляем обработчик для современных кнопок перевода
-    window.translationModal.translateModernItem = function(e) {
-        e.preventDefault();
-        window.linguaDebug('🔄 LINGUA v3.0: Modern translate button clicked');
-
-        var $button = $(e.currentTarget);
-
-        // v5.2: Check if button is disabled (Pro restriction)
-        if ($button.prop('disabled')) {
-            window.linguaDebug('🔒 LINGUA: Translation blocked - Pro feature');
-            return;
-        }
-
-        var $item = $button.closest('.lingua-translation-item');
-        var targetLanguage = $('#lingua-target-lang').val();
-
-        if (!targetLanguage || targetLanguage.length === 0) {
-            console.error('❌ Target language not selected');
-            alert('Error: Please select target language');
-            return;
-        }
-
-        // v5.2.91: Check if this is a plural group (supports 2-form and 3-form plurals)
-        if ($item.hasClass('lingua-plural-group')) {
-            window.linguaDebug('🔄 LINGUA v5.2.91: Translating plural group');
-
-            // v5.2.91: Check if this is 3-form plural (Russian) or 2-form plural (English/German)
-            var targetPluralFormsCount = parseInt($item.data('target-plural-forms-count')) || 0;
-            window.linguaDebug('🔢 LINGUA v5.2.91: Target plural forms count = ' + targetPluralFormsCount);
-
-            if (targetPluralFormsCount === 3) {
-                // v5.2.91: Russian 3-form plurals - translate each form separately
-                window.linguaDebug('✅ LINGUA v5.2.91: Translating 3-form Russian plurals');
-
-                // Get all 3 form textareas
-                var $form0 = $item.find('.lingua-plural-form-0');
-                var $form1 = $item.find('.lingua-plural-form-1');
-                var $form2 = $item.find('.lingua-plural-form-2');
-
-                var form0Original = $form0.data('original');
-                var form1Original = $form1.data('original');
-                var form1PluralOriginal = $form1.data('plural-original'); // v5.2.100: For auto-translate
-                var form2Original = $form2.data('original');
-                var form2PluralOriginal = $form2.data('plural-original'); // v5.2.100: For auto-translate
-
-                if (!form0Original || !form1Original || !form2Original) {
-                    console.error('❌ LINGUA v5.2.100: Could not find 3-form plural originals');
-                    alert('Error: Could not find plural forms');
-                    return;
-                }
-
-                // v5.2.100: For saving all forms use singular (msgid), for auto-translate Form 1/2 use plural
-                window.linguaDebug('🔍 LINGUA v5.2.100: form0Original (singular):', form0Original);
-                window.linguaDebug('🔍 LINGUA v5.2.100: form1Original (singular for saving):', form1Original);
-                window.linguaDebug('🔍 LINGUA v5.2.100: form1PluralOriginal (plural for auto-translate):', form1PluralOriginal);
-                window.linguaDebug('🔍 LINGUA v5.2.100: form2Original (singular for saving):', form2Original);
-                window.linguaDebug('🔍 LINGUA v5.2.100: form2PluralOriginal (plural for auto-translate):', form2PluralOriginal);
-
-                // Show loading state
-                var originalButtonHtml = $button.html();
-                $button.prop('disabled', true).html('⏳ Translating 3 forms...');
-
-                var translationsCompleted = 0;
-                var translationsTotal = 3; // v5.2.99: Translate ALL 3 forms
-
-                // Translate Form 0 (товар - singular)
-                window.linguaDebug('🌐 LINGUA v5.2.92: Sending translation request for Form 0 (товар):', form0Original);
-                $.post(lingua_admin.ajax_url, {
-                    action: 'lingua_auto_translate_text',
-                    nonce: lingua_admin.nonce,
-                    text: form0Original,
-                    target_lang: targetLanguage,
-                    source_lang: 'auto'
-                })
-                .done(function(response) {
-                    if (response.success && response.data.translated_text) {
-                        $form0.val(response.data.translated_text);
-                        window.linguaDebug('✅ LINGUA v5.2.92: Form 0 translated:', form0Original, '→', response.data.translated_text);
-                    }
-                    translationsCompleted++;
-                    if (translationsCompleted === translationsTotal) {
-                        $button.prop('disabled', false).html(originalButtonHtml);
-                    }
-                })
-                .fail(function() {
-                    translationsCompleted++;
-                    if (translationsCompleted === translationsTotal) {
-                        $button.prop('disabled', false).html(originalButtonHtml);
-                    }
-                });
-
-                // v5.2.100: Translate Form 1 (товара - genitive 2-4)
-                // CRITICAL FIX: Use PLURAL form (products) not singular (product) + number context
-                var form1TextToTranslate = form1PluralOriginal || form1Original;
-                if (targetLanguage === 'ru') {
-                    form1TextToTranslate = '2 ' + form1TextToTranslate; // "2 products" → "2 продукта"
-                    window.linguaDebug('🌐 LINGUA v5.2.100: Translating Form 1 with plural + number:', form1TextToTranslate);
-                } else {
-                    window.linguaDebug('🌐 LINGUA v5.2.100: Sending translation request for Form 1:', form1TextToTranslate);
-                }
-
-                $.post(lingua_admin.ajax_url, {
-                    action: 'lingua_auto_translate_text',
-                    nonce: lingua_admin.nonce,
-                    text: form1TextToTranslate,
-                    target_lang: targetLanguage,
-                    source_lang: 'auto'
-                })
-                .done(function(response) {
-                    if (response.success && response.data.translated_text) {
-                        var translatedText = response.data.translated_text;
-
-                        // v5.2.100: For Russian, remove the "2 " prefix we added for context
-                        if (targetLanguage === 'ru' && translatedText.match(/^[0-9]+\s+/)) {
-                            translatedText = translatedText.replace(/^[0-9]+\s+/, '');
-                            window.linguaDebug('✅ LINGUA v5.2.100: Form 1 translated, removed number prefix:', translatedText);
-                        }
-
-                        $form1.val(translatedText);
-                        window.linguaDebug('✅ LINGUA v5.2.100: Form 1 translated:', form1TextToTranslate, '→', translatedText);
-                    }
-                    translationsCompleted++;
-                    if (translationsCompleted === translationsTotal) {
-                        $button.prop('disabled', false).html(originalButtonHtml);
-                    }
-                })
-                .fail(function() {
-                    translationsCompleted++;
-                    if (translationsCompleted === translationsTotal) {
-                        $button.prop('disabled', false).html(originalButtonHtml);
-                    }
-                });
-
-                // Translate Form 2 (товаров - plural)
-                // v5.2.100: CRITICAL FIX - Use PLURAL form (products) not singular (product) + number context
-                var form2TextToTranslate = form2PluralOriginal || form2Original;
-                if (targetLanguage === 'ru') {
-                    form2TextToTranslate = '5 ' + form2TextToTranslate; // "5 products" → "5 продуктов"
-                    window.linguaDebug('🌐 LINGUA v5.2.100: Translating Form 2 with plural + number:', form2TextToTranslate);
-                } else {
-                    window.linguaDebug('🌐 LINGUA v5.2.100: Sending translation request for Form 2:', form2TextToTranslate);
-                }
-
-                $.post(lingua_admin.ajax_url, {
-                    action: 'lingua_auto_translate_text',
-                    nonce: lingua_admin.nonce,
-                    text: form2TextToTranslate,
-                    target_lang: targetLanguage,
-                    source_lang: 'auto'
-                })
-                .done(function(response) {
-                    if (response.success && response.data.translated_text) {
-                        var translatedText = response.data.translated_text;
-
-                        // v5.2.100: For Russian, remove the "5 " prefix we added for context
-                        if (targetLanguage === 'ru' && translatedText.match(/^[0-9]+\s+/)) {
-                            translatedText = translatedText.replace(/^[0-9]+\s+/, '');
-                            window.linguaDebug('✅ LINGUA v5.2.100: Form 2 translated, removed number prefix:', translatedText);
-                        }
-
-                        $form2.val(translatedText);
-                        window.linguaDebug('✅ LINGUA v5.2.100: Form 2 translated:', form2TextToTranslate, '→', translatedText);
-                    }
-                    translationsCompleted++;
-                    if (translationsCompleted === translationsTotal) {
-                        $button.prop('disabled', false).html(originalButtonHtml);
-                    }
-                })
-                .fail(function() {
-                    translationsCompleted++;
-                    if (translationsCompleted === translationsTotal) {
-                        $button.prop('disabled', false).html(originalButtonHtml);
-                    }
-                });
-
-                return; // Exit early for 3-form plurals
-
-            } else if (targetPluralFormsCount === 2) {
-                // v5.2.104: 2-form plurals (Italian, French, German, etc) - use NEW .lingua-plural-form-N classes
-                window.linguaDebug('✅ LINGUA v5.2.104: Translating 2-form plurals');
-
-                // v5.2.104: Use NEW class names .lingua-plural-form-0 and .lingua-plural-form-1
-                var $form0 = $item.find('.lingua-plural-form-0');
-                var $form1 = $item.find('.lingua-plural-form-1');
-
-                var form0Original = $form0.data('original');
-                var form1Original = $form1.data('original');
-                var form1PluralOriginal = $form1.data('plural-original'); // For auto-translate, use plural form
-
-                if (!form0Original || !form1Original) {
-                    console.error('❌ LINGUA v5.2.104: Plural forms not found');
-                    alert('Error: Could not find singular/plural forms');
-                    return;
-                }
-
-                window.linguaDebug('🔍 LINGUA v5.2.104: form0Original (singular):', form0Original);
-                window.linguaDebug('🔍 LINGUA v5.2.104: form1Original (singular for saving):', form1Original);
-                window.linguaDebug('🔍 LINGUA v5.2.104: form1PluralOriginal (plural for auto-translate):', form1PluralOriginal);
-
-                // Show loading state
-                var originalButtonHtml = $button.html();
-                $button.prop('disabled', true).html('⏳ Translating 2 forms...');
-
-                var translationsCompleted = 0;
-                var translationsTotal = 2;
-
-                // Translate Form 0 (singular: product → prodotto)
-                window.linguaDebug('🌐 LINGUA v5.2.104: Translating Form 0 (singular):', form0Original);
-                $.post(lingua_admin.ajax_url, {
-                    action: 'lingua_auto_translate_text',
-                    nonce: lingua_admin.nonce,
-                    text: form0Original,
-                    target_lang: targetLanguage,
-                    source_lang: 'auto'
-                })
-                .done(function(response) {
-                    if (response.success && response.data.translated_text) {
-                        $form0.val(response.data.translated_text);
-                        window.linguaDebug('✅ LINGUA v5.2.104: Form 0 translated:', form0Original, '→', response.data.translated_text);
-                    }
-                    translationsCompleted++;
-                    if (translationsCompleted === translationsTotal) {
-                        $button.prop('disabled', false).html(originalButtonHtml);
-                    }
-                })
-                .fail(function() {
-                    translationsCompleted++;
-                    if (translationsCompleted === translationsTotal) {
-                        $button.prop('disabled', false).html(originalButtonHtml);
-                    }
-                });
-
-                // Translate Form 1 (plural: products → prodotti)
-                // v5.2.105: Use plural form + add number context for correct translation
-                var form1TextToTranslate = form1PluralOriginal || form1Original;
-                // v5.2.105: Add "2 " prefix to help API understand it's plural form
-                form1TextToTranslate = '2 ' + form1TextToTranslate; // "2 products" → "2 prodotti"
-                window.linguaDebug('🌐 LINGUA v5.2.105: Translating Form 1 (plural) with number context:', form1TextToTranslate);
-                $.post(lingua_admin.ajax_url, {
-                    action: 'lingua_auto_translate_text',
-                    nonce: lingua_admin.nonce,
-                    text: form1TextToTranslate,
-                    target_lang: targetLanguage,
-                    source_lang: 'auto'
-                })
-                .done(function(response) {
-                    if (response.success && response.data.translated_text) {
-                        var translatedText = response.data.translated_text;
-
-                        // v5.2.105: Remove the "2 " prefix we added for context
-                        if (translatedText.match(/^[0-9]+\s+/)) {
-                            translatedText = translatedText.replace(/^[0-9]+\s+/, '');
-                            window.linguaDebug('✅ LINGUA v5.2.105: Form 1 translated, removed number prefix:', translatedText);
-                        }
-
-                        $form1.val(translatedText);
-                        window.linguaDebug('✅ LINGUA v5.2.105: Form 1 translated:', form1TextToTranslate, '→', translatedText);
-                    }
-                    translationsCompleted++;
-                    if (translationsCompleted === translationsTotal) {
-                        $button.prop('disabled', false).html(originalButtonHtml);
-                    }
-                })
-                .fail(function() {
-                    translationsCompleted++;
-                    if (translationsCompleted === translationsTotal) {
-                        $button.prop('disabled', false).html(originalButtonHtml);
-                    }
-                });
-
-                return; // Exit early for 2-form plurals
-
-            } else if (targetPluralFormsCount === 1) {
-                // v5.2.104: 1-form (no plurals): Chinese, Japanese, Korean, Thai, Vietnamese, Turkish
-                window.linguaDebug('✅ LINGUA v5.2.104: Translating single form (no plurals)');
-
-                var $form0 = $item.find('.lingua-plural-form-0');
-                var form0Original = $form0.data('original');
-
-                if (!form0Original) {
-                    console.error('❌ LINGUA v5.2.104: Original text not found');
-                    alert('Error: Could not find original text');
-                    return;
-                }
-
-                window.linguaDebug('🔍 LINGUA v5.2.104: form0Original:', form0Original);
-
-                // Show loading state
-                var originalButtonHtml = $button.html();
-                $button.prop('disabled', true).html('⏳ Translating...');
-
-                // Translate single form
-                window.linguaDebug('🌐 LINGUA v5.2.104: Translating single form:', form0Original);
-                $.post(lingua_admin.ajax_url, {
-                    action: 'lingua_auto_translate_text',
-                    nonce: lingua_admin.nonce,
-                    text: form0Original,
-                    target_lang: targetLanguage,
-                    source_lang: 'auto'
-                })
-                .done(function(response) {
-                    if (response.success && response.data.translated_text) {
-                        $form0.val(response.data.translated_text);
-                        window.linguaDebug('✅ LINGUA v5.2.104: Single form translated:', form0Original, '→', response.data.translated_text);
-                    }
-                    $button.prop('disabled', false).html(originalButtonHtml);
-                })
-                .fail(function() {
-                    $button.prop('disabled', false).html(originalButtonHtml);
-                });
-
-                return; // Exit early for 1-form
-
-            } else if (targetPluralFormsCount === 4) {
-                // v5.2.134: 4-form plurals: Slovenian, Scottish Gaelic
-                // Forms: 0=one(1), 1=two(2), 2=few(3-4), 3=other(5+)
-                window.linguaDebug('✅ LINGUA v5.2.134: Translating 4-form plurals (Slovenian/Gaelic)');
-
-                var $form0 = $item.find('.lingua-plural-form-0');
-                var $form1 = $item.find('.lingua-plural-form-1');
-
-                // v5.2.135: Fix - get plural from data-plural-original, not data-original
-                var form0Original = $form0.data('original');
-                var form1Original = $form1.attr('data-plural-original') || $form1.data('original');
-
-                window.linguaDebug('🔍 LINGUA v5.2.135: form0Original (singular):', form0Original);
-                window.linguaDebug('🔍 LINGUA v5.2.135: form1Original (plural):', form1Original);
-
-                if (!form0Original || !form1Original) {
-                    console.error('❌ LINGUA v5.2.134: Original texts not found for 4-form');
-                    alert('Error: Could not find original text for translation');
-                    return;
-                }
-
-                // Show loading state
-                var originalButtonHtml = $button.html();
-                $button.prop('disabled', true).html('⏳ Translating 4 forms...');
-
-                // Context numbers for 4-form plurals
-                var contextNumbers = [1, 2, 3, 5];
-                var completedRequests = 0;
-                var totalRequests = 4;
-
-                // Translate all 4 forms
-                contextNumbers.forEach(function(contextNum, index) {
-                    var textToTranslate = (contextNum === 1) ? form0Original : form1Original;
-                    var contextText = contextNum + ' ' + textToTranslate;
-
-                    window.linguaDebug('🌐 LINGUA v5.2.134: Translating form ' + index + ' with context:', contextText);
-
-                    $.post(lingua_admin.ajax_url, {
-                        action: 'lingua_auto_translate_text',
-                        nonce: lingua_admin.nonce,
-                        text: contextText,
-                        target_lang: targetLanguage,
-                        source_lang: 'auto'
-                    })
-                    .done(function(response) {
-                        if (response.success && response.data.translated_text) {
-                            var translatedText = response.data.translated_text;
-                            // Remove context number from translation
-                            translatedText = translatedText.replace(/^[\d]+\s*/, '');
-                            translatedText = translatedText.replace(/\s*[\d]+$/, '');
-                            translatedText = translatedText.trim();
-
-                            var $targetForm = $item.find('.lingua-plural-form-' + index);
-                            $targetForm.val(translatedText);
-                            window.linguaDebug('✅ LINGUA v5.2.134: Form ' + index + ' translated:', contextText, '→', translatedText);
-                        }
-                    })
-                    .always(function() {
-                        completedRequests++;
-                        if (completedRequests === totalRequests) {
-                            $button.prop('disabled', false).html(originalButtonHtml);
-                            window.linguaDebug('✅ LINGUA v5.2.134: All 4 forms translated');
-                        }
-                    });
-                });
-
-                return; // Exit early for 4-form plurals
-
-            } else if (targetPluralFormsCount === 5) {
-                // v5.2.135: 5-form plurals: Irish, Breton
-                // Forms: 0=one(1), 1=two(2), 2=few(3-6), 3=many(7-10), 4=other(11+)
-                window.linguaDebug('✅ LINGUA v5.2.135: Translating 5-form plurals (Irish/Breton)');
-
-                var $form0 = $item.find('.lingua-plural-form-0');
-                var $form1 = $item.find('.lingua-plural-form-1');
-
-                // v5.2.135: Get plural from data-plural-original
-                var form0Original = $form0.data('original');
-                var form1Original = $form1.attr('data-plural-original') || $form1.data('original');
-
-                window.linguaDebug('🔍 LINGUA v5.2.135: form0Original (singular):', form0Original);
-                window.linguaDebug('🔍 LINGUA v5.2.135: form1Original (plural):', form1Original);
-
-                if (!form0Original || !form1Original) {
-                    console.error('❌ LINGUA v5.2.135: Original texts not found for 5-form');
-                    alert('Error: Could not find original text for translation');
-                    return;
-                }
-
-                // Show loading state
-                var originalButtonHtml = $button.html();
-                $button.prop('disabled', true).html('⏳ Translating 5 forms...');
-
-                // Context numbers for 5-form plurals: one(1), two(2), few(3), many(7), other(11)
-                var contextNumbers = [1, 2, 3, 7, 11];
-                var completedRequests = 0;
-                var totalRequests = 5;
-
-                // Translate all 5 forms
-                contextNumbers.forEach(function(contextNum, index) {
-                    var textToTranslate = (contextNum === 1) ? form0Original : form1Original;
-                    var contextText = contextNum + ' ' + textToTranslate;
-
-                    window.linguaDebug('🌐 LINGUA v5.2.135: Translating form ' + index + ' with context:', contextText);
-
-                    $.post(lingua_admin.ajax_url, {
-                        action: 'lingua_auto_translate_text',
-                        nonce: lingua_admin.nonce,
-                        text: contextText,
-                        target_lang: targetLanguage,
-                        source_lang: 'auto'
-                    })
-                    .done(function(response) {
-                        if (response.success && response.data.translated_text) {
-                            var translatedText = response.data.translated_text;
-                            // Remove context number from translation
-                            translatedText = translatedText.replace(/^[\d]+\s*/, '');
-                            translatedText = translatedText.replace(/\s*[\d]+$/, '');
-                            translatedText = translatedText.trim();
-
-                            var $targetForm = $item.find('.lingua-plural-form-' + index);
-                            $targetForm.val(translatedText);
-                            window.linguaDebug('✅ LINGUA v5.2.135: Form ' + index + ' translated:', contextText, '→', translatedText);
-                        }
-                    })
-                    .always(function() {
-                        completedRequests++;
-                        if (completedRequests === totalRequests) {
-                            $button.prop('disabled', false).html(originalButtonHtml);
-                            window.linguaDebug('✅ LINGUA v5.2.135: All 5 forms translated');
-                        }
-                    });
-                });
-
-                return; // Exit early for 5-form plurals
-
-            } else if (targetPluralFormsCount === 6) {
-                // v5.2.134: 6-form plurals: Arabic
-                // Forms: 0=zero(0), 1=one(1), 2=two(2), 3=few(3-10), 4=many(11-99), 5=other(100+)
-                window.linguaDebug('✅ LINGUA v5.2.134: Translating 6-form plurals (Arabic)');
-
-                var $form0 = $item.find('.lingua-plural-form-0');
-                var $form1 = $item.find('.lingua-plural-form-1');
-                var $form2 = $item.find('.lingua-plural-form-2');
-                var $form3 = $item.find('.lingua-plural-form-3');
-                var $form4 = $item.find('.lingua-plural-form-4');
-                var $form5 = $item.find('.lingua-plural-form-5');
-
-                // v5.2.135: Fix - get plural from data-plural-original, not data-original
-                var form0Original = $form0.data('original');
-                var form1Original = $form1.attr('data-plural-original') || $form1.data('original');
-
-                window.linguaDebug('🔍 LINGUA v5.2.135: form0Original (singular):', form0Original);
-                window.linguaDebug('🔍 LINGUA v5.2.135: form1Original (plural):', form1Original);
-
-                if (!form0Original || !form1Original) {
-                    console.error('❌ LINGUA v5.2.135: Original texts not found for 6-form');
-                    alert('Error: Could not find original text for translation');
-                    return;
-                }
-
-                // Show loading state
-                var originalButtonHtml = $button.html();
-                $button.prop('disabled', true).html('⏳ Translating 6 forms...');
-
-                // Arabic context numbers for each form
-                var contextNumbers = [0, 1, 2, 3, 11, 100];
-                var completedRequests = 0;
-                var totalRequests = 6;
-
-                // Translate all 6 forms
-                contextNumbers.forEach(function(contextNum, index) {
-                    var textToTranslate = (contextNum === 1) ? form0Original : form1Original;
-                    var contextText = contextNum + ' ' + textToTranslate;
-
-                    window.linguaDebug('🌐 LINGUA v5.2.134: Translating form ' + index + ' with context:', contextText);
-
-                    $.post(lingua_admin.ajax_url, {
-                        action: 'lingua_auto_translate_text',
-                        nonce: lingua_admin.nonce,
-                        text: contextText,
-                        target_lang: targetLanguage,
-                        source_lang: 'auto'
-                    })
-                    .done(function(response) {
-                        if (response.success && response.data.translated_text) {
-                            var translatedText = response.data.translated_text;
-                            // Remove context number from translation (both Latin and Arabic numerals)
-                            // Handle both LTR (number at start) and RTL (number at end)
-                            translatedText = translatedText.replace(/^[\d٠-٩]+\s*/, ''); // Start of string
-                            translatedText = translatedText.replace(/\s*[\d٠-٩]+$/, ''); // End of string (RTL)
-                            translatedText = translatedText.trim();
-
-                            var $targetForm = $item.find('.lingua-plural-form-' + index);
-                            $targetForm.val(translatedText);
-                            window.linguaDebug('✅ LINGUA v5.2.134: Form ' + index + ' translated:', contextText, '→', translatedText);
-                        }
-                    })
-                    .always(function() {
-                        completedRequests++;
-                        if (completedRequests === totalRequests) {
-                            $button.prop('disabled', false).html(originalButtonHtml);
-                            window.linguaDebug('✅ LINGUA v5.2.134: All 6 forms translated');
-                        }
-                    });
-                });
-
-                return; // Exit early for 6-form plurals
-
-            } else {
-                // v5.2.104: Unknown plural forms count
-                console.error('❌ LINGUA v5.2.104: Unknown plural forms count:', targetPluralFormsCount);
-                alert('Error: Unsupported plural forms count: ' + targetPluralFormsCount);
-                return;
-            }
-        }
-
-        // Regular single item translation (non-plural)
-        var $originalText = $item.find('.lingua-original-text');
-        var $translatedTextarea = $item.find('.lingua-translated-text');
-
-        // v5.0.11 FIX: Use .text() for DIV (was textarea before)
-        var originalText = $originalText.text().trim();
-
-        window.linguaDebug('🔍 DEBUG: Original text:', originalText);
-        window.linguaDebug('🔍 DEBUG: Target language:', targetLanguage);
-        window.linguaDebug('🔍 DEBUG: Button element:', $button);
-        window.linguaDebug('🔍 DEBUG: Item element:', $item);
-
-        if (!originalText || originalText.length === 0) {
-            console.error('❌ Original text is empty');
-            alert('Error: No text to translate');
-            return;
-        }
-
-        // Показываем индикатор загрузки
-        $button.prop('disabled', true).text('⏳ Translating...');
-
-        // Выполняем перевод
-        $.post(lingua_admin.ajax_url, {
-            action: 'lingua_auto_translate_text',
-            nonce: lingua_admin.nonce,
-            text: originalText,
-            target_lang: targetLanguage,
-            source_lang: 'auto'
-        })
-        .done(function(response) {
-            if (response.success && response.data.translated_text) {
-                $translatedTextarea.val(response.data.translated_text);
-                window.linguaDebug('✅ LINGUA v3.0: Translation completed');
-            } else {
-                console.error('❌ Translation failed:', response.data);
-                alert('Translation failed: ' + (response.data || 'Unknown error'));
-            }
-        })
-        .fail(function(xhr, status, error) {
-            console.error('❌ AJAX translation failed:', error);
-            alert('Translation request failed: ' + error);
-        })
-        .always(function() {
-            $button.prop('disabled', false).text('🔄 Translate');
-        });
-    };
+    // translateModernItem function removed (auto-translate Pro feature removed)
 
     // v5.0.7: Auto-resize textarea helper function (only for translation fields)
     window.linguaAutoResizeTextarea = function(textarea) {
@@ -5323,20 +4199,6 @@ jQuery(document).ready(function($) {
 
         var $container = $('#lingua-media-content');
         $container.empty();
-
-        // v5.2: Check Pro restriction and show upgrade notice (convert string to boolean)
-        var isPro = window.lingua_admin && (window.lingua_admin.is_pro === true || window.lingua_admin.is_pro === '1' || window.lingua_admin.is_pro === 1);
-        if (!isPro) {
-            var middlewareUrl = (window.lingua_admin && window.lingua_admin.middleware_url) || 'https://translate.yournewsite.ru/plans';
-            $container.html(
-                '<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; padding: 40px; border-radius: 8px; margin: 20px; text-align: center;">' +
-                    '<h3 style="margin: 0 0 16px 0; font-size: 24px; font-weight: bold; color: #ffffff;">🔒 Media Translation - Pro Feature</h3>' +
-                    '<p style="margin: 16px 0; font-size: 16px; color: #ffffff;">Translate images, alt text, and media attributes with our Pro version.</p>' +
-                    '<a href="' + middlewareUrl + '" target="_blank" class="button button-primary" style="background: #ffffff; color: #667eea; border: none; border-radius: 8px; margin-top: 12px; font-weight: 600; padding: 12px 24px; font-size: 16px;">Upgrade to Pro →</a>' +
-                '</div>'
-            );
-            return;
-        }
 
         // Group items by src_hash (each image has 1-3 items: src, alt, title)
         var imageGroups = {};
@@ -5451,13 +4313,6 @@ jQuery(document).ready(function($) {
         // v5.2: Attach "Add Media" button handler (WordPress Media Library picker)
         $('.lingua-add-media-btn').on('click', function(e) {
             e.preventDefault();
-
-            // v5.2: Check Pro restriction (convert string to boolean)
-            var isPro = window.lingua_admin && (window.lingua_admin.is_pro === true || window.lingua_admin.is_pro === '1' || window.lingua_admin.is_pro === 1);
-            if (!isPro) {
-                window.linguaDebug('🔒 LINGUA: Media translation blocked - Pro feature');
-                return;
-            }
 
             var srcHash = $(this).data('src-hash');
             window.translationModal.openMediaLibraryPicker(srcHash);

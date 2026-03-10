@@ -110,7 +110,7 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
 
                 <div style="align-self: flex-end;">
                     <button type="submit" class="button"><?php esc_html_e('Filter', 'iqcloud-translate'); ?></button>
-                    <a href="<?php echo admin_url('admin.php?page=lingua-strings'); ?>" class="button"><?php esc_html_e('Reset', 'iqcloud-translate'); ?></a>
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=lingua-strings')); ?>" class="button"><?php esc_html_e('Reset', 'iqcloud-translate'); ?></a>
                 </div>
             </div>
         </form>
@@ -127,12 +127,12 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
                     ? round(($domain_stat->translated_count / $domain_stat->string_count) * 100)
                     : 0;
                 ?>
-                <a href="<?php echo admin_url('admin.php?page=lingua-strings&filter=gettext&domain=' . urlencode($domain_stat->gettext_domain)); ?>"
-                   class="lingua-domain-badge <?php echo $current_domain === $domain_stat->gettext_domain ? 'active' : ''; ?>">
+                <a href="<?php echo esc_url(admin_url('admin.php?page=lingua-strings&filter=gettext&domain=' . urlencode($domain_stat->gettext_domain))); ?>"
+                   class="lingua-domain-badge <?php echo $current_domain === $domain_stat->gettext_domain ? 'active' : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- safe ternary with literal strings ?>">
                     <strong><?php echo esc_html($domain_stat->gettext_domain); ?></strong>
-                    <span class="count"><?php echo number_format($domain_stat->string_count); ?></span>
-                    <span class="progress" style="background: linear-gradient(to right, #46b450 <?php echo $percentage; ?>%, #ddd <?php echo $percentage; ?>%);">
-                        <?php echo $percentage; ?>%
+                    <span class="count"><?php echo esc_html(number_format($domain_stat->string_count)); ?></span>
+                    <span class="progress" style="background: linear-gradient(to right, #46b450 <?php echo esc_attr($percentage); ?>%, #ddd <?php echo esc_attr($percentage); ?>%);">
+                        <?php echo esc_html($percentage); ?>%
                     </span>
                 </a>
             <?php endforeach; ?>
@@ -171,7 +171,7 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
             <tbody>
                 <?php $counter = 1; foreach ($strings as $string): ?>
                     <tr data-string-id="<?php echo esc_attr($string->id); ?>">
-                        <td><?php echo $counter++; ?></td>
+                        <td><?php echo esc_html($counter++); ?></td>
                         <td>
                             <div class="string-original" title="<?php echo esc_attr($string->original_text); ?>">
                                 <?php echo esc_html(mb_substr($string->original_text, 0, 80)); ?>
@@ -192,7 +192,7 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
                             <?php endif; ?>
                             <?php if (!empty($string->is_plural_group)): ?>
                                 <span class="lingua-badge plural" title="<?php echo esc_attr($string->original_plural); ?>">
-                                    <?php printf(esc_html__('plural (%d forms)', 'iqcloud-translate'), $string->plural_forms_count); ?>
+                                    <?php printf(esc_html__('plural (%d forms)', 'iqcloud-translate'), intval($string->plural_forms_count)); ?>
                                 </span>
                             <?php endif; ?>
                             <?php if (strpos($string->context, '.email') !== false): ?>
@@ -206,11 +206,11 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
                             <?php if (!empty($string->is_plural_group)): ?>
                                 <?php if ($string->plural_forms_translated === $string->plural_forms_count): ?>
                                     <span class="lingua-status translated">
-                                        <?php printf(esc_html__('%d/%d translated', 'iqcloud-translate'), $string->plural_forms_translated, $string->plural_forms_count); ?>
+                                        <?php printf(esc_html__('%d/%d translated', 'iqcloud-translate'), intval($string->plural_forms_translated), intval($string->plural_forms_count)); ?>
                                     </span>
                                 <?php elseif ($string->plural_forms_translated > 0): ?>
                                     <span class="lingua-status partial">
-                                        <?php printf(esc_html__('%d/%d translated', 'iqcloud-translate'), $string->plural_forms_translated, $string->plural_forms_count); ?>
+                                        <?php printf(esc_html__('%d/%d translated', 'iqcloud-translate'), intval($string->plural_forms_translated), intval($string->plural_forms_count)); ?>
                                     </span>
                                 <?php else: ?>
                                     <span class="lingua-status untranslated">
@@ -260,8 +260,8 @@ $current_lang = isset($_GET['lang']) ? sanitize_text_field($_GET['lang']) : '';
                 ));
 
                 if ($page_links) {
-                    echo '<span class="displaying-num">' . sprintf(esc_html__('%d items', 'iqcloud-translate'), $total_strings) . '</span>';
-                    echo '<span class="pagination-links">' . $page_links . '</span>';
+                    echo '<span class="displaying-num">' . sprintf(esc_html__('%d items', 'iqcloud-translate'), intval($total_strings)) . '</span>';
+                    echo '<span class="pagination-links">' . wp_kses_post($page_links) . '</span>';
                 }
                 ?>
             </div>

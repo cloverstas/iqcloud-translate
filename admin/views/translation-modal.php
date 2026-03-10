@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 $debug_timestamp = date('Y-m-d H:i:s');
 ?>
 
-<!-- LINGUA v2.1.3-unified-save-fix TEMPLATE LOADED: <?php echo $debug_timestamp; ?> -->
+<!-- LINGUA v2.1.3-unified-save-fix TEMPLATE LOADED: <?php echo esc_html($debug_timestamp); ?> -->
 
 <div id="lingua-translation-modal" class="lingua-modal" style="display: none;">
     <div class="lingua-modal-content">
@@ -63,17 +63,7 @@ $debug_timestamp = date('Y-m-d H:i:s');
                 </div>
 
                 <div class="lingua-modal-actions">
-                    <button type="button" id="lingua-auto-translate-all" class="button button-secondary">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m5 8 6 6"/>
-                            <path d="m4 14 6-6 2-3"/>
-                            <path d="M2 5h12"/>
-                            <path d="M7 2h1"/>
-                            <path d="m22 22-5-10-5 10"/>
-                            <path d="M14 18h6"/>
-                        </svg>
-                        <?php esc_html_e('Auto-translate Page', 'iqcloud-translate'); ?>
-                    </button>
+                    <?php do_action('lingua_modal_actions'); ?>
                     <button type="button" id="lingua-extract-content" class="button button-secondary" title="<?php esc_html_e('Re-extract page content', 'iqcloud-translate'); ?>">
                         🔄 <?php esc_html_e('Refresh', 'iqcloud-translate'); ?>
                     </button>

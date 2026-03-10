@@ -74,7 +74,7 @@ $default_language = get_option('lingua_default_language', lingua_get_site_langua
                 <div class="lingua-stat-card">
                     <div class="lingua-stat-number"><?php echo esc_html($count); ?></div>
                     <div class="lingua-stat-label">
-                        <?php echo isset($languages[$lang]['flag']) ? $languages[$lang]['flag'] : ''; ?>
+                        <?php echo isset($languages[$lang]['flag']) ? esc_html($languages[$lang]['flag']) : ''; ?>
                         <?php echo esc_html($languages[$lang]['name']); ?>
                     </div>
                 </div>
@@ -95,7 +95,7 @@ $default_language = get_option('lingua_default_language', lingua_get_site_langua
                 <option value=""><?php esc_html_e('All Languages', 'iqcloud-translate'); ?></option>
                 <?php foreach ($languages as $code => $lang): ?>
                     <option value="<?php echo esc_attr($code); ?>" <?php selected($language_filter, $code); ?>>
-                        <?php echo isset($lang['flag']) ? $lang['flag'] . ' ' : ''; ?>
+                        <?php echo isset($lang['flag']) ? esc_html($lang['flag']) . ' ' : ''; ?>
                         <?php echo esc_html($lang['name']); ?>
                     </option>
                 <?php endforeach; ?>
@@ -163,9 +163,9 @@ $default_language = get_option('lingua_default_language', lingua_get_site_langua
                                 <div class="lingua-translation-flags">
                                     <?php foreach ($languages as $code => $lang): ?>
                                         <?php if ($code === $default_language): continue; endif; ?>
-                                        <span class="lingua-flag <?php echo in_array($code, $translation_languages) ? 'translated' : 'not-translated'; ?>" 
+                                        <span class="lingua-flag <?php echo esc_attr(in_array($code, $translation_languages) ? 'translated' : 'not-translated'); ?>"
                                               title="<?php echo esc_attr($lang['name']); ?>">
-                                            <?php echo isset($lang['flag']) ? $lang['flag'] : $code; ?>
+                                            <?php echo isset($lang['flag']) ? esc_html($lang['flag']) : esc_html($code); ?>
                                         </span>
                                     <?php endforeach; ?>
                                 </div>
@@ -214,7 +214,7 @@ $default_language = get_option('lingua_default_language', lingua_get_site_langua
     );
     $pagination_links = paginate_links($pagination_args);
     if ($pagination_links) {
-        echo '<div class="tablenav"><div class="tablenav-pages">' . $pagination_links . '</div></div>';
+        echo '<div class="tablenav"><div class="tablenav-pages">' . wp_kses_post($pagination_links) . '</div></div>';
     }
     ?>
 </div>

@@ -39,13 +39,7 @@ class Lingua_Activator {
             )
         ));
         
-        // v5.2.174: Yandex API removed - using Middleware API only
-        // API key is now lingua_middleware_api_key
-
         // Translation settings
-        add_option('lingua_auto_translate_posts', false);
-        add_option('lingua_auto_translate_pages', false);
-        add_option('lingua_auto_translate_seo', false);
         add_option('lingua_translation_quality', 'balanced');
         
         // Language switcher settings

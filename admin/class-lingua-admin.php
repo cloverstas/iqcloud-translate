@@ -34,11 +34,10 @@ class Lingua_Admin {
 
         $nonce = wp_create_nonce('lingua_admin_nonce');
 
-        // Get Pro status for inline initialization
-        $middleware_api = new Lingua_Middleware_API();
-        $is_pro = $middleware_api->is_pro_active();
+        // Get Pro status via filter (Pro add-on hooks into this)
+        $is_pro = apply_filters('lingua_is_pro_active', false);
 
-        lingua_debug_log('[Lingua v5.2.155] inject_fresh_nonce: Generated nonce = ' . substr($nonce, 0, 10) . '..., is_pro = ' . ($is_pro ? 'true' : 'false'));
+        lingua_debug_log('[Lingua v1.1.0] inject_fresh_nonce: Generated nonce = ' . substr($nonce, 0, 10) . '..., is_pro = ' . ($is_pro ? 'true' : 'false'));
 
         // v5.5: Use wp_add_inline_script() instead of inline <script> tag (WP review compliance)
         $nonce_prefix = substr($nonce, 0, 10);
@@ -363,22 +362,6 @@ class Lingua_Admin {
         lingua_debug_log('Lingua: Starting save_settings()');
         
         try {
-        // v5.2.64: Middleware API settings (только API key, URL захардкожен в константе)
-        if (isset($_POST['middleware_api_key'])) {
-            $new_key = sanitize_text_field($_POST['middleware_api_key']);
-            $old_key = get_option('lingua_middleware_api_key', '');
-            
-            if ($old_key !== $new_key) {
-                update_option('lingua_middleware_api_key', $new_key);
-                // Clear permanent Pro status when API key changes (URL всегда из константы)
-                delete_option('lingua_pro_status_' . md5($old_key . LINGUA_MIDDLEWARE_URL));
-                delete_option('lingua_pro_status_' . md5($new_key . LINGUA_MIDDLEWARE_URL));
-                lingua_debug_log('[Lingua v5.2.64] API key changed, Pro status cleared');
-            } else {
-                lingua_debug_log('[Lingua v5.2.64] API key unchanged, Pro status preserved permanently');
-            }
-        }
-        
         // Language settings
         if (isset($_POST['default_language'])) {
             $default_lang = sanitize_text_field($_POST['default_language']);
@@ -445,22 +428,8 @@ class Lingua_Admin {
         update_option('lingua_languages', $translation_languages);
         update_option('lingua_translation_languages', array_keys($translation_languages));
 
-        // v5.2.177: Sync active languages to middleware API
-        $api_key = get_option('lingua_middleware_api_key', '');
-        if (!empty($api_key)) {
-            $middleware_api = new Lingua_Middleware_API();
-            $language_codes = array_keys($translation_languages);
-            $sync_result = $middleware_api->update_active_languages($language_codes);
-
-            if (is_wp_error($sync_result)) {
-                lingua_debug_log('[Lingua v5.2.177] Failed to sync languages to middleware: ' . $sync_result->get_error_message());
-            } else {
-                lingua_debug_log('[Lingua v5.2.177] Synced ' . count($language_codes) . ' languages to middleware: ' . implode(', ', $language_codes));
-                // Clear API status cache to refresh dashboard
-                $cache_key = 'lingua_api_status_' . md5($api_key . LINGUA_MIDDLEWARE_URL);
-                delete_transient($cache_key);
-            }
-        }
+        // Allow Pro add-on to sync languages
+        do_action('lingua_languages_saved', array_keys($translation_languages));
 
         // Save URL slugs
         if (isset($_POST['url_slugs']) && is_array($_POST['url_slugs'])) {
@@ -471,24 +440,13 @@ class Lingua_Admin {
             update_option('lingua_url_slugs', $url_slugs);
         }
 
-        // Translation settings
-        update_option('lingua_auto_translate_website', isset($_POST['auto_translate_website']));
-
-        // v5.3.17: Save translatable post types
+        // Save translatable post types
         if (isset($_POST['translatable_post_types']) && is_array($_POST['translatable_post_types'])) {
             $post_types = array_map('sanitize_text_field', $_POST['translatable_post_types']);
             update_option('lingua_translatable_post_types', $post_types);
         } else {
             // If none selected, keep defaults
             update_option('lingua_translatable_post_types', array('post', 'page', 'product'));
-        }
-
-        // v5.3.0: Save auto-translate domains whitelist
-        if (isset($_POST['auto_translate_domains']) && is_array($_POST['auto_translate_domains'])) {
-            $domains = array_map('sanitize_text_field', $_POST['auto_translate_domains']);
-            update_option('lingua_auto_translate_domains', $domains);
-        } else {
-            update_option('lingua_auto_translate_domains', array());
         }
 
         // Language Switcher settings
@@ -619,12 +577,9 @@ class Lingua_Admin {
             true
         );
         
-        // Localize script for AJAX (расширенный набор строк)
-        // v3.0.33: NONCE moved to wp_footer to prevent caching issues
-        // v5.2.137: Restored Pro status check from Middleware API
-        $middleware_api = new Lingua_Middleware_API();
-        $is_pro = $middleware_api->is_pro_active();
-        lingua_debug_log('[Lingua Admin] is_pro_active: ' . ($is_pro ? 'TRUE' : 'FALSE'));
+        // Localize script for AJAX
+        // v1.1.0: Pro status via filter (Pro add-on hooks into this)
+        $is_pro = apply_filters('lingua_is_pro_active', false);
 
         // v5.2.1: Generate nonce directly here to avoid timing issues
         $nonce = wp_create_nonce('lingua_admin_nonce');
@@ -643,9 +598,8 @@ class Lingua_Admin {
         wp_localize_script('lingua-admin', 'lingua_admin', array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => $nonce, // v5.2.1: Generate nonce directly
-            'is_pro' => $is_pro, // v5.2.137: Pro status from Middleware API
-            'middleware_url' => get_option('lingua_middleware_url', 'http://77.95.201.43:4002'), // v5.2: Middleware portal URL
-            'default_language' => get_option('lingua_default_language', lingua_get_site_language()), // v5.2.72: Pass default language to JS
+            'is_pro' => $is_pro,
+            'default_language' => get_option('lingua_default_language', lingua_get_site_language()),
             'debug_mode' => lingua_is_debug_enabled(),
             'strings' => array(
                 // API тестирование
@@ -704,116 +658,6 @@ class Lingua_Admin {
         ));
     }
     
-    /**
-     * v5.2.167: AJAX handler for saving API settings
-     */
-    public function ajax_save_api_settings() {
-        check_ajax_referer('lingua_admin_nonce', 'nonce');
-
-        if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error(__('Permission denied', 'iqcloud-translate'));
-        }
-
-        $api_key = isset($_POST['api_key']) ? sanitize_text_field($_POST['api_key']) : '';
-
-        if (empty($api_key)) {
-            wp_send_json_error(__('API key is required', 'iqcloud-translate'));
-        }
-
-        // Clear old Pro status cache before saving new key
-        $old_key = get_option('lingua_middleware_api_key', '');
-        if ($old_key !== $api_key) {
-            $old_cache_key = 'lingua_pro_status_' . md5($old_key . LINGUA_MIDDLEWARE_URL);
-            delete_option($old_cache_key);
-        }
-
-        // Save new API key
-        update_option('lingua_middleware_api_key', $api_key);
-
-        wp_send_json_success(__('Settings saved', 'iqcloud-translate'));
-    }
-
-    /**
-     * v5.2: AJAX handler for testing Middleware API connection
-     */
-    public function ajax_test_api() {
-        check_ajax_referer('lingua_admin_nonce', 'nonce');
-
-        if (!current_user_can(lingua_settings_capability())) {
-            wp_die();
-        }
-
-        // v5.2.167: Get API key from saved options (already saved by ajax_save_api_settings)
-        $api_key = get_option('lingua_middleware_api_key');
-
-        if (empty($api_key)) {
-            wp_send_json_error(__('API key is required', 'iqcloud-translate'));
-        }
-
-        $api = new Lingua_Middleware_API();
-        $result = $api->test_connection();
-
-        if (is_wp_error($result)) {
-            wp_send_json_error($result->get_error_message());
-        } else {
-            wp_send_json_success(__('API connection successful!', 'iqcloud-translate'));
-        }
-    }
-
-    /**
-     * v5.2.169: AJAX handler for checking Pro status (called on page load)
-     */
-    public function ajax_check_pro_status() {
-        check_ajax_referer('lingua_admin_nonce', 'nonce');
-
-        if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error(__('Permission denied', 'iqcloud-translate'));
-        }
-
-        $api_key = get_option('lingua_middleware_api_key');
-
-        if (empty($api_key)) {
-            wp_send_json_success(array('is_pro' => false));
-            return;
-        }
-
-        // Test connection to verify current status
-        $api = new Lingua_Middleware_API();
-        $result = $api->test_connection();
-
-        $is_pro = !is_wp_error($result);
-
-        // Update cached status
-        $cache_key = 'lingua_pro_status_' . md5($api_key . LINGUA_MIDDLEWARE_URL);
-        update_option($cache_key, $is_pro ? 1 : 0);
-
-        wp_send_json_success(array('is_pro' => $is_pro));
-    }
-
-    /**
-     * v5.2.171: AJAX handler for disconnecting license
-     */
-    public function ajax_disconnect_license() {
-        check_ajax_referer('lingua_admin_nonce', 'nonce');
-
-        if (!current_user_can(lingua_settings_capability())) {
-            wp_send_json_error(__('Permission denied', 'iqcloud-translate'));
-        }
-
-        $api_key = get_option('lingua_middleware_api_key', '');
-
-        // Clear Pro status cache
-        if (!empty($api_key)) {
-            $cache_key = 'lingua_pro_status_' . md5($api_key . LINGUA_MIDDLEWARE_URL);
-            delete_option($cache_key);
-        }
-
-        // Clear API key
-        delete_option('lingua_middleware_api_key');
-
-        wp_send_json_success(__('License disconnected', 'iqcloud-translate'));
-    }
-
     /**
      * AJAX handler for translating content
      */
@@ -1342,43 +1186,32 @@ class Lingua_Admin {
     }
 
     /**
-     * Auto-translate on post save
+     * Hook point for post save actions (e.g., auto-translation via Pro add-on)
+     *
+     * @param int     $post_id Post ID.
+     * @param WP_Post $post    Post object.
+     * @param bool    $update  Whether this is an update.
      */
     public function maybe_auto_translate($post_id, $post, $update) {
-        // Check if auto-translation is enabled
-        $auto_translate_posts = get_option('lingua_auto_translate_posts', false);
-        $auto_translate_pages = get_option('lingua_auto_translate_pages', false);
-        
-        if (!$auto_translate_posts && !$auto_translate_pages) {
+        // Skip revisions and autosaves
+        if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
             return;
         }
-        
-        // Check post type
-        if (($post->post_type === 'post' && !$auto_translate_posts) ||
-            ($post->post_type === 'page' && !$auto_translate_pages)) {
-            return;
-        }
-        
+
         // Only for published posts
         if ($post->post_status !== 'publish') {
             return;
         }
-        
-        // Avoid infinite loops
-        if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
-            return;
-        }
-        
-        // Get enabled languages
-        $languages = get_option('lingua_languages', array());
-        $default_lang = get_option('lingua_default_language', lingua_get_site_language());
-        
-        // Auto-translate to all enabled languages
-        foreach ($languages as $lang_code => $lang_data) {
-            if ($lang_code !== $default_lang) {
-                wp_schedule_single_event(time() + 10, 'lingua_auto_translate_post', array($post_id, $lang_code));
-            }
-        }
+
+        /**
+         * Fires when a post is published or updated.
+         * Pro add-on can hook here to trigger auto-translation.
+         *
+         * @param int     $post_id Post ID.
+         * @param WP_Post $post    Post object.
+         * @param bool    $update  Whether this is an update.
+         */
+        do_action('lingua_post_saved', $post_id, $post, $update);
     }
     
     /**
@@ -1451,146 +1284,37 @@ class Lingua_Admin {
     }
 
     /**
-     * AJAX handler for auto-translating text
-     */
-    public function ajax_auto_translate_text() {
-        check_ajax_referer('lingua_admin_nonce', 'nonce');
-
-        if (!current_user_can(lingua_translating_capability())) {
-            wp_die();
-        }
-
-        // v5.2.174: Check Pro license for auto-translation feature
-        $api = new Lingua_Middleware_API();
-        if (!$api->is_pro_active()) {
-            wp_send_json_error(array(
-                'message' => __('Auto-translation is a Pro feature. Please activate your license in Settings → License.', 'iqcloud-translate'),
-                'upgrade_required' => true
-            ));
-            return;
-        }
-
-        // Allow HTML tags in text for proper translation (use wp_kses_post for security)
-        $text = isset($_POST['text']) ? wp_kses_post(stripslashes($_POST['text'])) : '';
-        $source_lang = isset($_POST['source_lang']) ? sanitize_text_field($_POST['source_lang']) : 'auto';
-        $target_lang = isset($_POST['target_lang']) ? sanitize_text_field($_POST['target_lang']) : '';
-
-        if (empty($text) || empty($target_lang)) {
-            wp_send_json_error(__('Invalid parameters for translation', 'iqcloud-translate'));
-        }
-
-        // Проверяем наличие HTML тегов и используем соответствующий метод перевода
-        if (strpos($text, '<') !== false && strpos($text, '>') !== false) {
-            // HTML content - use HTML-preserving translation
-            $result = $api->translate_html($text, $target_lang, $source_lang);
-        } else {
-            // Plain text - use regular translation
-            $result = $api->translate($text, $target_lang, $source_lang);
-        }
-
-        if (is_wp_error($result)) {
-            wp_send_json_error($result->get_error_message());
-        } else {
-            wp_send_json_success(array(
-                'translated_text' => $result,
-                'source_lang' => $source_lang,
-                'target_lang' => $target_lang
-            ));
-        }
-    }
-
-    /**
-     * v5.2.199: AJAX handler for batch auto-translation (10-50x faster)
-     */
-    public function ajax_auto_translate_batch() {
-        check_ajax_referer('lingua_admin_nonce', 'nonce');
-
-        if (!current_user_can(lingua_translating_capability())) {
-            wp_die();
-        }
-
-        $api = new Lingua_Middleware_API();
-        if (!$api->is_pro_active()) {
-            wp_send_json_error(array(
-                'message' => __('Auto-translation is a Pro feature.', 'iqcloud-translate'),
-                'upgrade_required' => true
-            ));
-            return;
-        }
-
-        $texts = isset($_POST['texts']) ? $_POST['texts'] : array();
-        $target_lang = isset($_POST['target_lang']) ? sanitize_text_field($_POST['target_lang']) : '';
-        $source_lang = isset($_POST['source_lang']) ? sanitize_text_field($_POST['source_lang']) : 'auto';
-
-        if (empty($texts) || empty($target_lang)) {
-            wp_send_json_error(__('Invalid parameters', 'iqcloud-translate'));
-            return;
-        }
-
-        // Sanitize texts (allow HTML)
-        $clean_texts = array();
-        foreach ($texts as $text) {
-            $clean_texts[] = wp_kses_post(stripslashes($text));
-        }
-
-        // Use batch translation
-        $results = $api->translate_batch($clean_texts, $target_lang, $source_lang);
-
-        if (is_wp_error($results)) {
-            wp_send_json_error($results->get_error_message());
-        } else {
-            wp_send_json_success(array(
-                'translations' => $results,
-                'count' => count($results)
-            ));
-        }
-    }
-
-    /**
-     * Handle bulk translation request
+     * Handle bulk translation request.
+     * Delegates to Pro add-on via action hook.
      */
     private function handle_bulk_translation() {
-        $post_types = isset($_POST['post_types']) ? $_POST['post_types'] : array();
-        $target_languages = isset($_POST['target_languages']) ? $_POST['target_languages'] : array();
+        $post_types = isset($_POST['post_types']) ? array_map('sanitize_text_field', $_POST['post_types']) : array();
+        $target_languages = isset($_POST['target_languages']) ? array_map('sanitize_text_field', $_POST['target_languages']) : array();
         $post_status = isset($_POST['post_status']) ? sanitize_text_field($_POST['post_status']) : 'publish';
         $limit = isset($_POST['limit']) ? intval($_POST['limit']) : 10;
-        
+
         if (empty($post_types) || empty($target_languages)) {
             add_settings_error('lingua_bulk', 'missing_params', __('Please select post types and target languages.', 'iqcloud-translate'));
             return;
         }
-        
-        // Get posts to translate
-        $args = array(
-            'post_type' => $post_types,
-            'post_status' => $post_status,
-            'posts_per_page' => $limit,
-            'meta_query' => array(
-                array(
-                    'key' => '_lingua_auto_translated',
-                    'compare' => 'NOT EXISTS'
-                )
-            )
-        );
-        
-        $posts = get_posts($args);
-        $scheduled_count = 0;
-        
-        foreach ($posts as $post) {
-            foreach ($target_languages as $lang) {
-                // Schedule auto-translation
-                wp_schedule_single_event(time() + ($scheduled_count * 30), 'lingua_auto_translate_post', array($post->ID, $lang));
-                $scheduled_count++;
-            }
-            
-            // Mark as scheduled for auto-translation
-            update_post_meta($post->ID, '_lingua_auto_translated', time());
+
+        /**
+         * Fires when bulk translation is requested.
+         * Pro add-on can hook here to schedule auto-translations.
+         *
+         * @param array  $post_types       Selected post types.
+         * @param array  $target_languages Target language codes.
+         * @param string $post_status      Post status filter.
+         * @param int    $limit            Maximum posts to process.
+         */
+        do_action('lingua_bulk_translate_requested', $post_types, $target_languages, $post_status, $limit);
+
+        if (!has_action('lingua_bulk_translate_requested')) {
+            add_settings_error('lingua_bulk', 'pro_required',
+                __('Bulk auto-translation requires the IQCloud Translate Pro add-on.', 'iqcloud-translate'),
+                'error'
+            );
         }
-        
-        add_settings_error('lingua_bulk', 'success',
-            sprintf(__('Scheduled %d translations for %d posts.', 'iqcloud-translate'), $scheduled_count, count($posts)),
-            'updated'
-        );
     }
 
     /**
@@ -2424,32 +2148,6 @@ class Lingua_Admin {
             'term_id' => $term_id,
             'language' => $language
         ));
-    }
-
-    /**
-     * v5.2: AJAX handler for testing Middleware API connection
-     * v5.2.157: Delegates to test_connection() which handles caching via update_option()
-     */
-    public function ajax_test_middleware_connection() {
-        check_ajax_referer('lingua_test_connection', 'nonce');
-
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Unauthorized', 'iqcloud-translate'));
-            return;
-        }
-
-        $middleware_api = new Lingua_Middleware_API();
-        $result = $middleware_api->test_connection();
-
-        if (is_wp_error($result)) {
-            // v5.2.157: test_connection() already deleted cache via delete_option() on error
-            // Just return error message to user
-            wp_send_json_error($result->get_error_message());
-        } else {
-            // v5.2.157: test_connection() already saved status via update_option() on success
-            // No need to overwrite with set_transient() - this was causing conflicts
-            wp_send_json_success(__('Connection successful! API is working correctly.', 'iqcloud-translate'));
-        }
     }
 
     /**
