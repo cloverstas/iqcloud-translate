@@ -154,6 +154,9 @@ class Lingua_Admin {
                 lingua_debug_log('[Lingua Settings] Nonce verified successfully, calling save_settings()');
                 $this->save_settings();
 
+                // Allow Pro add-on to save its settings
+                do_action('lingua_settings_saved');
+
                 // v5.2.130: Redirect to same tab after save
                 $active_tab = isset($_POST['active_tab']) ? sanitize_text_field($_POST['active_tab']) : 'api-settings';
                 $redirect_url = add_query_arg(array(
